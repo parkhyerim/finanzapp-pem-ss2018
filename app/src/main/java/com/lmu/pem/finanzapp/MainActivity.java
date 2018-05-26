@@ -6,7 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity implements Tab1.OnFragmentInteractionListener, Tab2.OnFragmentInteractionListener, Tab3.OnFragmentInteractionListener, Tab4.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements DbTab.OnFragmentInteractionListener, KtoTab.OnFragmentInteractionListener, TransTab.OnFragmentInteractionListener, BudgTab.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,10 +14,10 @@ public class MainActivity extends AppCompatActivity implements Tab1.OnFragmentIn
         setContentView(R.layout.activity_main);
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab3"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab4"));
+        tabLayout.addTab(tabLayout.newTab().setText("Dashboard"));
+        tabLayout.addTab(tabLayout.newTab().setText("Konten"));
+        tabLayout.addTab(tabLayout.newTab().setText("Trans."));
+        tabLayout.addTab(tabLayout.newTab().setText("Budget"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
