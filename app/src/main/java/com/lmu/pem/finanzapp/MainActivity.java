@@ -1,5 +1,6 @@
 package com.lmu.pem.finanzapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -10,7 +11,7 @@ import com.lmu.pem.finanzapp.controller.PagerAdapter;
 
 public class MainActivity extends AppCompatActivity  {
 
-    //implements DbTab.OnFragmentInteractionListener, KtoTab.OnFragmentInteractionListener, TransTab.OnFragmentInteractionListener, BudgTab.OnFragmentInteractionListener
+    //implements DashboardFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, TransactionFragment.OnFragmentInteractionListener, BudgetFragment.OnFragmentInteractionListener
 
     private ViewPager viewPager;
 
@@ -26,5 +27,10 @@ public class MainActivity extends AppCompatActivity  {
         tabs.setTabTextColors(Color.GRAY, Color.parseColor("white"));
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
