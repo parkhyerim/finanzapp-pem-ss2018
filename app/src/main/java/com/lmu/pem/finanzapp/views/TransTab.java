@@ -25,7 +25,7 @@ public class TransTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.fragment_tab3, container, false);
+        View aboutView = inflater.inflate(R.layout.fragment_tab2, container, false);
 
         // Inflate the layout for this fragment
         return aboutView;

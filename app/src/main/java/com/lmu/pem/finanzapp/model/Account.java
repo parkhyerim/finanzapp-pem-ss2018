@@ -2,20 +2,25 @@ package com.lmu.pem.finanzapp.model;
 
 public class Account {
     //TODO - Evtl wäre eine ID sinnvoll, da müsste man sich überlegen wie man die am besten vergibt und speichert
-    private String name, color;
+    private String name;
+    private int color;
     private boolean isDefault;
     private double balance;
+    private static final int DEFAULT_COLOR = 0xff283593;
     //TODO - sinnvolle Konstante für Cash-Account
 
     public Account(String name) {
-        this(name, "#283593", false);
+        this(name, DEFAULT_COLOR, false);
+    }
+    public Account(String name, int color) {
+        this(name, color, false);
     }
     public Account(String name, boolean isDefault) {
-        this(name, "#283593", isDefault);
+        this(name, DEFAULT_COLOR, isDefault);
     }
-    public Account(String name, String color, boolean isDefault) {
+    public Account(String name, int color, boolean isDefault) {
         this.name = name;
-        this.color = "#283593";
+        this.color = color;
         this.isDefault = isDefault;
         this.balance = 0.0;
     }
@@ -28,11 +33,11 @@ public class Account {
         this.name = name;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

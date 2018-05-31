@@ -28,8 +28,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
         switch(position){
             case 0: return new DbTab();
-            case 1: return new KtoTab();
-            case 2: return new TransTab();
+            case 1: return new TransTab();
+            case 2: return new KtoTab();
             case 3: return new BudgTab();
         }
         return null;
