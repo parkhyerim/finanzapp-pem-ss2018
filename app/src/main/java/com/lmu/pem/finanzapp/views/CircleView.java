@@ -4,9 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 //derivative of original class by Michael Krause from https://stackoverflow.com/questions/25961263/draw-a-circle-onto-a-view-android/25961888
@@ -19,7 +19,7 @@ public class CircleView extends View
     private int textColor = DEFAULT_TEXT_COLOR;
     private Paint paint, textPaint;
     private String text;
-    private boolean underlineText;
+    private boolean emphasis;
     private int textSize;
 
     public CircleView(Context context)
@@ -39,8 +39,8 @@ public class CircleView extends View
         paint = new Paint();
         paint.setAntiAlias(true);
         textPaint = new TextPaint();
-        underlineText = false;
-        textSize = 60;
+        emphasis = false;
+        textSize = 50;
     }
 
     public void setCircleColor(int circleColor)
@@ -63,7 +63,7 @@ public class CircleView extends View
     }
     public void setText(String text, boolean underline) {
         this.text = text;
-        this.underlineText = underline;
+        this.emphasis = underline;
     }
 
     protected void onDraw(Canvas canvas)
@@ -91,7 +91,10 @@ public class CircleView extends View
         textPaint.setColor(textColor);
         textPaint.setTextSize(textSize);
         textPaint.setTextAlign(Paint.Align.CENTER);
-        if(underlineText) textPaint.setFlags(TextPaint.UNDERLINE_TEXT_FLAG);
-        canvas.drawText(text, cx, cy + (textSize / 2), textPaint);
+        if(emphasis){
+            textPaint.setFlags(TextPaint.UNDERLINE_TEXT_FLAG);
+            textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        }
+        canvas.drawText(text.toUpperCase(), cx, cy + (textSize / 2), textPaint);
     }
 }

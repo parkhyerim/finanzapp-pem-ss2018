@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity  {
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getApplicationContext()));
         TabLayout tabs = findViewById(R.id.tabLayoutId);
         tabs.setupWithViewPager(viewPager);
-        tabs.setTabMode(TabLayout.MODE_SCROLLABLE); //kann man sich irgendwann nochmal überlegen ob man eine gute Lösung für fixed Tabs findet.
+        tabs.setTabMode(TabLayout.MODE_SCROLLABLE); //wenn wir bei Icons sind, können hier wieder fixed tabs verwendet werden
         //tabs.setTabTextColors(Color.GRAY, Color.parseColor("white"));
     }
 

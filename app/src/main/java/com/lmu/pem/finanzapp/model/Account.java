@@ -20,7 +20,7 @@ public class Account {
     }
     public Account(String name, int color, boolean isDefault) {
         this.name = name;
-        this.color = color;
+        this.color = color; //TODO - integrate array of (10?) default colors
         this.isDefault = isDefault;
         this.balance = 0.0;
     }

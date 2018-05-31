@@ -28,9 +28,9 @@ public class KtoTab extends Fragment {
     public KtoTab() {
         // TODO - read accounts from database
         this.accounts = new Account[]{
-                new Account("Bargeld", true), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
-                new Account("Urlaub", 0xffff5722),
-                new Account("Sonst", 0xff005700)
+                new Account("Cash"), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
+                new Account("Main", 0xff00695c, true),
+                new Account("Vacation", 0xffc62828)
         };
     }
 

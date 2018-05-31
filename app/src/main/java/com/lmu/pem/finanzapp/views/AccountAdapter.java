@@ -10,6 +10,7 @@ import com.lmu.pem.finanzapp.model.Account;
 public class AccountAdapter extends BaseAdapter {
     private Context context;
     private Account[] accounts;
+    private final int CIRCLE_SIZE = 400;
 
     public AccountAdapter(Context context, Account[] accounts) {
         this.context = context;
@@ -36,7 +37,7 @@ public class AccountAdapter extends BaseAdapter {
         CircleView circleView;
         if(convertView == null){ //not a recycled view
             circleView = new CircleView(this.context);
-            circleView.setLayoutParams(new ViewGroup.LayoutParams(350,350));
+            circleView.setLayoutParams(new ViewGroup.LayoutParams(CIRCLE_SIZE,CIRCLE_SIZE));
         }else{
             circleView = (CircleView) convertView;
         }
