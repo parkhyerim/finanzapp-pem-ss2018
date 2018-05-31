@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.views.TransTab;
 import com.lmu.pem.finanzapp.views.TransactionFragment;
 import com.lmu.pem.finanzapp.views.BudgetFragment;
 import com.lmu.pem.finanzapp.views.DashboardFragment;

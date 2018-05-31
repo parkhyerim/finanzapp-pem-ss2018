@@ -1,12 +1,7 @@
 package com.lmu.pem.finanzapp.views;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +33,7 @@ public class AccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_tab3, container, false);
+        View v = inflater.inflate(R.layout.account_fragment, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridview);
         AccountAdapter adapter = new AccountAdapter(getContext(), accounts);
         gridView.setAdapter(adapter);
