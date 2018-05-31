@@ -6,13 +6,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.views.BudgTab;
-import com.lmu.pem.finanzapp.views.DbTab;
-import com.lmu.pem.finanzapp.views.KtoTab;
 import com.lmu.pem.finanzapp.views.TransTab;
+import com.lmu.pem.finanzapp.views.TransactionFragment;
+import com.lmu.pem.finanzapp.views.BudgetFragment;
+import com.lmu.pem.finanzapp.views.DashboardFragment;
+import com.lmu.pem.finanzapp.views.AccountFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {
     private Context context;
@@ -27,10 +27,10 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         switch(position){
-            case 0: return new DbTab();
-            case 1: return new TransTab();
-            case 2: return new KtoTab();
-            case 3: return new BudgTab();
+            case 0: return new DashboardFragment();
+            case 1: return new TransactionFragment();
+            case 2: return new AccountFragment();
+            case 3: return new BudgetFragment();
         }
         return null;
 

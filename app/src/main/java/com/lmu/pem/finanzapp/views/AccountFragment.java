@@ -21,11 +21,11 @@ import com.lmu.pem.finanzapp.model.Account;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class KtoTab extends Fragment {
+public class AccountFragment extends Fragment {
 
     private Account[] accounts;
 
-    public KtoTab() {
+    public AccountFragment() {
         // TODO - read accounts from database
         this.accounts = new Account[]{
                 new Account("Cash"), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.KtoTab">
+    tools:context=".views.AccountFragment">
     <GridView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

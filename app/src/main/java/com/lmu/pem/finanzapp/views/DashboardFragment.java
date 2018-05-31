@@ -14,8 +14,10 @@ import com.lmu.pem.finanzapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BudgTab extends Fragment {
-    public BudgTab() {
+public class DashboardFragment extends Fragment {
+
+
+    public DashboardFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +26,7 @@ public class BudgTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.fragment_tab4, container, false);
+        View aboutView = inflater.inflate(R.layout.fragment_tab1, container, false);
 
         // Inflate the layout for this fragment
         return aboutView;

@@ -1,5 +1,6 @@
 package com.lmu.pem.finanzapp;
 
+import android.content.Intent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
@@ -16,7 +17,7 @@ import com.lmu.pem.finanzapp.controller.PagerAdapter;
 
 public class MainActivity extends AppCompatActivity  {
 
-    //implements DbTab.OnFragmentInteractionListener, KtoTab.OnFragmentInteractionListener, TransTab.OnFragmentInteractionListener, BudgTab.OnFragmentInteractionListener
+    //implements DashboardFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, TransactionFragment.OnFragmentInteractionListener, BudgetFragment.OnFragmentInteractionListener
 
     private ViewPager viewPager;
 
@@ -47,5 +48,10 @@ public class MainActivity extends AppCompatActivity  {
         searchView.setIconifiedByDefault(false);
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

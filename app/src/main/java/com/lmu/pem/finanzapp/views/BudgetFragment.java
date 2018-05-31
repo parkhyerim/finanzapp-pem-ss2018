@@ -14,9 +14,8 @@ import com.lmu.pem.finanzapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransTab extends Fragment {
-
-    public TransTab() {
+public class BudgetFragment extends Fragment {
+    public BudgetFragment() {
         // Required empty public constructor
     }
 
@@ -25,10 +24,9 @@ public class TransTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.fragment_tab2, container, false);
+        View aboutView = inflater.inflate(R.layout.fragment_tab4, container, false);
 
         // Inflate the layout for this fragment
         return aboutView;
     }
-
 }
