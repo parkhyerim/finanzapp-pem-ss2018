@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getApplicationContext()));
         TabLayout tabs = findViewById(R.id.tabLayoutId);
         tabs.setupWithViewPager(viewPager);
-        tabs.setTabTextColors(Color.GRAY, Color.parseColor("white"));
-
+        tabs.setTabMode(TabLayout.MODE_SCROLLABLE); //kann man sich irgendwann nochmal überlegen ob man eine gute Lösung für fixed Tabs findet.
+        //tabs.setTabTextColors(Color.GRAY, Color.parseColor("white"));
 
     }
 }
