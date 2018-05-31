@@ -1,7 +1,5 @@
 package com.lmu.pem.finanzapp.views;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +24,7 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.fragment_tab1, container, false);
+        View aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
 
         // Inflate the layout for this fragment
         return aboutView;

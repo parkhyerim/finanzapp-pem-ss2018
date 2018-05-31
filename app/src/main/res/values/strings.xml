@@ -1,14 +1,23 @@
 <resources>
-    <string name="app_name">Finanz App</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="dashboard_text">
-        Welcome Back!
-    </string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
+    <!-- Grundlegendes -->
+    <string name="app_name">Financing App</string>
+    <string name="tab_1_label">Dashboard</string>
+    <string name="tab_2_label">Transactions</string>
+    <string name="tab_3_label">Accounts</string>
+    <string name="tab_4_label">Budgets</string>
     <string name="action_settings">Settings</string>
+    <string name="search_hint">Perform a Quick Action</string>
+    <!-- anscheinend nicht benötigt?
+    <string name="title_activity_main2">Main2Activity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+     -->
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Dashboard -->
+    <string name="dashboard_text">Welcome Back!</string>
+    <!-- Transaktionen -->
+
+    <!-- Konten -->
+    <string name="account_cash">Cash</string>
+
+    <!-- Bugdets -->
 </resources>
