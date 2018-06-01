@@ -23,9 +23,9 @@ public class AccountFragment extends Fragment {
     public AccountFragment() {
         // TODO - read accounts from database
         this.accounts = new Account[]{
-                new Account("Cash"), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
-                new Account("Main", 0xff00695c, true),
-                new Account("Vacation", 0xffc62828)
+                new Account("Cash", 64.45), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
+                new Account("Main", 0xff00695c, true, 2049.05),
+                new Account("Vacation", 0xffc62828, 256.09)
         };
     }
 
@@ -37,6 +37,7 @@ public class AccountFragment extends Fragment {
         GridView gridView = (GridView) v.findViewById(R.id.gridview);
         AccountAdapter adapter = new AccountAdapter(getContext(), accounts);
         gridView.setAdapter(adapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -51,9 +52,6 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        //View aboutView = inflater.inflate(R.layout.fragment_tab2, container, false);
-
-        // Inflate the layout for this fragment
         return v;
     }
 
