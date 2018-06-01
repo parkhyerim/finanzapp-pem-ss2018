@@ -1,6 +1,9 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -42,7 +45,37 @@ public class AccountAdapter extends BaseAdapter {
             circleView = (CircleView) convertView;
         }
         circleView.setText(accounts[position].getName(), accounts[position].isDefault());
+        circleView.setSubText(""+accounts[position].getBalance());
         circleView.setCircleColor(accounts[position].getColor());
+
+        circleView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                switch(event.getAction()){
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        Log.println(Log.INFO, "123123123", "Drag started!");
+                        return false;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        Log.println(Log.INFO, "123123123", "Drag entered!");
+                        //TODO set color (call invalidate!) / ...
+                        return true;
+                    case DragEvent.ACTION_DRAG_LOCATION:
+                        return true;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        return true;
+                    case DragEvent.ACTION_DROP:
+                        Log.println(Log.INFO, "123123123", "Dropped!");
+                        return true;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        Log.println(Log.INFO, "123123123", "Stopped dragging!");
+                        return true;
+                    default:
+                        Log.println(Log.INFO, "123123123", "No idea what that was!");
+                        break;
+                }
+                return true;
+            }
+        });
 
         return circleView;
     }
