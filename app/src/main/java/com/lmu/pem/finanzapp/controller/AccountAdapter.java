@@ -1,28 +1,30 @@
-package com.lmu.pem.finanzapp.views;
+package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.lmu.pem.finanzapp.model.Account;
+import com.lmu.pem.finanzapp.data.Account;
+import com.lmu.pem.finanzapp.views.CircleView;
+
+import java.util.ArrayList;
 
 public class AccountAdapter extends BaseAdapter {
     private Context context;
-    private Account[] accounts;
+    private ArrayList<Account> accounts;
     private final int CIRCLE_SIZE = 400;
 
-    public AccountAdapter(Context context, Account[] accounts) {
+    public AccountAdapter(Context context, ArrayList<Account> accounts) {
         this.context = context;
         this.accounts = accounts;
     }
 
     @Override
     public int getCount() {
-        return accounts.length;
+        return accounts.size();
     }
 
     @Override
@@ -44,9 +46,9 @@ public class AccountAdapter extends BaseAdapter {
         }else{
             circleView = (CircleView) convertView;
         }
-        circleView.setText(accounts[position].getName(), accounts[position].isDefault());
-        circleView.setSubText(""+accounts[position].getBalance());
-        circleView.setCircleColor(accounts[position].getColor());
+        circleView.setText(accounts.get(position).getName(), accounts.get(position).isDefault());
+        circleView.setSubText(""+accounts.get(position).getBalance());
+        circleView.setCircleColor(accounts.get(position).getColor());
 
         circleView.setOnDragListener(new View.OnDragListener() {
             @Override
