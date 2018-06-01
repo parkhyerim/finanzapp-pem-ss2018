@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.data.TransactionItem;
+import com.lmu.pem.finanzapp.model.TransactionItem;
 
 import java.util.ArrayList;
 
