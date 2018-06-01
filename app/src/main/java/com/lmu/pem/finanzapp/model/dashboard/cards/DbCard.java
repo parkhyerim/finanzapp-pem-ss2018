@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.model.cards;
+package com.lmu.pem.finanzapp.model.dashboard.cards;
 
 public class DbCard {
 

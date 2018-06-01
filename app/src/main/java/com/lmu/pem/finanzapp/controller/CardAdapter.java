@@ -1,6 +1,6 @@
 package com.lmu.pem.finanzapp.controller;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.model.cards.*;
+import com.lmu.pem.finanzapp.model.dashboard.cards.*;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -122,22 +122,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             h.primaryText.setText(c.getPrimaryText());
             h.amountText.setText(String.format(Locale.getDefault(), "%.2f %s",c.getAmount(), "€"));
 
-            /**
+
             switch (c.getAmountType()) {
+
+
                 case POSITIVE:
-                    h.amountText.setTextColor(Color.GREEN);
-                    h.amountDescText.setTextColor(Color.GREEN);
+                    h.amountText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_green_light));
+                    h.amountDescText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_green_light));
                     break;
                 case NEGATIVE:
-                    h.amountText.setTextColor(Color.RED);
-                    h.amountDescText.setTextColor(Color.RED);
-                    break;
-                case NEUTRAL:
-                    h.amountText.setTextColor(Color.GRAY);
-                    h.amountDescText.setTextColor(Color.GRAY);
+                    h.amountText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_red_light));
+                    h.amountDescText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_red_light));
                     break;
             }
-             **/
+
 
             if (c.getAmountDescription() == "")
                 removeView(h.amountDescText);

@@ -10,11 +10,10 @@ import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
-import com.lmu.pem.finanzapp.model.cards.BasicAmountCard;
-import com.lmu.pem.finanzapp.model.cards.DbCard;
-import com.lmu.pem.finanzapp.model.cards.WelcomeCard;
+import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
+import com.lmu.pem.finanzapp.model.dashboard.cards.DbCard;
+import com.lmu.pem.finanzapp.model.dashboard.cards.WelcomeCard;
 
-import java.time.Month;
 import java.util.ArrayList;
 
 
