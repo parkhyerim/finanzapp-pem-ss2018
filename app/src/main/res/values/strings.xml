@@ -20,4 +20,28 @@
     <string name="account_cash">Cash</string>
 
     <!-- Bugdets -->
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!--Welcome Card-->
+    <string name="welcomecard_title">Welcome back!</string>
+    <string name="welcomecard_text">Do you want me do give you a roundup of your recent activities?</string>
+    <string name="welcomecard_btn1">YES</string>
+    <string name="welcomecard_btn2">NO</string>
+
+    <!--Highest Expenses Card-->
+    <string name="highestexpenses_title">Highest Expenses</string>
+    <string name="highestexpenses_mainText">In the last few months, you spent most money on</string>
+    <string name="highestexpenses_amount">87.54 €</string>
+    <string name="highestexpenses_btn1">More about this</string>
+
+    <!--Most economical month Expenses Card-->
+    <string name="mem_title">Most economical Month</string>
+    <string name="mem_mainText">Your most economical month is usually </string>
+    <string name="mem_amount">87.54 €</string>
+    <string name="mem_amountDesc">spent on average.</string>
+    <string name="mem_secondaryText">Keep it up!</string>
+    <string name="mem_btn1">More about this</string>
+
 </resources>
