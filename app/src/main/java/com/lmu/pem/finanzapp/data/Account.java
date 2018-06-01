@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.model;
+package com.lmu.pem.finanzapp.data;
 
 public class Account {
     private String name;
