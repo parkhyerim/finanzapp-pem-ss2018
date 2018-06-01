@@ -13,14 +13,14 @@ import android.view.View;
 public class CircleView extends View
 {
     private static final int DEFAULT_CIRCLE_COLOR = Color.RED;
-    private static final int DEFAULT_TEXT_COLOR = Color.BLACK;
+    private static final int DEFAULT_TEXT_COLOR = Color.WHITE;
 
     private int circleColor = DEFAULT_CIRCLE_COLOR;
     private int textColor = DEFAULT_TEXT_COLOR;
-    private Paint paint, textPaint;
-    private String text;
+    private Paint paint, textPaint, subtextPaint;
+    private String text, subtext;
     private boolean emphasis;
-    private int textSize;
+    private int textSize, subtextSize;
 
     public CircleView(Context context)
     {
@@ -39,8 +39,12 @@ public class CircleView extends View
         paint = new Paint();
         paint.setAntiAlias(true);
         textPaint = new TextPaint();
+        subtextPaint = new TextPaint();
         emphasis = false;
-        textSize = 50;
+        textSize = 55;
+        subtextSize = 40;
+        text="";
+        subtext="";
     }
 
     public void setCircleColor(int circleColor)
@@ -64,6 +68,14 @@ public class CircleView extends View
     public void setText(String text, boolean underline) {
         this.text = text;
         this.emphasis = underline;
+    }
+
+    public String getSubText() {
+        return subtext;
+    }
+
+    public void setSubText(String text) {
+        this.subtext = text;
     }
 
     protected void onDraw(Canvas canvas)
@@ -95,6 +107,15 @@ public class CircleView extends View
             textPaint.setFlags(TextPaint.UNDERLINE_TEXT_FLAG);
             textPaint.setTypeface(Typeface.DEFAULT_BOLD);
         }
-        canvas.drawText(text.toUpperCase(), cx, cy + (textSize / 2), textPaint);
+        if(subtext.length()>0){
+            canvas.drawText(text.toUpperCase(), cx, cy - (textSize / 2), textPaint);
+
+            subtextPaint.setColor(textColor);
+            subtextPaint.setTextSize(subtextSize);
+            subtextPaint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText(subtext+" €", cx, cy + (textSize / 2) + 20, subtextPaint);
+        } else {
+            canvas.drawText(text.toUpperCase(), cx, cy + (textSize / 2), textPaint);
+        }
     }
 }

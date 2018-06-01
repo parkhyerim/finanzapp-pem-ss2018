@@ -10,7 +10,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.model.Account;
+import com.lmu.pem.finanzapp.controller.AccountAdapter;
+import com.lmu.pem.finanzapp.model.AccountManager;
 
 
 /**
@@ -18,15 +19,10 @@ import com.lmu.pem.finanzapp.model.Account;
  */
 public class AccountFragment extends Fragment {
 
-    private Account[] accounts;
+    private AccountManager accountManager;
 
     public AccountFragment() {
-        // TODO - read accounts from database
-        this.accounts = new Account[]{
-                new Account("Cash"), //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
-                new Account("Main", 0xff00695c, true),
-                new Account("Vacation", 0xffc62828)
-        };
+        this.accountManager = AccountManager.getInstance();
     }
 
     @Override
@@ -35,8 +31,9 @@ public class AccountFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.account_fragment, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridview);
-        AccountAdapter adapter = new AccountAdapter(getContext(), accounts);
+        AccountAdapter adapter = new AccountAdapter(getContext(), accountManager.getAccounts());
         gridView.setAdapter(adapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -51,9 +48,6 @@ public class AccountFragment extends Fragment {
             }
         });
 
-        //View aboutView = inflater.inflate(R.layout.fragment_tab2, container, false);
-
-        // Inflate the layout for this fragment
         return v;
     }
 
