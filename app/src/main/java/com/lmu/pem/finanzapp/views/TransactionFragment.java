@@ -17,7 +17,6 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.Transaction;
-import com.lmu.pem.finanzapp.model.TransactionItem;
 
 import java.util.ArrayList;
 
@@ -27,7 +26,7 @@ import java.util.ArrayList;
  */
 public class TransactionFragment extends Fragment {
 
-    private ArrayList<TransactionItem> mTransactionList;
+    private ArrayList<Transaction> mTransactionList;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -76,6 +75,7 @@ public class TransactionFragment extends Fragment {
 
         mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
         mAmount = mTransaction.getAmount();
+
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -135,18 +135,18 @@ public class TransactionFragment extends Fragment {
 
     public void createTransactionList() {
         mTransactionList = new ArrayList<>();
-        mTransactionList.add(new TransactionItem(R.drawable.food, "Cash", "Food","30 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.car, "Bank Accounts", "Car","100 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.hausehold, "Cash", "Household","120 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.car, "Bank Accounts", "Car","120 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.hausehold, "Cash", "Household","10 Euro"));
+        mTransactionList.add(new Transaction(R.drawable.food, "Cash", "Food",30));
+        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",30));
+        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",30));
+        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",120));
+        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",10));
     }
 
     public void insertItem(int position, String account, double amount, String category){
         mAccount = account;
         String amountStr = String.valueOf(amount) + " Euro";
 
-        mTransactionList.add(new TransactionItem(R.drawable.money, "Cash", category, amountStr));
+        mTransactionList.add(new Transaction(R.drawable.money, "Cash", category, amount));
         mAdapter.notifyItemInserted(position);
 
     }
