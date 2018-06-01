@@ -16,8 +16,8 @@ import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
-import com.lmu.pem.finanzapp.data.Transaction;
-import com.lmu.pem.finanzapp.data.TransactionItem;
+import com.lmu.pem.finanzapp.model.Transaction;
+import com.lmu.pem.finanzapp.model.TransactionItem;
 
 import java.util.ArrayList;
 

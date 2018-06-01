@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.data;
+package com.lmu.pem.finanzapp.model;
 
 public class Transaction {
     double mExpense;
