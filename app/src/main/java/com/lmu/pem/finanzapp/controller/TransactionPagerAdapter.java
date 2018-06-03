@@ -22,8 +22,8 @@ public class TransactionPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch(position){
-            case 0: return new IncomeFragment();
-            case 1: return new ExpenseFragment();
+            case 0: return new ExpenseFragment();
+            case 1: return new IncomeFragment();
 
         }
         return null;
@@ -40,8 +40,8 @@ public class TransactionPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch(position){
-            case 0: return "Income";
-            case 1: return "Expense";
+            case 0: return "Expense";
+            case 1: return "Income";
         }
         return null;
     }
