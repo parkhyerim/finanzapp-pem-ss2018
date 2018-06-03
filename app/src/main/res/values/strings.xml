@@ -44,4 +44,21 @@
     <string name="mem_secondaryText">Keep it up!</string>
     <string name="mem_btn1">More about this</string>
 
+    <!-- Transaction Category -->
+    <string-array name="transaction_category">
+        <item>Food</item>
+        <item>Culture</item>
+        <item>Social Life</item>
+        <item>Household</item>
+        <item>Transportation</item>
+        <item>Beauty</item>
+        <item>Apparel</item>
+        <item>Gift</item>
+        <item>Education</item>
+        <item>Health</item>
+        <item>Car</item>
+        <item>Travel</item>
+        <item>Other</item>
+    </string-array>
+
 </resources>

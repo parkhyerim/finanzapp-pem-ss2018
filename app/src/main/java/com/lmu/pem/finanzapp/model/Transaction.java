@@ -1,6 +1,10 @@
 package com.lmu.pem.finanzapp.model;
 
-public class Transaction {
+import android.support.annotation.NonNull;
+
+import java.util.Date;
+
+public class Transaction implements Comparable<Transaction> {
     private double expense;
     private double income;
     private double amount;
@@ -10,6 +14,8 @@ public class Transaction {
     private String item;
 
     private int imageResource;
+    private String date;
+
 
     public Transaction( int imageResource, String category, String account, double expense, double income, double amount) {
 
@@ -30,7 +36,7 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Transaction(int imageResource, String account, String category, double expense){
+    public Transaction(int imageResource, String account, String category, double expense, String date){
         this.imageResource = imageResource;
         this.account = account;
         this.category = category;
@@ -55,6 +61,9 @@ public class Transaction {
         return category;
     }
 
+    public String getDate() {
+        return date;
+    }
 
     public double addExpense(double expense){
         amount -= expense;
@@ -64,5 +73,11 @@ public class Transaction {
     public double addIncome(double income) {
         amount += income;
         return amount;
+    }
+
+    @Override
+    public int compareTo(@NonNull Transaction o) {
+        return getCategory().toString()
+                            .compareTo(o.getCategory().toString());
     }
 }
