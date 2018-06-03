@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
 
     private ArrayList<Transaction> mTransactionList;
+    private final int rowLayout;
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder{
 
@@ -33,8 +34,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
-    public TransactionAdapter(ArrayList<Transaction> transactionList){
+    public TransactionAdapter(ArrayList<Transaction> transactionList, int rowLayout){
         mTransactionList = transactionList;
+        this.rowLayout = rowLayout;
     }
 
 
