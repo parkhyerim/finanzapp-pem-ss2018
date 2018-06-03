@@ -75,10 +75,7 @@ public class TransactionFragment extends Fragment {
         mRecyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
-
-
-
-                addButton = rootView.findViewById(R.id.transaction_addButton);
+        addButton = rootView.findViewById(R.id.transaction_addButton);
 
 
         mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
