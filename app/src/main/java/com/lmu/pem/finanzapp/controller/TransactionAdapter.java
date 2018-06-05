@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.data.TransactionItem;
+import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
 
-    private ArrayList<TransactionItem> mTransactionList;
+    private ArrayList<Transaction> mTransactionList;
+    private final int rowLayout;
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder{
 
@@ -33,8 +34,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
-    public TransactionAdapter(ArrayList<TransactionItem> transactionList){
+    public TransactionAdapter(ArrayList<Transaction> transactionList, int rowLayout){
         mTransactionList = transactionList;
+        this.rowLayout = rowLayout;
     }
 
 
@@ -51,11 +53,11 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
 
-        TransactionItem currentItem = mTransactionList.get(position);
+        Transaction currentItem = mTransactionList.get(position);
 
         holder.categoryImageView.setImageResource(currentItem.getImageResource());
-        holder.categoryTextView.setText(currentItem.getCategoryName());
-        holder.accountTextView.setText(currentItem.getAccountName());
+        holder.categoryTextView.setText(currentItem.getCategory());
+        holder.accountTextView.setText(currentItem.getAccount());
         holder.amountTextView.setText(String.valueOf(currentItem.getAmount()));
 
     }

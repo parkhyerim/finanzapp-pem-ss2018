@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/transaction_date_section_text"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/transaction_recycler_section_header"
+    android:background="#41cfef"
+    android:textStyle="bold"
+    android:textSize="20sp">
+
+</TextView>

@@ -14,10 +14,10 @@ import android.widget.Button;
 
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
-import com.lmu.pem.finanzapp.data.Transaction;
-import com.lmu.pem.finanzapp.data.TransactionItem;
+import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
  */
 public class TransactionFragment extends Fragment {
 
-    private ArrayList<TransactionItem> mTransactionList;
+    private ArrayList<Transaction> mTransactionList;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -42,6 +42,7 @@ public class TransactionFragment extends Fragment {
     private String mCategory;
     private String mAccount;
     private Object setContentView;
+    private String date;
 
 
     public TransactionFragment() {
@@ -64,11 +65,14 @@ public class TransactionFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new TransactionAdapter(mTransactionList);
+        mAdapter = new TransactionAdapter(mTransactionList, R.layout.transactions_item);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
+                true, getSectionCallback(mTransactionList) );
+        mRecyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
         addButton = rootView.findViewById(R.id.transaction_addButton);
@@ -76,6 +80,7 @@ public class TransactionFragment extends Fragment {
 
         mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
         mAmount = mTransaction.getAmount();
+
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +113,9 @@ public class TransactionFragment extends Fragment {
                position = mTransactionList.size();
                mExpense = data.getDoubleExtra("expense", 0);
                mCategory = data.getStringExtra("category");
-               insertItem(position, mAccount, mExpense, mCategory);
+               this.date = "11.Mai";
+               //mAmount += mExpense;
+               insertItem(position, mAccount, mExpense, mCategory, this.date);
 
            }
 
@@ -135,23 +142,46 @@ public class TransactionFragment extends Fragment {
 
     public void createTransactionList() {
         mTransactionList = new ArrayList<>();
-        mTransactionList.add(new TransactionItem(R.drawable.food, "Cash", "Food","30 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.car, "Bank Accounts", "Car","100 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.hausehold, "Cash", "Household","120 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.car, "Bank Accounts", "Car","120 Euro"));
-        mTransactionList.add(new TransactionItem(R.drawable.hausehold, "Cash", "Household","10 Euro"));
+        mTransactionList.add(new Transaction(R.drawable.food, "Cash", "Food",30, "1.Mai"));
+        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",30, "1.Mai"));
+        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",30,"2.Mai"));
+        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",120,"3.Mai"));
+        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",10,"1.Mai"));
     }
 
-    public void insertItem(int position, String account, double amount, String category){
+    public void insertItem(int position, String account, double amount, String category, String date){
         mAccount = account;
         String amountStr = String.valueOf(amount) + " Euro";
+        this.date = date;
 
-        mTransactionList.add(new TransactionItem(R.drawable.money, "Cash", category, amountStr));
+        mTransactionList.add(new Transaction(R.drawable.money, "Cash", category, amount, this.date));
         mAdapter.notifyItemInserted(position);
 
     }
 
 
+
+    private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
+        return new RecyclerSectionItemDecoration.SectionCallback() {
+            @Override
+            public boolean isSection(int position) {
+                return position == 0
+                        || transactionList.get(position)
+                        .getCategory()
+                        .charAt(0) != transactionList.get(position - 1)
+                        .getCategory()
+                        .charAt(0);
+            }
+
+            @Override
+            public CharSequence getSectionHeader(int position) {
+                return transactionList.get(position)
+                        .getCategory()
+                        .subSequence(0,
+                                1);
+            }
+        };
+    }
 
 
 
