@@ -23,7 +23,16 @@ public class AccountManager {
         else return instance;
     }
 
+    //also to be used for changing attributes of a given account
     public ArrayList<Account> getAccounts() {
         return accounts;
+    }
+
+    public void addAccount(Account acc){
+        this.accounts.add(acc);
+    }
+
+    public void deleteAccount(int index){
+        this.accounts.remove(index);
     }
 }
