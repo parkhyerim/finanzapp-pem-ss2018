@@ -79,7 +79,7 @@ public class TransactionFragment extends Fragment {
 
 
         mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
-        mAmount = mTransaction.getAmount();
+        //mAmount = mTransaction.getAmount();
 
 
 
@@ -105,7 +105,7 @@ public class TransactionFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
 
 //        Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
 
@@ -113,31 +113,15 @@ public class TransactionFragment extends Fragment {
                position = mTransactionList.size();
                mExpense = data.getDoubleExtra("expense", 0);
                mCategory = data.getStringExtra("category");
+               mAccount = data.getStringExtra("catego");
                this.date = "11.Mai";
                //mAmount += mExpense;
                insertItem(position, mAccount, mExpense, mCategory, this.date);
 
            }
-
-
-
     }
 
-    /*
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(requestCode == 111 ) {
-            postion = mTransactionList.size();
-            mExpense = data.getDoubleExtra("expense", 0);
-            mCategory = data.getStringExtra("category");
-            insertItem(postion, mAccount, mAmount, mCategory);
-
-        }
-
-    }
-    */
 
 
     public void createTransactionList() {
@@ -151,10 +135,11 @@ public class TransactionFragment extends Fragment {
 
     public void insertItem(int position, String account, double amount, String category, String date){
         mAccount = account;
+        mAmount = amount;
         String amountStr = String.valueOf(amount) + " Euro";
         this.date = date;
 
-        mTransactionList.add(new Transaction(R.drawable.money, "Cash", category, amount, this.date));
+        mTransactionList.add(new Transaction(R.drawable.money, mAccount, category, mAmount , this.date));
         mAdapter.notifyItemInserted(position);
 
     }
