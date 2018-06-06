@@ -86,6 +86,9 @@ public class TransactionFragment extends Fragment {
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 */
+
+
+        // to add a new transaction
         addButton = rootView.findViewById(R.id.transaction_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +100,7 @@ public class TransactionFragment extends Fragment {
 
         return rootView;
     }
+
 
 
     @Override
@@ -116,15 +120,13 @@ public class TransactionFragment extends Fragment {
                position = transactionList.size();
 
                date = data.getStringExtra("date");
-               category = data.getStringExtra("category");
                account = data.getStringExtra("account");
+               category = data.getStringExtra("category");
+               description = data.getStringExtra("description");
                expense = data.getDoubleExtra("expense", 0);
                income = data.getDoubleExtra("income", 0);
-               description = data.getStringExtra("description");
-               //date = "11.Mai";
-               //description = "...";
 
-               //mAmount += mExpense;
+               //new transaction can be added to the transaction list
                insertItem(position, date, account, category, description, expense, income);
 
            }
@@ -135,16 +137,21 @@ public class TransactionFragment extends Fragment {
     public void createTransactionList() {
 
         transactionList = new ArrayList<>();
-        transactionList.add(new Transaction("05/05/2018", R.drawable.food, "Cash", "Food", "Hamburger", 30, 0));
-        transactionList.add(new Transaction("05/29/2018", R.drawable.car, "Main", "Car", "Auto waschen",30, 0));
-        transactionList.add(new Transaction("05/29/2018", R.drawable.hausehold, "Cash", "Household", "Edeka", 75,0));
-        transactionList.add(new Transaction("05/30/2018", R.drawable.food, "Cash", "Food", "Käse",20,0));
-        transactionList.add(new Transaction("05/30/2018", R.drawable.money, "Bank Account", "Salary","Werkstudenten-Gehalt", 0,1000));
+
+        // dummy transaction list
+        transactionList.add(new Transaction("28/04/2018", R.drawable.salary, "Bank Account", "Salary", "Werkstudenten-Gehalt", 0, 450));
+        transactionList.add(new Transaction("29/04/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
+        transactionList.add(new Transaction("01/05/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
+        transactionList.add(new Transaction("04/05/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20,0));
+        transactionList.add(new Transaction("05/05/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!",0,180));
+        transactionList.add(new Transaction("13/05/2018", R.drawable.gift, "Cash", "Gift","Muttertag", 38.25,0));
+        transactionList.add(new Transaction("14/05/2018", R.drawable.culture, "Cash", "Culture","Black Panther", 21,0));
 
     }
 
 
     public void insertItem(int position, String date, String account, String category, String description, double expense, double income){
+
         this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
 
         this.date = date;
@@ -154,8 +161,6 @@ public class TransactionFragment extends Fragment {
         this.expense = expense;
         this.description = description;
 
-
-
         transactionList.add(new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income));
         adapter.notifyItemInserted(position);
 
@@ -163,11 +168,12 @@ public class TransactionFragment extends Fragment {
 
 
 
+    /*
     public static ArrayList<Transaction> getTransactionSorted() {
         Collections.sort(transactionList);
         return transactionList;
     }
-
+*/
 
     /*
     //
@@ -190,8 +196,6 @@ public class TransactionFragment extends Fragment {
     }
 
 */
-
-
 
 
 

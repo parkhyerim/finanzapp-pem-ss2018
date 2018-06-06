@@ -1,6 +1,5 @@
 package com.lmu.pem.finanzapp.controller;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -21,11 +20,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private final int rowLayout;
 
 
-    //
-    //
-    //
-
-
     public TransactionAdapter(ArrayList<Transaction> transactionList, int rowLayout){
 
         this.transactionList = transactionList;
@@ -41,27 +35,20 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView accountTextView;
         private TextView moneyTextView;
 
-        //
-        //
-
 
         public TransactionViewHolder(View itemView) {
             super(itemView);
+
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
 
-            /*
-            Context c = itemView.getApplicationContext();
-            int id = c.getResources().getIdentifier("drawable/"+"food", null, c.getPackageName());
-
-            */
-
         }
     }
 
-    //
+    /*
+
     //
     //
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
@@ -77,24 +64,19 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
         public HeaderViewHolder(View itemView){
             super(itemView);
-
         }
 
     }
-
-
-
+*/
 
 
     @NonNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transactions_item, parent, false);
         TransactionViewHolder transactionViewHolder = new TransactionViewHolder(view);
         return transactionViewHolder;
-
 
     }
 
@@ -104,24 +86,32 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
 
         Transaction currentItem = transactionList.get(position);
-        holder.categoryImageView.setImageResource(currentItem.getImageResource());
 
         holder.accountTextView.setText(currentItem.getAccount());
+        holder.categoryImageView.setImageResource(currentItem.getImageResource());
 
 
-        //TODO Währungssymbol besser zeigen
+        //TODO Währungssymbol effizienter, kluger zeigen...
         if(currentItem.getExpense() > currentItem.getIncome()) {
+
             holder.moneyTextView.setText("-" + String.valueOf(currentItem.getExpense())+ "\u20ac");
             holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
+
         } else  {
+
             holder.moneyTextView.setText(String.valueOf(currentItem.getIncome())+ "\u20ac");
             holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
+
         }
 
-        if(currentItem.getDescrition().equals("")){
+        if(currentItem.getDescription().equals("")){
+
+            // If there is no description-input, then the category name will be shown.
             holder.descriptionTextView.setText(currentItem.getCategory());
+
         } else {
-            holder.descriptionTextView.setText(currentItem.getDescrition());
+
+            holder.descriptionTextView.setText(currentItem.getDescription());
         }
 
 
@@ -134,6 +124,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Wenn transactionList null ist, dann gibt 0 Wert zurück
         return null!= transactionList? transactionList.size():0;
+
     }
 
 

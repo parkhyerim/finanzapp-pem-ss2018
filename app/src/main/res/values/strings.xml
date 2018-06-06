@@ -43,12 +43,22 @@
     <string name="mem_amountDesc">spent on average.</string>
     <string name="mem_secondaryText">Keep it up!</string>
     <string name="mem_btn1">More about this</string>
-    
-    
-    <!--Section RecyclerView-->
-    <string name="linear_sectioned_recyclerview_vertical">Linear Sectioned RecyclerView</string>
 
-
-
+    <!-- Transaction Category -->
+    <string-array name="transaction_category">
+        <item>Food</item>
+        <item>Culture</item>
+        <item>Social Life</item>
+        <item>Household</item>
+        <item>Transportation</item>
+        <item>Beauty</item>
+        <item>Apparel</item>
+        <item>Gift</item>
+        <item>Education</item>
+        <item>Health</item>
+        <item>Car</item>
+        <item>Travel</item>
+        <item>Other</item>
+    </string-array>
 
 </resources>
