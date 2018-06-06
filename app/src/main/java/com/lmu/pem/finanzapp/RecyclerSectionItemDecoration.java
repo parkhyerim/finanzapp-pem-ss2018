@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
+
     private final int headerOffset;
     private final boolean sticky;
     private final SectionCallback sectionCallback;
@@ -17,17 +18,19 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
     private TextView header;
 
     public RecyclerSectionItemDecoration(int headerHeight, boolean sticky, SectionCallback sectionCallback){
+
         headerOffset = headerHeight;
         this.sticky = sticky;
         this.sectionCallback = sectionCallback;
+
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
-        int pos = parent.getChildAdapterPosition(view);
-        if(sectionCallback.isSection(pos)){
+        int position = parent.getChildAdapterPosition(view);
+        if(sectionCallback.isSection(position)){
             outRect.top = headerOffset;
         }
 
@@ -39,7 +42,7 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
 
         if (headerView == null) {
             headerView = inflateHeaderView(parent);
-            header = (TextView) headerView.findViewById(R.id.transaction_date_section_text);
+            header = headerView.findViewById(R.id.transaction_date_section_text);
             fixLayoutSize(headerView, parent);
         }
 
@@ -55,7 +58,6 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
                 previousHeader = title;
             }
         }
-
 
     }
 
@@ -97,6 +99,7 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
     }
 
+    //
     public interface SectionCallback {
 
         boolean isSection(int position);

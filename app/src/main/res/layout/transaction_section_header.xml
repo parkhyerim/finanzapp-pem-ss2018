@@ -6,6 +6,6 @@
     android:layout_height="@dimen/transaction_recycler_section_header"
     android:background="#41cfef"
     android:textStyle="bold"
-    android:textSize="20sp">
+    android:textSize="15sp">
 
 </TextView>
