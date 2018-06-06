@@ -1,6 +1,7 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.jaychang.srv.decoration.SectionHeaderProvider;
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
@@ -20,6 +22,9 @@ import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -27,22 +32,25 @@ import java.util.ArrayList;
  */
 public class TransactionFragment extends Fragment {
 
-    private ArrayList<Transaction> mTransactionList;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private Button addButton;
-    private Transaction mTransaction;
+
+    private static ArrayList<Transaction> transactionList;
+    private Transaction transaction;
 
     private int position;
-    private double mExpense;
-    private double mAmount;
-    private String mCategory;
-    private String mAccount;
-    private Object setContentView;
-    private String date;
+    private int imageResource;
+    private double expense = 0;
+    private double income = 0;
+    private String category = "";
+    private String account = "";
+    private String date = "";
+    private String description = "";
+
 
 
     public TransactionFragment() {
@@ -52,37 +60,33 @@ public class TransactionFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
-        MainActivity main = (MainActivity) getActivity();
 
         createTransactionList();
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.transaction_recyclerView);
-
-
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new TransactionAdapter(mTransactionList, R.layout.transactions_item);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-
-        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
-                true, getSectionCallback(mTransactionList) );
-        mRecyclerView.addItemDecoration(transactionSectionItemDecoration);
-
-
-        addButton = rootView.findViewById(R.id.transaction_addButton);
-
-
-        mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
-        //mAmount = mTransaction.getAmount();
+        recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity());
+        adapter = new TransactionAdapter(transactionList, R.layout.transactions_item);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
 
 
 
+/*
+//
+//
+        transactionList = getTransactionSorted();
+
+
+        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(
+                        getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionList));
+        recyclerView.addItemDecoration(transactionSectionItemDecoration);
+
+*/
+        addButton = rootView.findViewById(R.id.transaction_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,75 +102,96 @@ public class TransactionFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
-
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-//        Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
+        //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
 
            if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
-               position = mTransactionList.size();
-               mExpense = data.getDoubleExtra("expense", 0);
-               mCategory = data.getStringExtra("category");
-               mAccount = data.getStringExtra("catego");
-               this.date = "11.Mai";
+
+               position = transactionList.size();
+
+               date = data.getStringExtra("date");
+               category = data.getStringExtra("category");
+               account = data.getStringExtra("account");
+               expense = data.getDoubleExtra("expense", 0);
+               income = data.getDoubleExtra("income", 0);
+               description = data.getStringExtra("description");
+               //date = "11.Mai";
+               //description = "...";
+
                //mAmount += mExpense;
-               insertItem(position, mAccount, mExpense, mCategory, this.date);
+               insertItem(position, date, account, category, description, expense, income);
 
            }
     }
 
 
 
-
     public void createTransactionList() {
-        mTransactionList = new ArrayList<>();
-        mTransactionList.add(new Transaction(R.drawable.food, "Cash", "Food",30, "1.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",30, "1.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",30,"2.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",120,"3.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",10,"1.Mai"));
+
+        transactionList = new ArrayList<>();
+        transactionList.add(new Transaction("05/05/2018", R.drawable.food, "Cash", "Food", "Hamburger", 30, 0));
+        transactionList.add(new Transaction("05/29/2018", R.drawable.car, "Main", "Car", "Auto waschen",30, 0));
+        transactionList.add(new Transaction("05/29/2018", R.drawable.hausehold, "Cash", "Household", "Edeka", 75,0));
+        transactionList.add(new Transaction("05/30/2018", R.drawable.food, "Cash", "Food", "Käse",20,0));
+        transactionList.add(new Transaction("05/30/2018", R.drawable.money, "Bank Account", "Salary","Werkstudenten-Gehalt", 0,1000));
+
     }
 
-    public void insertItem(int position, String account, double amount, String category, String date){
-        mAccount = account;
-        mAmount = amount;
-        String amountStr = String.valueOf(amount) + " Euro";
+
+    public void insertItem(int position, String date, String account, String category, String description, double expense, double income){
+        this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+
         this.date = date;
+        this.account = account;
+        this.category = category;
+        this.income = income;
+        this.expense = expense;
+        this.description = description;
 
-        mTransactionList.add(new Transaction(R.drawable.money, mAccount, category, mAmount , this.date));
-        mAdapter.notifyItemInserted(position);
+
+
+        transactionList.add(new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income));
+        adapter.notifyItemInserted(position);
 
     }
 
 
 
+    public static ArrayList<Transaction> getTransactionSorted() {
+        Collections.sort(transactionList);
+        return transactionList;
+    }
+
+
+    /*
+    //
+    //
+    //
     private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                return position == 0
-                        || transactionList.get(position)
-                        .getCategory()
-                        .charAt(0) != transactionList.get(position - 1)
-                        .getCategory()
-                        .charAt(0);
+                return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
             }
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                return transactionList.get(position)
-                        .getCategory()
-                        .subSequence(0,
-                                1);
+                date = transactionList.get(position).getDate().toString();
+                return date;
+                //return transactionList.get(position).getDate().subSequence(0, 8);
             }
         };
     }
+
+*/
+
+
 
 
 

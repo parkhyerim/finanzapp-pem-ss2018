@@ -2,8 +2,6 @@ package com.lmu.pem.finanzapp.model;
 
 import android.support.annotation.NonNull;
 
-import java.util.Date;
-
 public class Transaction implements Comparable<Transaction> {
     private double expense;
     private double income;
@@ -11,13 +9,27 @@ public class Transaction implements Comparable<Transaction> {
 
     private String category;
     private String account;
-    private String item;
+    private String descrition;
 
-    private int imageResource;
     private String date;
+    private int imageResource;
+    private int id;
 
 
-    public Transaction( int imageResource, String category, String account, double expense, double income, double amount) {
+    public Transaction(String date, int imageResource, String account, String category, String description, double expense, double income) {
+
+        this.date = date;
+        this.imageResource = imageResource;
+        this.account = account;
+        this.category = category;
+        this.descrition = description;
+        this.expense = expense;
+        this.income = income;
+
+    }
+
+
+    public Transaction(int imageResource, String category, String account, double expense, double income, double amount) {
 
         this.imageResource = imageResource;
         this.category = category;
@@ -41,6 +53,7 @@ public class Transaction implements Comparable<Transaction> {
         this.account = account;
         this.category = category;
         this.expense = expense;
+        this.date = date;
     }
 
 
@@ -51,6 +64,14 @@ public class Transaction implements Comparable<Transaction> {
 
     public double getAmount() {
         return amount;
+    }
+
+    public double getExpense() {
+        return expense;
+    }
+
+    public double getIncome() {
+        return income;
     }
 
     public int getImageResource() {
@@ -65,6 +86,12 @@ public class Transaction implements Comparable<Transaction> {
         return date;
     }
 
+    public String getDescrition() {
+        return descrition;
+    }
+
+    public int getId() { return id; }
+
     public double addExpense(double expense){
         amount -= expense;
         return amount;
@@ -76,8 +103,15 @@ public class Transaction implements Comparable<Transaction> {
     }
 
     @Override
-    public int compareTo(@NonNull Transaction o) {
+    public int compareTo(@NonNull Transaction transaction) {
+
+        return getDate().toString()
+                .compareTo(transaction.getDate().toString());
+
+        /*
         return getCategory().toString()
                             .compareTo(o.getCategory().toString());
+
+                            */
     }
 }

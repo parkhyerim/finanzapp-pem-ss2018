@@ -12,42 +12,44 @@
 
         <ImageView
             android:id="@+id/category_imageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:padding="2dp"
             app:srcCompat="@mipmap/ic_launcher_round" />
 
-    <TextView
-        android:id="@+id/categoryName_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/category_imageView"
-        android:paddingLeft="15dp"
-        android:text="Item"
-        android:textColor="@android:color/black"
-        android:textSize="23sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/description_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/category_imageView"
+            android:paddingLeft="20dp"
+            android:text="Description"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/account_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/categoryName_textView"
-        android:layout_toEndOf="@+id/category_imageView"
-        android:paddingLeft="15dp"
-        android:text="Account"
-        android:textSize="10sp"
-        android:textStyle="italic"/>
+        <TextView
+            android:id="@+id/account_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description_textView"
+            android:layout_toEndOf="@+id/category_imageView"
+            android:paddingLeft="20dp"
+            android:paddingTop="5dp"
+            android:text="Account"
+            android:textSize="10sp"
+            android:textStyle="italic"/>
 
-    <TextView
-        android:id="@+id/amount_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:text="Amount"
-        android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/money_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="20dp"
+            android:text="Amount"
+            android:textSize="15sp"/>
 
     </RelativeLayout>
 
