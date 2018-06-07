@@ -2,6 +2,11 @@ package com.lmu.pem.finanzapp.model;
 
 import android.support.annotation.NonNull;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Transaction implements Comparable<Transaction> {
 
     private double expense;
@@ -79,6 +84,20 @@ public class Transaction implements Comparable<Transaction> {
 
         return getDate().toString()
                 .compareTo(transaction.getDate().toString());
+
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("transactionDate", date);
+        result.put("expense", expense);
+        result.put("income", income);
+        result.put("description", description);
+        result.put("category", category);
+        result.put("account", account);
+        result.put("imageResource", imageResource);
+        return result;
 
     }
 }

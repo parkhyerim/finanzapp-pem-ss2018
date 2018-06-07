@@ -124,19 +124,19 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         // Date
         Calendar cal = Calendar.getInstance();
-        year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH);
-        day = cal.get(Calendar.DAY_OF_MONTH);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
 
         dateDisplay = (TextView) findViewById(R.id.dateDisplay_textView);
         if (day < 10 && month < 10) {
-            dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
-        } else if (month < 10) {
-            dateDisplay.setText("0"+ month + "/" + day + "/" + year);
+            dateDisplay.setText("0"+ day + "/" + "0" + month + "/" + year);
         } else if (day < 10) {
-            dateDisplay.setText(month + "/" +  "0" + day + "/" + year);
+            dateDisplay.setText("0"+ day + "/" + month + "/" + year);
+        } else if (month < 10) {
+            dateDisplay.setText(day + "/" +  "0" + month + "/" + year);
         } else {
-            dateDisplay.setText(month + "/" + day + "/" + year);
+            dateDisplay.setText(day + "/" + month + "/" + year);
         }
 
         dateDisplay.setOnClickListener(new View.OnClickListener() {
@@ -144,9 +144,9 @@ public class TransactionAddActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Calendar cal = Calendar.getInstance();
-                year = cal.get(Calendar.YEAR);
-                month = cal.get(Calendar.MONTH);
-                day = cal.get(Calendar.DAY_OF_MONTH);
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
@@ -156,17 +156,17 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            public void onDateSet(DatePicker view, int year, int month, int day) {
                 month = month + 1;
                 //Log.d("date", "onDateSet: date: " + year + "/" + month +"/" + dayOfMonth);
-                if (dayOfMonth < 10 && month < 10) {
-                    dateDisplay.setText("0"+ month + "/" + "0" + dayOfMonth + "/" + year);
+                if (day < 10 && month < 10) {
+                    dateDisplay.setText("0"+ day + "/" + "0" + month + "/" + year);
+                } else if (day < 10) {
+                    dateDisplay.setText("0"+ day + "/" + month + "/" + year);
                 } else if (month < 10) {
-                    dateDisplay.setText("0"+ month + "/" + dayOfMonth + "/" + year);
-                } else if (dayOfMonth < 10) {
-                    dateDisplay.setText(month + "/" +  "0" + dayOfMonth + "/" + year);
+                    dateDisplay.setText(day + "/" +  "0" + month + "/" + year);
                 } else {
-                    dateDisplay.setText(month + "/" + dayOfMonth + "/" + year);
+                    dateDisplay.setText(day + "/" + month + "/" + year);
                 }
             }
         };

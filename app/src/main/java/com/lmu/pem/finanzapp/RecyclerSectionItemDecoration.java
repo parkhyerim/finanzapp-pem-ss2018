@@ -42,7 +42,7 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
 
         if (headerView == null) {
             headerView = inflateHeaderView(parent);
-            header = headerView.findViewById(R.id.transaction_date_section_text);
+            header = headerView.findViewById(R.id.transaction_date_header);
             fixLayoutSize(headerView, parent);
         }
 
@@ -64,8 +64,11 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
     private void drawHeader(Canvas c, View child, View headerView) {
         c.save();
         if (sticky) {
+            //c.translate(15, child.getBottom()-headerView.getHeight());
+
             c.translate(0, Math.max(0, child.getTop() - headerView.getHeight()));
         } else {
+           // c.translate(15, child.getBottom()-headerView.getHeight());
             c.translate(0, child.getTop() - headerView.getHeight());
         }
         headerView.draw(c);
