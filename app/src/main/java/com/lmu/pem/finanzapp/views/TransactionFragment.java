@@ -98,12 +98,12 @@ public class TransactionFragment extends Fragment {
         transactionList = getTransactionSorted();
 
 
-        /*
+
         RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(
                         getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionList));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
-*/
+
         // to add a new transaction
         addButton = rootView.findViewById(R.id.transaction_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -221,20 +221,13 @@ public class TransactionFragment extends Fragment {
     }
 
 
-
-
     public static ArrayList<Transaction> getTransactionSorted() {
         Collections.sort(transactionList);
         return transactionList;
     }
 
 
-
-
-    //
-    //
-    //
-    /*
+    // Header
     private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
@@ -250,8 +243,4 @@ public class TransactionFragment extends Fragment {
             }
         };
     }
-*/
-
-
-
 }
