@@ -1,8 +1,10 @@
 package com.lmu.pem.finanzapp.data;
 
+import java.util.Calendar;
+
 public class Account {
-    private String name;
-    private int color, id; //TODO - ID muss sinnvoll gesetzt und ggf. gespeichert werden
+    private String name, id;
+    private int color;
     private boolean isDefault;
     private double balance;
     private static final int DEFAULT_COLOR = 0xff283593;
@@ -21,10 +23,14 @@ public class Account {
         this(name, color, false, balance);
     }
     public Account(String name, int color, boolean isDefault, double balance) {
+        this(name, color, isDefault, balance, name + "_" + Calendar.getInstance().getTime().toString());
+    }
+    public Account(String name, int color, boolean isDefault, double balance, String id) {
         this.name = name;
         this.color = color; //TODO - integrate array of (10?) default colors
         this.isDefault = isDefault;
         this.balance = balance;
+        this.id = id;
     }
 
     public String getName() {
@@ -57,5 +63,9 @@ public class Account {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public String getId() {
+        return id;
     }
 }

@@ -35,4 +35,22 @@ public class AccountManager {
     public void deleteAccount(int index){
         this.accounts.remove(index);
     }
+
+    public Account getAccountById(String id){
+        for(Account acc : accounts){
+            if(acc.getId().equals(id)){
+                return acc;
+            }
+        }
+        return null;
+    }
+
+    public boolean isNameTaken(String name){
+        for(Account acc : accounts){
+            if(acc.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
