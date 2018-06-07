@@ -23,5 +23,5 @@
 
 
     <!--Transaction section header-->
-    <dimen name="transaction_recycler_section_header">20dp</dimen>
+    <dimen name="transaction_recycler_section_header">18dp</dimen>
 </resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Transaction Category -->
+    <string-array name="expense_category">
+        <item><null/></item>
+        <item>Food</item>
+        <item>Household</item>
+        <item>Transportation</item>
+        <item>Health</item>
+        <item>Movie</item>
+        <item>Beauty</item>
+        <item>Apparel</item>
+        <item>Party</item>
+        <item>Gift</item>
+        <item>Education</item>
+        <item>Music</item>
+        <item>Car</item>
+        <item>Travel</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="income_category">
+        <item><null/></item>
+        <item>Salary</item>
+        <item>Bonus</item>
+        <item>Petty cash</item>
+        <item>Stock</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="account">
+        <item><null/></item>
+        <item>Cash</item>
+        <item>Main</item>
+        <item>Bank Account</item>
+    </string-array>
+
+</resources>

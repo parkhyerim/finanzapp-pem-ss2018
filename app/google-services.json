@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "824981103420",
+    "firebase_url": "https://diebestefinanzapp.firebaseio.com",
+    "project_id": "diebestefinanzapp",
+    "storage_bucket": "diebestefinanzapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824981103420:android:5f912ddd884da970",
+        "android_client_info": {
+          "package_name": "com.lmu.pem.finanzapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "824981103420-dcctieckipcmth8e3ddpat4p7j947s0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lmu.pem.finanzapp",
+            "certificate_hash": "4a0028e750095541e5eba23219553df14e95b24f"
+          }
+        },
+        {
+          "client_id": "824981103420-7nohsk4aa44oofhgph47rdllbkqdg5o5.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "824981103420-7nohsk4aa44oofhgph47rdllbkqdg5o5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiMwBbQ-b4WN5NUx-2ShQnlbV-kF6wjU8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "824981103420-7nohsk4aa44oofhgph47rdllbkqdg5o5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

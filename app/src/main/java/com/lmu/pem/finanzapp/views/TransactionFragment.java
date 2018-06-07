@@ -1,17 +1,27 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import com.jaychang.srv.decoration.SectionHeaderProvider;
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
@@ -20,6 +30,13 @@ import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -27,22 +44,27 @@ import java.util.ArrayList;
  */
 public class TransactionFragment extends Fragment {
 
-    private ArrayList<Transaction> mTransactionList;
+    DatabaseReference db;
+    DatabaseReference transactionRef;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private Button addButton;
-    private Transaction mTransaction;
+
+    private static ArrayList<Transaction> transactionList;
+    private Transaction transaction;
 
     private int position;
-    private double mExpense;
-    private double mAmount;
-    private String mCategory;
-    private String mAccount;
-    private Object setContentView;
-    private String date;
+    private int imageResource;
+    private double expense = 0;
+    private double income = 0;
+    private String category = "";
+    private String account = "";
+    private String date = "";
+    private String description = "";
+
 
 
     public TransactionFragment() {
@@ -52,42 +74,73 @@ public class TransactionFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
-        MainActivity main = (MainActivity) getActivity();
+
+
+        // Firebase : get Reference
+        db = FirebaseDatabase.getInstance().getReference();
+        transactionRef = db.child("transaction");
+
+
 
         createTransactionList();
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.transaction_recyclerView);
-
-
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new TransactionAdapter(mTransactionList, R.layout.transactions_item);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-
-        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
-                true, getSectionCallback(mTransactionList) );
-        mRecyclerView.addItemDecoration(transactionSectionItemDecoration);
-
-
-        addButton = rootView.findViewById(R.id.transaction_addButton);
-
-
-        mTransaction = new Transaction("Food", "Cash", 0, 0, 0);
-        mAmount = mTransaction.getAmount();
+        recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity());
+        adapter = new TransactionAdapter(transactionList, R.layout.transactions_item);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
 
 
 
+       // transactionList = getTransactionSorted();
+
+        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(
+                        getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionList));
+        recyclerView.addItemDecoration(transactionSectionItemDecoration);
+
+
+        // to add a new transaction
+        addButton = rootView.findViewById(R.id.transaction_add_button);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
                 startActivityForResult(intent, 111);
+            }
+        });
+
+
+
+        transactionRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+               // Log.d(TAG+"Added", dataSnapshot.getValue(Transaction.class).toString());
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG+"Changed",dataSnapshot.getValue(Transaction.class).toString());
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG+"Removed",dataSnapshot.getValue(Transaction.class).toString());
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG+"Moved",dataSnapshot.getValue(Transaction.class).toString());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG+"Cancelled",databaseError.toString());
             }
         });
 
@@ -98,91 +151,96 @@ public class TransactionFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-
-
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
 
-//        Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
+        //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
 
            if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
-               position = mTransactionList.size();
-               mExpense = data.getDoubleExtra("expense", 0);
-               mCategory = data.getStringExtra("category");
-               this.date = "11.Mai";
-               //mAmount += mExpense;
-               insertItem(position, mAccount, mExpense, mCategory, this.date);
+
+               position = transactionList.size();
+
+               date = data.getStringExtra("date");
+               account = data.getStringExtra("account");
+               category = data.getStringExtra("category");
+               description = data.getStringExtra("description");
+               expense = data.getDoubleExtra("expense", 0);
+               income = data.getDoubleExtra("income", 0);
+
+               //new transaction can be added to the transaction list
+               insertItem(position, date, account, category, description, expense, income);
 
            }
-
-
-
     }
 
-    /*
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(requestCode == 111 ) {
-            postion = mTransactionList.size();
-            mExpense = data.getDoubleExtra("expense", 0);
-            mCategory = data.getStringExtra("category");
-            insertItem(postion, mAccount, mAmount, mCategory);
-
-        }
-
-    }
-    */
 
 
     public void createTransactionList() {
-        mTransactionList = new ArrayList<>();
-        mTransactionList.add(new Transaction(R.drawable.food, "Cash", "Food",30, "1.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",30, "1.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",30,"2.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.car, "Bank Accounts", "Car",120,"3.Mai"));
-        mTransactionList.add(new Transaction(R.drawable.hausehold, "Cash", "Household",10,"1.Mai"));
+
+        transactionList = new ArrayList<>();
+
+        // dummy transaction list
+
+        /*
+        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Bank Account", "Salary", "Werkstudenten-Gehalt", 0, 450));
+        //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
+        //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
+        transactionList.add(new Transaction("05/01/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20,0));
+        transactionList.add(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!",0,180));
+         transactionList.add(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie","Black Panther", 21,0));
+        transactionList.add(new Transaction("05/13/2018", R.drawable.gift, "Cash", "Gift","Muttertag", 38.25,0));
+ */
     }
 
-    public void insertItem(int position, String account, double amount, String category, String date){
-        mAccount = account;
-        String amountStr = String.valueOf(amount) + " Euro";
+
+    public void insertItem(int position, String date, String account, String category, String description, double expense, double income){
+
+        final String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
+
+        this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+
         this.date = date;
+        this.account = account;
+        this.category = category;
+        this.income = income;
+        this.expense = expense;
+        this.description = description;
+        Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income);
+        transactionList.add(transaction);
+        adapter.notifyItemInserted(position);
 
-        mTransactionList.add(new Transaction(R.drawable.money, "Cash", category, amount, this.date));
-        mAdapter.notifyItemInserted(position);
+        Map<String, Object> transactionItemValues = transaction.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/transaction/" + key, transactionItemValues);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
 
     }
 
 
+    public static ArrayList<Transaction> getTransactionSorted() {
+        Collections.sort(transactionList);
+        return transactionList;
+    }
 
+
+    // Header
     private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                return position == 0
-                        || transactionList.get(position)
-                        .getCategory()
-                        .charAt(0) != transactionList.get(position - 1)
-                        .getCategory()
-                        .charAt(0);
+                return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
             }
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                return transactionList.get(position)
-                        .getCategory()
-                        .subSequence(0,
-                                1);
+                date = transactionList.get(position).getDate().toString();
+                return date;
+                //return transactionList.get(position).getDate().subSequence(0, 8);
             }
         };
     }
-
-
-
 }
