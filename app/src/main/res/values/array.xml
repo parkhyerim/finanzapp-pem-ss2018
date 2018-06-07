@@ -5,15 +5,15 @@
     <string-array name="expense_category">
         <item><null/></item>
         <item>Food</item>
-        <item>Culture</item>
-        <item>Social Life</item>
         <item>Household</item>
         <item>Transportation</item>
+        <item>Health</item>
+        <item>Movie</item>
         <item>Beauty</item>
         <item>Apparel</item>
+        <item>Party</item>
         <item>Gift</item>
         <item>Education</item>
-        <item>Health</item>
         <item>Music</item>
         <item>Car</item>
         <item>Travel</item>

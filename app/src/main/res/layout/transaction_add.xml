@@ -71,6 +71,7 @@
             android:layout_alignBottom="@+id/expenseAdd_textView"
             android:layout_alignParentEnd="true"
             android:inputType="numberDecimal"
+            android:textAlignment="viewEnd"
             android:textColor="@color/colorPrimary"
             android:textSize="30sp" />
 
@@ -205,6 +206,7 @@
             android:layout_width="270dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:textAlignment="viewEnd"
             android:textSize="18sp" />
 
         <Button

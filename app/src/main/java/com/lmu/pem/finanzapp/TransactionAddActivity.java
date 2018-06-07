@@ -130,13 +130,13 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         dateDisplay = (TextView) findViewById(R.id.dateDisplay_textView);
         if (day < 10 && month < 10) {
-            dateDisplay.setText("0"+ day + "/" + "0" + month + "/" + year);
-        } else if (day < 10) {
-            dateDisplay.setText("0"+ day + "/" + month + "/" + year);
+            dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
         } else if (month < 10) {
-            dateDisplay.setText(day + "/" +  "0" + month + "/" + year);
+            dateDisplay.setText("0"+ month + "/" + day + "/" + year);
+        } else if (day < 10) {
+            dateDisplay.setText(month + "/" +  "0" + day + "/" + year);
         } else {
-            dateDisplay.setText(day + "/" + month + "/" + year);
+            dateDisplay.setText(month + "/" + day + "/" + year);
         }
 
         dateDisplay.setOnClickListener(new View.OnClickListener() {
@@ -160,13 +160,13 @@ public class TransactionAddActivity extends AppCompatActivity {
                 month = month + 1;
                 //Log.d("date", "onDateSet: date: " + year + "/" + month +"/" + dayOfMonth);
                 if (day < 10 && month < 10) {
-                    dateDisplay.setText("0"+ day + "/" + "0" + month + "/" + year);
-                } else if (day < 10) {
-                    dateDisplay.setText("0"+ day + "/" + month + "/" + year);
+                    dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
                 } else if (month < 10) {
-                    dateDisplay.setText(day + "/" +  "0" + month + "/" + year);
+                    dateDisplay.setText("0"+ month + "/" + day + "/" + year);
+                } else if (day < 10) {
+                    dateDisplay.setText(month + "/" +  "0" + day + "/" + year);
                 } else {
-                    dateDisplay.setText(day + "/" + month + "/" + year);
+                    dateDisplay.setText(month + "/" + day + "/" + year);
                 }
             }
         };

@@ -1,7 +1,5 @@
 package com.lmu.pem.finanzapp.views;
 
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import com.jaychang.srv.decoration.SectionHeaderProvider;
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
@@ -80,8 +79,10 @@ public class TransactionFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
 
 
+        // Firebase : get Reference
         db = FirebaseDatabase.getInstance().getReference();
         transactionRef = db.child("transaction");
+
 
 
         createTransactionList();
@@ -95,9 +96,7 @@ public class TransactionFragment extends Fragment {
 
 
 
-        transactionList = getTransactionSorted();
-
-
+       // transactionList = getTransactionSorted();
 
         RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(
                         getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionList));
@@ -113,6 +112,8 @@ public class TransactionFragment extends Fragment {
                 startActivityForResult(intent, 111);
             }
         });
+
+
 
         transactionRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -145,7 +146,6 @@ public class TransactionFragment extends Fragment {
 
         return rootView;
     }
-
 
 
     @Override
@@ -184,22 +184,22 @@ public class TransactionFragment extends Fragment {
         transactionList = new ArrayList<>();
 
         // dummy transaction list
+
         /*
-        transactionList.add(new Transaction("28/04/2018", R.drawable.salary, "Bank Account", "Salary", "Werkstudenten-Gehalt", 0, 450));
-        transactionList.add(new Transaction("29/04/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
-        transactionList.add(new Transaction("01/05/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
-        transactionList.add(new Transaction("04/05/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20,0));
-        transactionList.add(new Transaction("05/05/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!",0,180));
-        transactionList.add(new Transaction("13/05/2018", R.drawable.gift, "Cash", "Gift","Muttertag", 38.25,0));
-        transactionList.add(new Transaction("14/05/2018", R.drawable.culture, "Cash", "Culture","Black Panther", 21,0));
-*/
+        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Bank Account", "Salary", "Werkstudenten-Gehalt", 0, 450));
+        //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
+        //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
+        transactionList.add(new Transaction("05/01/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20,0));
+        transactionList.add(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!",0,180));
+         transactionList.add(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie","Black Panther", 21,0));
+        transactionList.add(new Transaction("05/13/2018", R.drawable.gift, "Cash", "Gift","Muttertag", 38.25,0));
+ */
     }
 
 
     public void insertItem(int position, String date, String account, String category, String description, double expense, double income){
 
         final String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
-
 
         this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
 
