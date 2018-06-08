@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import com.lmu.pem.finanzapp.controller.PagerAdapter;
+import com.lmu.pem.finanzapp.model.AccountManager;
 
 public class MainActivity extends AppCompatActivity  {
 

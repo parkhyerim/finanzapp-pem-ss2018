@@ -1,21 +1,54 @@
 package com.lmu.pem.finanzapp.model;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.lmu.pem.finanzapp.controller.AccountAdapter;
 import com.lmu.pem.finanzapp.data.Account;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AccountManager {
 
     private static AccountManager instance;
 
     private ArrayList<Account> accounts;
+    private Account defaultAcc;
 
-    public AccountManager() {
-        // TODO - read accounts from database
+    private AccountManager() {
         this.accounts = new ArrayList<Account>();
-        this.accounts.add(new Account("Cash", 64.45)); //TODO durch String-Ressource ersetzen - Crash bei: getContext().getString(R.string.account_cash)
-        this.accounts.add(new Account("Main", 0xff00695c, true, 2049.05));
-        this.accounts.add(new Account("Vacation", 0xffc62828, 256.09));
+        //this.accounts.add(new Account("Cash", 0xff00695c, true, 64.45)); //TODO - temporary
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("accounts");
+
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
+                for (String key : map.keySet()) {
+
+                    Account newAcc=new Account(
+                            dataSnapshot.child(key).child("name").getValue(String.class),
+                            dataSnapshot.child(key).child("color").getValue(Integer.class),
+                            dataSnapshot.child(key).child("isDefault").getValue(Boolean.class),
+                            dataSnapshot.child(key).child("balance").getValue(Double.class)
+                    );
+                    if((boolean) map.get(key).get("isDefault")) defaultAcc=newAcc;
+                    accounts.add(newAcc);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("123123123","Cancelled: "+databaseError.toString());
+            }
+        });
     }
 
     public static AccountManager getInstance () {
@@ -30,6 +63,10 @@ public class AccountManager {
 
     public void addAccount(Account acc){
         this.accounts.add(acc);
+        if(acc.isDefault()){
+            this.defaultAcc.setDefault(false);
+            this.defaultAcc = acc;
+        }
     }
 
     public void deleteAccount(int index){
@@ -52,5 +89,9 @@ public class AccountManager {
             }
         }
         return false;
+    }
+
+    public Account getDefault(){
+        return defaultAcc;
     }
 }

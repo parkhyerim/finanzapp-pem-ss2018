@@ -1,6 +1,8 @@
 package com.lmu.pem.finanzapp.data;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Account {
     private String name, id;
@@ -22,8 +24,11 @@ public class Account {
     public Account(String name, int color, double balance) {
         this(name, color, false, balance);
     }
+    public Account(String name, boolean isDefault, double balance) {
+        this(name, DEFAULT_COLOR, isDefault, balance);
+    }
     public Account(String name, int color, boolean isDefault, double balance) {
-        this(name, color, isDefault, balance, name + "_" + Calendar.getInstance().getTime().toString());
+        this(name, color, isDefault, balance, name + "_" + Calendar.getInstance().getTime().hashCode());
     }
     public Account(String name, int color, boolean isDefault, double balance, String id) {
         this.name = name;
@@ -67,5 +72,15 @@ public class Account {
 
     public String getId() {
         return id;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("id", id);
+        result.put("name", name);
+        result.put("color", color);
+        result.put("isDefault", isDefault);
+        result.put("balance", balance);
+        return result;
     }
 }

@@ -22,6 +22,10 @@ public class AccountAdapter extends BaseAdapter {
         this.accounts = accounts;
     }
 
+    public void setAccounts(ArrayList<Account> accounts) {
+        this.accounts = accounts;
+    }
+
     @Override
     public int getCount() {
         return accounts.size();
