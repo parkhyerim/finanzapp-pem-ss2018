@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "824981103420-36v303jo8tt8vh5087kntr6l2hmhlm58.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lmu.pem.finanzapp",
+            "certificate_hash": "114290eb7c6e00d1e771ab6ade85d3695152c1ef"
+          }
+        },
+        {
           "client_id": "824981103420-dcctieckipcmth8e3ddpat4p7j947s0j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
