@@ -17,8 +17,8 @@ public class DashboardManager {
 
 
     public static DashboardManager getInstance () {
-        if (instance == null) return new DashboardManager();
-        else return instance;
+        if (instance == null) instance = new DashboardManager();
+        return instance;
     }
 
 }

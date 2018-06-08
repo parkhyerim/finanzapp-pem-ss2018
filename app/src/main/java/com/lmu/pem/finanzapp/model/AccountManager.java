@@ -52,8 +52,8 @@ public class AccountManager {
     }
 
     public static AccountManager getInstance () {
-        if (instance == null) return new AccountManager();
-        else return instance;
+        if (instance == null) instance = new AccountManager();
+        return instance;
     }
 
     //also to be used for changing attributes of a given account
