@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccountAddActivity"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:title="Add a new Account"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    </android.support.v7.widget.Toolbar>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:columnCount="2"
+        >
+
+        <TextView
+            android:text="Name: "
+            />
+        <EditText
+            android:id="@+id/nameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Name of the account"
+            />
+        <TextView
+            android:text="Balance: "
+            />
+        <EditText
+            android:id="@+id/balanceEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="Balance of the account"
+            />
+        <TextView
+            android:text="Default account:"/>
+        <CheckBox
+            android:id="@+id/defaultCheck"/>
+        <!-- TODO - Color picker / color check buttons / circleViews -->
+    </GridLayout>
+    <Button
+        android:id="@+id/addAccButton"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:layout_gravity="center"
+        android:text="Add Account"
+        android:backgroundTint="@color/colorPrimary"
+        />
+
+</LinearLayout>
