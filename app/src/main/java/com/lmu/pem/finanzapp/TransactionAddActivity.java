@@ -20,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lmu.pem.finanzapp.model.AccountManager;
+
 import org.w3c.dom.Text;
 
 import java.text.NumberFormat;
@@ -56,6 +58,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     private Spinner expenseCategorySpinner;
     private Spinner incomeCategorySpinner;
 
+    private AccountManager accountManager;
+
     private ViewPager viewPager;
 
     @Override
@@ -72,6 +76,8 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         incomeRelativeLayout.setEnabled(false);
         incomeRelativeLayout.setVisibility(View.GONE);
+
+        accountManager = AccountManager.getInstance();
 
 
         /*
@@ -174,14 +180,15 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Spinner
         // Account-Spinner(Dropdown)
         accountSpinner = (Spinner) findViewById(R.id.account_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.account, android.R.layout.simple_spinner_item);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.account, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner.setAdapter(adapter);
         accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                account = parent.getItemAtPosition(position).toString();
+                account = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
                 //Toast.makeText(getBaseContext(), account + " selected", Toast.LENGTH_SHORT).show();
             }
 
