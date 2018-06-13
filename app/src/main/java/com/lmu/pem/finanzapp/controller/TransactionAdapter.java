@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.data.Account;
+import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
@@ -86,8 +88,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
 
         Transaction currentItem = transactionList.get(position);
+        Account acc = AccountManager.getInstance().getAccountById(currentItem.getAccount());
+        if(acc==null){
+            holder.accountTextView.setText(currentItem.getAccount());
+        }else{
+            holder.accountTextView.setText(acc.getName());
+        }
 
-        holder.accountTextView.setText(currentItem.getAccount());
         holder.categoryImageView.setImageResource(currentItem.getImageResource());
 
 

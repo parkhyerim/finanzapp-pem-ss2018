@@ -51,16 +51,44 @@ public class AccountManager {
         });
     }
 
+    /**
+     * Get the AccountManager (Singleton implementation). If there already is one, return this instance. If there isn't, create a new one and return it.
+     * @return the AccountManager instance
+     */
     public static AccountManager getInstance () {
         if (instance == null) instance = new AccountManager();
         return instance;
     }
 
+    /**
+     * Get the Accounts this AccountManager manages.
+     * @return an unordered ArrayList containing all the Accounts
+     */
     //also to be used for changing attributes of a given account
     public ArrayList<Account> getAccounts() {
         return accounts;
     }
 
+    /**
+     * Get an array with all accounts' names of the AccountManager
+     * @return a String array with the accounts' names, the default account's name being the first.
+     */
+    public String[] getNameArray(){
+        String[] result = new String[accounts.size()];
+        ArrayList<String> list=new ArrayList<String>(accounts.size());
+        list.add(defaultAcc.getName());
+        for(Account a : accounts){
+            if(!a.equals(defaultAcc)){
+                list.add(a.getName());
+            }
+        }
+        return list.toArray(result);
+    }
+
+    /**
+     * Add an Account to the AccountManager
+     * @param acc The Account object to be added
+     */
     public void addAccount(Account acc){
         this.accounts.add(acc);
         if(acc.isDefault()){
@@ -69,10 +97,19 @@ public class AccountManager {
         }
     }
 
-    public void deleteAccount(int index){
+    /**
+     * Remove an account from this AccountManager
+     * @param index The index of the Account to be removed
+     */
+    public void deleteAccount(int index){ //TODO: pass ID and figure out index automatically
         this.accounts.remove(index);
     }
 
+    /**
+     * Get the Account object with the specified Account ID
+     * @param id The ID String of the desired Account
+     * @return The Account object with the passed ID. If there is none matching the ID, null is returned
+     */
     public Account getAccountById(String id){
         for(Account acc : accounts){
             if(acc.getId().equals(id)){
@@ -82,6 +119,25 @@ public class AccountManager {
         return null;
     }
 
+    /**
+     * Get the ID of the Account that has the specified name. Since same-name Accounts are prohibited, an Account's name is unique.
+     * @param name the name of the Account we're looking for
+     * @return either the found ID or null if the name matched none of the account
+     */
+    public String getAccountIdByName(String name){
+        for(Account acc : accounts){
+            if(acc.getName().equals(name)){
+                return acc.getId();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the AccountManager already manages an Account with the specified name
+     * @param name the name to check by
+     * @return true if there is already an Account with this name, false if there is not
+     */
     public boolean isNameTaken(String name){
         for(Account acc : accounts){
             if(acc.getName().equals(name)){
@@ -91,6 +147,10 @@ public class AccountManager {
         return false;
     }
 
+    /**
+     * Get the default Account of this AccountManager
+     * @return the Account object set as default
+     */
     public Account getDefault(){
         return defaultAcc;
     }
