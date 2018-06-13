@@ -34,8 +34,52 @@ public class MainActivity extends AppCompatActivity  {
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getApplicationContext()));
         TabLayout tabs = findViewById(R.id.tabLayoutId);
         tabs.setupWithViewPager(viewPager);
-        tabs.setTabMode(TabLayout.MODE_SCROLLABLE); //wenn wir bei Icons sind, können hier wieder fixed tabs verwendet werden
-        //tabs.setTabTextColors(Color.GRAY, Color.parseColor("white"));
+        tabs.getTabAt(0).setIcon(R.drawable.tab_dashboard_white);
+        tabs.getTabAt(1).setIcon(R.drawable.tab_transactions_black);
+        tabs.getTabAt(2).setIcon(R.drawable.tab_accounts_black);
+        tabs.getTabAt(3).setIcon(R.drawable.tab_budgets_black);
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch(tab.getPosition()){
+                    case 0:
+                        tab.setIcon(R.drawable.tab_dashboard_white);
+                        break;
+                    case 1:
+                        tab.setIcon(R.drawable.tab_transactions_white);
+                        break;
+                    case 2:
+                        tab.setIcon(R.drawable.tab_accounts_white);
+                        break;
+                    case 3:
+                        tab.setIcon(R.drawable.tab_budgets_white);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                switch(tab.getPosition()){
+                    case 0:
+                        tab.setIcon(R.drawable.tab_dashboard_black);
+                        break;
+                    case 1:
+                        tab.setIcon(R.drawable.tab_transactions_black);
+                        break;
+                    case 2:
+                        tab.setIcon(R.drawable.tab_accounts_black);
+                        break;
+                    case 3:
+                        tab.setIcon(R.drawable.tab_budgets_black);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override

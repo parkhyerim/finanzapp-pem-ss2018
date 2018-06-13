@@ -39,7 +39,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 4;
     }
-
+/*
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
@@ -50,5 +50,5 @@ public class PagerAdapter extends FragmentPagerAdapter {
             case 3: return context.getString(R.string.tab_4_label);
         }
         return null;
-    }
+    }*/
 }
