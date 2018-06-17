@@ -180,7 +180,6 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Spinner
         // Account-Spinner(Dropdown)
         accountSpinner = (Spinner) findViewById(R.id.account_spinner);
-        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.account, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner.setAdapter(adapter);

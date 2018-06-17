@@ -9,6 +9,8 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.lmu.pem.finanzapp.model.GlobalSettings;
+
 //derivative of original class by Michael Krause from https://stackoverflow.com/questions/25961263/draw-a-circle-onto-a-view-android/25961888
 public class CircleView extends View
 {
@@ -113,7 +115,7 @@ public class CircleView extends View
             subtextPaint.setColor(textColor);
             subtextPaint.setTextSize(subtextSize);
             subtextPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(subtext+" €", cx, cy + (textSize / 2) + 20, subtextPaint);
+            canvas.drawText(subtext+" "+ GlobalSettings.getInstance().getCurrency(), cx, cy + (textSize / 2) + 20, subtextPaint);
         } else {
             canvas.drawText(text.toUpperCase(), cx, cy + (textSize / 2), textPaint);
         }
