@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.AccountManager;
 
 import org.w3c.dom.Text;
@@ -44,7 +45,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private RelativeLayout incomeRelativeLayout;
     private RelativeLayout transactionAddRelativeLayout;
 
-    private EditText currentEditText;
+    private EditText moneyEditText;
     private EditText descriptionEditText;
 
     private Button expenseButton;
@@ -68,16 +69,20 @@ public class TransactionAddActivity extends AppCompatActivity {
         setContentView(R.layout.transaction_add);
         //setTitle("Add Transaction");
 
-        currentEditText = findViewById(R.id.expenseAdd_editText);
+        moneyEditText = findViewById(R.id.expenseAdd_editText);
         descriptionEditText = findViewById(R.id.description_editView);
         incomeRelativeLayout = findViewById(R.id.income_layout);
         expenseRelativeLayout = findViewById(R.id.expense_layout);
         transactionAddRelativeLayout = findViewById(R.id.transaction_add_layout);
 
+
         incomeRelativeLayout.setEnabled(false);
         incomeRelativeLayout.setVisibility(View.GONE);
 
         accountManager = AccountManager.getInstance();
+
+
+
 
 
         /*
@@ -233,6 +238,28 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
 
+        // wenn the Addactivitiy-view is open for updating/editing the transaction
+
+        dateDisplay.setText(getIntent().getStringExtra("date"));
+        descriptionEditText.setText(getIntent().getStringExtra("description"));
+        moneyEditText.setText(String.valueOf(getIntent().getDoubleExtra("money", 0.0)));
+
+        //
+        if(getIntent().hasExtra("category")){
+            int expense = getIntent().getIntExtra("category", 0);
+            expenseCategorySpinner.setSelection(expense);
+        } else {
+            expenseRelativeLayout.setEnabled(false);
+            expenseRelativeLayout.setVisibility(View.GONE);
+            incomeRelativeLayout.setEnabled(true);
+            incomeRelativeLayout.setVisibility(View.VISIBLE);
+
+            int income = getIntent().getIntExtra("category2",0);
+            incomeCategorySpinner.setSelection(income);
+        }
+
+
+
         // Buttons (expenseButton, incomeButton, doneButton)
 
         expenseButton = (Button) findViewById(R.id.expense_button);
@@ -240,7 +267,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         expenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dateDisplay.getText().toString().equals("")|| currentEditText.getText().toString().equals("")){
+                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
                     Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
                     //Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
                     TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
@@ -256,7 +283,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 } else {
 
                     income = 0;
-                    expense = Double.parseDouble(currentEditText.getText().toString());
+                    expense = Double.parseDouble(moneyEditText.getText().toString());
 
                     expenseButton.setAlpha(1.0f);
                     incomeButton.setAlpha(0.5f);
@@ -275,7 +302,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         incomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dateDisplay.getText().toString().equals("")|| currentEditText.getText().toString().equals("")){
+                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
                     Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
 
                     incomeButton.setAlpha(1.0f);
@@ -286,7 +313,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                     incomeRelativeLayout.setVisibility(View.VISIBLE);
                 } else {
                     expense = 0;
-                    income = Double.parseDouble(currentEditText.getText().toString());
+                    income = Double.parseDouble(moneyEditText.getText().toString());
 
                     incomeButton.setAlpha(1.0f);
                     expenseButton.setAlpha(0.5f);
@@ -308,7 +335,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dateDisplay.getText().toString().equals("")|| currentEditText.getText().toString().equals("")){
+                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
                     Toast.makeText(TransactionAddActivity.this, "Please insert account", Toast.LENGTH_LONG).show();
 
                 } else if(accountSpinner.getSelectedItem().toString().equals("")){
@@ -335,4 +362,23 @@ public class TransactionAddActivity extends AppCompatActivity {
         });
     }
 
+
+
+    /*
+    public void editTransaction() {
+        editTransaction();
+        description = getIntent().getStringExtra("description");
+        descriptionEditText.setText(description);
+
+        currentEditText.setText(String.valueOf(getIntent().getDoubleExtra("money", 0.0)));
+        dateDisplay.setText(getIntent().getStringExtra("date"));
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("description", description);
+        setResult(RESULT_OK, resultIntent);
+        finish();
+
+    }
+
+    */
 }

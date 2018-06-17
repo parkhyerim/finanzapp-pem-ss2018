@@ -90,7 +90,7 @@ public class TransactionFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionList, R.layout.transactions_item);
+        adapter = new TransactionAdapter(transactionList, rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -185,15 +185,15 @@ public class TransactionFragment extends Fragment {
 
         // dummy transaction list
 
-        /*
-        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Bank Account", "Salary", "Werkstudenten-Gehalt", 0, 450));
+
+        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Test", "Salary", "Werkstudenten-Gehalt", 0, 450));
         //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
         //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
         transactionList.add(new Transaction("05/01/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20,0));
         transactionList.add(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!",0,180));
          transactionList.add(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie","Black Panther", 21,0));
         transactionList.add(new Transaction("05/13/2018", R.drawable.gift, "Cash", "Gift","Muttertag", 38.25,0));
- */
+
     }
 
 
