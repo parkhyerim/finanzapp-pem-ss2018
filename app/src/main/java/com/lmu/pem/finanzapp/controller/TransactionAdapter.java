@@ -70,7 +70,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             Intent intent = new Intent(this.context, TransactionAddActivity.class);
             intent.putExtra("date", transaction.getDate());
             intent.putExtra("money", transaction.getMoney());
-            //intent.putExtra("account", transaction.getAccount());
+            intent.putExtra("account", transaction.getAccount());
             intent.putExtra("description", transaction.getDescription());
 
             int index = 0;

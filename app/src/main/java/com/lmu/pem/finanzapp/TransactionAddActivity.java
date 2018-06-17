@@ -1,6 +1,5 @@
 package com.lmu.pem.finanzapp;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,14 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.AccountManager;
 
-import org.w3c.dom.Text;
-
-import java.text.NumberFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
@@ -41,9 +34,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private int month;
     private int day;
 
-    private RelativeLayout expenseRelativeLayout;
-    private RelativeLayout incomeRelativeLayout;
-    private RelativeLayout transactionAddRelativeLayout;
+    private RelativeLayout expenseRelativeLayout, incomeRelativeLayout, transactionAddRelativeLayout;
 
     private EditText moneyEditText;
     private EditText descriptionEditText;
@@ -55,9 +46,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private TextView dateDisplay;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
-    private Spinner accountSpinner;
-    private Spinner expenseCategorySpinner;
-    private Spinner incomeCategorySpinner;
+    private Spinner accountSpinner, expenseCategorySpinner, incomeCategorySpinner;
 
     private AccountManager accountManager;
 
@@ -187,6 +176,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         accountSpinner = (Spinner) findViewById(R.id.account_spinner);
         //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.account, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
+
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner.setAdapter(adapter);
         accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -244,6 +234,16 @@ public class TransactionAddActivity extends AppCompatActivity {
         descriptionEditText.setText(getIntent().getStringExtra("description"));
         moneyEditText.setText(String.valueOf(getIntent().getDoubleExtra("money", 0.0)));
 
+        String acc = accountSpinner.getSelectedItem().toString();
+        String[] accNames =  AccountManager.getInstance().getNameArray();
+        for(int i =0; i < accNames.length ; i++){
+            if (accNames[i].equals(acc)){
+                accountSpinner.setSelection(i);
+            } else {
+                accountSpinner.setSelection(0);
+            }
+        }
+
         //
         if(getIntent().hasExtra("category")){
             int expense = getIntent().getIntExtra("category", 0);
@@ -274,23 +274,14 @@ public class TransactionAddActivity extends AppCompatActivity {
                     toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
                     toast.show();
 
-                    expenseButton.setAlpha(1.0f);
-                    incomeButton.setAlpha(0.5f);
-                    incomeRelativeLayout.setEnabled(false);
-                    incomeRelativeLayout.setVisibility(View.GONE);
-                    expenseRelativeLayout.setEnabled(true);
-                    expenseRelativeLayout.setVisibility(View.VISIBLE);
+                    expenseCategoryShow();
+
                 } else {
 
                     income = 0;
                     expense = Double.parseDouble(moneyEditText.getText().toString());
 
-                    expenseButton.setAlpha(1.0f);
-                    incomeButton.setAlpha(0.5f);
-                    incomeRelativeLayout.setEnabled(false);
-                    incomeRelativeLayout.setVisibility(View.GONE);
-                    expenseRelativeLayout.setEnabled(true);
-                    expenseRelativeLayout.setVisibility(View.VISIBLE);
+                    expenseCategoryShow();
                     transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
 
                     //Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
@@ -305,22 +296,13 @@ public class TransactionAddActivity extends AppCompatActivity {
                 if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
                     Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
 
-                    incomeButton.setAlpha(1.0f);
-                    expenseButton.setAlpha(0.5f);
-                    expenseRelativeLayout.setEnabled(false);
-                    expenseRelativeLayout.setVisibility(View.GONE);
-                    incomeRelativeLayout.setEnabled(true);
-                    incomeRelativeLayout.setVisibility(View.VISIBLE);
+                    incomeCategoryShow();
+
                 } else {
                     expense = 0;
                     income = Double.parseDouble(moneyEditText.getText().toString());
 
-                    incomeButton.setAlpha(1.0f);
-                    expenseButton.setAlpha(0.5f);
-                    expenseRelativeLayout.setEnabled(false);
-                    expenseRelativeLayout.setVisibility(View.GONE);
-                    incomeRelativeLayout.setEnabled(true);
-                    incomeRelativeLayout.setVisibility(View.VISIBLE);
+                    incomeCategoryShow();
                     transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
 
                     // Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
@@ -364,21 +346,23 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
 
-    /*
-    public void editTransaction() {
-        editTransaction();
-        description = getIntent().getStringExtra("description");
-        descriptionEditText.setText(description);
-
-        currentEditText.setText(String.valueOf(getIntent().getDoubleExtra("money", 0.0)));
-        dateDisplay.setText(getIntent().getStringExtra("date"));
-
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("description", description);
-        setResult(RESULT_OK, resultIntent);
-        finish();
-
+    public void expenseCategoryShow() {
+        expenseButton.setAlpha(1.0f);
+        incomeButton.setAlpha(0.5f);
+        incomeRelativeLayout.setEnabled(false);
+        incomeRelativeLayout.setVisibility(View.GONE);
+        expenseRelativeLayout.setEnabled(true);
+        expenseRelativeLayout.setVisibility(View.VISIBLE);
     }
 
-    */
+
+    public void incomeCategoryShow() {
+        incomeButton.setAlpha(1.0f);
+        expenseButton.setAlpha(0.5f);
+        expenseRelativeLayout.setEnabled(false);
+        expenseRelativeLayout.setVisibility(View.GONE);
+        incomeRelativeLayout.setEnabled(true);
+        incomeRelativeLayout.setVisibility(View.VISIBLE);
+    }
+
 }
