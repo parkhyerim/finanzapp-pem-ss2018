@@ -19,12 +19,14 @@ import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
 
     private ArrayList<Transaction> transactionList;
     Context context;
+
    // private final int rowLayout;
 
 
@@ -188,6 +190,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
 
+    public void setSearchResult(ArrayList<Transaction> result){
+        transactionList = result;
+        notifyDataSetChanged();
+    }
 
 
 

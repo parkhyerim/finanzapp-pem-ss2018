@@ -7,13 +7,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.support.v7.widget.SearchView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,19 +42,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.ButterKnife;
+
 import static android.content.ContentValues.TAG;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransactionFragment extends Fragment {
+public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     DatabaseReference db;
     DatabaseReference transactionRef;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
     private Button addButton;
@@ -66,10 +74,22 @@ public class TransactionFragment extends Fragment {
     private String description = "";
 
 
-
     public TransactionFragment() {
         super();
         // Required empty public constructor
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
 
@@ -78,6 +98,7 @@ public class TransactionFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
 
+        ButterKnife.bind(this,rootView);
 
         // Firebase : get Reference
         db = FirebaseDatabase.getInstance().getReference();
@@ -147,11 +168,6 @@ public class TransactionFragment extends Fragment {
         return rootView;
     }
 
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
 
     @Override
@@ -243,4 +259,56 @@ public class TransactionFragment extends Fragment {
             }
         };
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        //
+        inflater.inflate(R.menu.menu_items, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        //
+        final SearchView searchView = (SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(this);
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                adapter.setSearchResult(transactionList);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final ArrayList<Transaction> filteredList = filter(transactionList, newText);
+        adapter.setSearchResult(filteredList);
+        return false;
+    }
+
+
+    private ArrayList<Transaction> filter(ArrayList<Transaction> transactionList, String query){
+        query = query.toLowerCase();
+        final ArrayList<Transaction> fiteredList = new ArrayList<>();
+        for(Transaction transaction: transactionList){
+            final String text = transaction.getDescription().toLowerCase();
+            if(text.contains(query)){
+                fiteredList.add(transaction);
+            }
+        }
+        return  fiteredList;
+    }
+
+
+
 }
