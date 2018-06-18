@@ -26,19 +26,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     private ArrayList<Transaction> transactionList;
     Context context;
-
-   // private final int rowLayout;
-
-
+    // private final int rowLayout;
 
     public TransactionAdapter(ArrayList<Transaction> transactionList, Context context){
-
         this.transactionList = transactionList;
         //this.rowLayout = rowLayout;
         this.context = context;
-
     }
-
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -46,43 +40,42 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView descriptionTextView;
         private TextView accountTextView;
         private TextView moneyTextView;
-        ArrayList<Transaction> transactions = new ArrayList<>();
+        ArrayList<Transaction> transactions;
         Context context;
 
 
         public TransactionViewHolder(View itemView, Context context, ArrayList<Transaction> transactions) {
             super(itemView);
-
+            this.transactions = new ArrayList<>();
             this.transactions = transactions;
             this.context = context;
+
             itemView.setOnClickListener(this);
+
+            // Alle findViewByIDs
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
-
         }
 
         public void onClick(View v) {
 
-            // update(edit) a transaction
-
+            // Update(edit) a transaction
             int position = getAdapterPosition();
             Transaction transaction = this.transactions.get(position);
             Intent intent = new Intent(this.context, TransactionAddActivity.class);
             intent.putExtra("date", transaction.getDate());
-            intent.putExtra("money", transaction.getMoney());
             intent.putExtra("account", transaction.getAccount());
             intent.putExtra("description", transaction.getDescription());
+            intent.putExtra("money", transaction.getMoney());
 
-            int index = 0;
+            int index;
             String[] expenseCategories, incomeCategories;
-
             expenseCategories = context.getResources().getStringArray(R.array.expense_category);
             incomeCategories = context.getResources().getStringArray(R.array.income_category);
 
             if (Arrays.asList(expenseCategories).contains(transaction.getCategory())){
-
                 for(int i = 0 ; i < expenseCategories.length; i++) {
                     if(expenseCategories[i].equals(transaction.getCategory())){
                         index = i;
@@ -90,39 +83,28 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     }
                 }
             } else {
-
                 for(int i = 0 ; i < incomeCategories.length; i++) {
                     if(incomeCategories[i].equals(transaction.getCategory())){
                         index = i;
                         intent.putExtra("category2", index);
-
                     }
                 }
             }
-
             this.context.startActivity(intent);
         }
     }
 
     /*
-
-    //
-    //
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         public FooterViewHolder(View itemView){
             super(itemView);
-
+            }
         }
-
-    }
-
-    //
     //
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
         public HeaderViewHolder(View itemView){
             super(itemView);
         }
-
     }
 */
 
@@ -130,63 +112,50 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @NonNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transactions_item, parent, false);
         TransactionViewHolder transactionViewHolder = new TransactionViewHolder(view, context, transactionList);
         return transactionViewHolder;
-
     }
-
 
 
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
+        Transaction currentTransactionItem = transactionList.get(position);
 
-        Transaction currentItem = transactionList.get(position);
-        Account acc = AccountManager.getInstance().getAccountById(currentItem.getAccount());
-        if(acc==null){
-            holder.accountTextView.setText(currentItem.getAccount());
+        // Account
+        Account account = AccountManager.getInstance().getAccountById(currentTransactionItem.getAccount());
+        if(account==null){
+            holder.accountTextView.setText(currentTransactionItem.getAccount());
         }else{
-            holder.accountTextView.setText(acc.getName());
+            holder.accountTextView.setText(account.getName());
         }
 
-        holder.categoryImageView.setImageResource(currentItem.getImageResource());
+        // Category-Image
+        holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
-
+        // Expense or Income
         //TODO Währungssymbol effizienter, kluger zeigen...
-        if(currentItem.getExpense() > currentItem.getIncome()) {
-
-            holder.moneyTextView.setText("-" + String.valueOf(currentItem.getExpense())+ "\u20ac");
+        if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
+            holder.moneyTextView.setText("-" + String.valueOf(currentTransactionItem.getExpense())+ "\u20ac");
             holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
-
-        } else  {
-
-            holder.moneyTextView.setText(String.valueOf(currentItem.getIncome())+ "\u20ac");
-            holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
-
-        }
-
-        if(currentItem.getDescription().equals("")){
-
-            // If there is no description-input, then the category name will be shown.
-            holder.descriptionTextView.setText(currentItem.getCategory());
-
         } else {
-
-            holder.descriptionTextView.setText(currentItem.getDescription());
+            holder.moneyTextView.setText(String.valueOf(currentTransactionItem.getIncome())+ "\u20ac");
+            holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
 
-
-
-
+        // Description
+        if(currentTransactionItem.getDescription().equals("")){
+            // If there is no description-input, then the category name will be shown.
+            holder.descriptionTextView.setText(currentTransactionItem.getCategory());
+        } else {
+            holder.descriptionTextView.setText(currentTransactionItem.getDescription());
+        }
     }
 
     @Override
     public int getItemCount() {
-
         // Wenn transactionList null ist, dann gibt 0 Wert zurück
         return null!= transactionList? transactionList.size():0;
-
     }
 
 
@@ -194,9 +163,5 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         transactionList = result;
         notifyDataSetChanged();
     }
-
-
-
-
 
 }
