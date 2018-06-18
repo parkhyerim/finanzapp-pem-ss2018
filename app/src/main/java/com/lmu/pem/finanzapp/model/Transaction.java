@@ -12,6 +12,7 @@ public class Transaction implements Comparable<Transaction> {
     private double expense;
     private double income;
     private double amount;
+    private double money;
 
     private String category;
     private String account;
@@ -65,6 +66,14 @@ public class Transaction implements Comparable<Transaction> {
         return description;
     }
 
+    public double getMoney() {
+        if(getExpense() > getIncome()){
+            money = getExpense();
+        } else {
+            money = getIncome();
+        }
+        return money;
+    }
 
     public double addExpense(double expense){
         amount -= expense;

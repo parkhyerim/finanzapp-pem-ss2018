@@ -13,39 +13,16 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
         <android.support.v7.widget.SearchView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:id="@+id/menu_search"
             android:queryHint="@string/search_hint"
             android:background="@color/cardview_light_background"/>
+
     </android.support.v7.widget.Toolbar>
-<!--
-    <android.support.v7.widget.CardView
-        android:layout_width="400dp"
-        android:layout_height="50dp"
-        app:cardBackgroundColor="@color/colorwebsiteTab"
-        app:cardElevation="3dp"
-        android:layout_marginTop="8dp"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/cardView">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="5dp">
-
-            <EditText
-                android:id="@+id/quickActionEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="#ffffff" />
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
--->
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
