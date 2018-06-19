@@ -15,6 +15,7 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.Transaction;
 
 import java.util.ArrayList;
@@ -136,10 +137,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         // Expense or Income
         //TODO Währungssymbol effizienter, kluger zeigen...
         if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
-            holder.moneyTextView.setText("-" + String.valueOf(currentTransactionItem.getExpense())+ "\u20ac");
+            holder.moneyTextView.setText("-" + String.valueOf(currentTransactionItem.getExpense())+ " " + GlobalSettings.getInstance().getCurrency());
             holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
         } else {
-            holder.moneyTextView.setText(String.valueOf(currentTransactionItem.getIncome())+ "\u20ac");
+            holder.moneyTextView.setText(String.valueOf(currentTransactionItem.getIncome())+ " " + GlobalSettings.getInstance().getCurrency());
             holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
 

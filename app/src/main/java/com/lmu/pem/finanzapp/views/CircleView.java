@@ -115,7 +115,7 @@ public class CircleView extends View
             subtextPaint.setColor(textColor);
             subtextPaint.setTextSize(subtextSize);
             subtextPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(subtext+" "+ GlobalSettings.getInstance().getCurrency(), cx, cy + (textSize / 2) + 20, subtextPaint);
+            canvas.drawText(subtext, cx, cy + (textSize / 2) + 20, subtextPaint);
         } else {
             canvas.drawText(text.toUpperCase(), cx, cy + (textSize / 2), textPaint);
         }

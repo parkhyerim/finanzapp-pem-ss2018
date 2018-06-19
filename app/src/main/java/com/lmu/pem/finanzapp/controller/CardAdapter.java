@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.dashboard.cards.*;
 
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             BasicAmountCard c = (BasicAmountCard) dataSet.get(position);
 
             h.primaryText.setText(c.getPrimaryText());
-            h.amountText.setText(String.format(Locale.getDefault(), "%.2f %s",c.getAmount(), "€"));
+            h.amountText.setText(String.format(Locale.getDefault(), "%.2f %s",c.getAmount(), GlobalSettings.getInstance().getCurrency()));
 
 
             switch (c.getAmountType()) {

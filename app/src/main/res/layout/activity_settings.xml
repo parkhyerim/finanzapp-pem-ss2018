@@ -16,96 +16,39 @@
         app:title="Settings"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
-    <LinearLayout
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
-
+        android:columnCount="2"
+        android:padding="5dp"
+        android:orientation="horizontal">
         <TextView
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:text="Currency: "
             android:textSize="16sp"
+            android:layout_marginBottom="10dp"
             />
-        <RadioGroup
-            android:id="@+id/currencyToggleGroup"
-            android:layout_width="match_parent"
+        <Spinner
+            android:id="@+id/currencySpinner"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="15dp"
-            >
-            <ToggleButton
-                android:id="@+id/euroToggle"
-                android:textOff="€"
-                android:textOn="€"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"/>
-            <ToggleButton
-                android:id="@+id/dollarToggle"
-                android:textOff="$"
-                android:textOn="$"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
-            <ToggleButton
-                android:id="@+id/poundToggle"
-                android:textOff="£"
-                android:textOn="£"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
-        </RadioGroup>
+            android:padding="5dp"
+            android:paddingRight="10dp"
+            />
         <TextView
             android:text="Home Tab: "
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:textSize="16sp"
+            android:layout_marginBottom="10dp"
             />
-        <RadioGroup
-            android:id="@+id/homeTabToggleGroup"
-            android:layout_width="match_parent"
+        <Spinner
+            android:id="@+id/homeTabSpinner"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="15dp"
-            >
-            <ToggleButton
-                android:id="@+id/dbTabToggle"
-                android:textOff=""
-                android:textOn=""
-                android:drawableTop="@drawable/tab_dashboard_black"
-                android:textSize="0sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"/>
-            <ToggleButton
-                android:id="@+id/transTabToggle"
-                android:textOff=""
-                android:textOn=""
-                android:drawableTop="@drawable/tab_transactions_black"
-                android:textSize="0sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
-            <ToggleButton
-                android:id="@+id/accTabToggle"
-                android:textOff=""
-                android:textOn=""
-                android:drawableTop="@drawable/tab_accounts_black"
-                android:textSize="0sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
-            <ToggleButton
-                android:id="@+id/budgTabToggle"
-                android:textOff=""
-                android:textOn=""
-                android:drawableTop="@drawable/tab_budgets_black"
-                android:textSize="0sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
-        </RadioGroup>
-    </LinearLayout>
+            android:padding="5dp"
+            android:paddingRight="10dp"
+            />
+    </GridLayout>
 </LinearLayout>

@@ -2,7 +2,11 @@ package com.lmu.pem.finanzapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -16,50 +20,40 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         final GlobalSettings globalSettings = GlobalSettings.getInstance();
-        RadioGroup currencyGroup = findViewById(R.id.currencyToggleGroup);
-        currencyGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        setupSpinners(globalSettings);
+    }
+
+    private void setupSpinners(final GlobalSettings globalSettings) {
+        Spinner currencySpinner = (Spinner) findViewById(R.id.currencySpinner);
+        ArrayAdapter<CharSequence> currencyAdapter = ArrayAdapter.createFromResource(this, R.array.currency_array, android.R.layout.simple_spinner_item);
+        currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        currencySpinner.setAdapter(currencyAdapter);
+        currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
-                    case R.id.euroToggle:
-                        Toast.makeText(SettingsActivity.this, "EURO", Toast.LENGTH_SHORT).show();
-                        globalSettings.setCurrency("€");
-                        break;
-                    case R.id.dollarToggle:
-                        Toast.makeText(SettingsActivity.this, "DOLLAR", Toast.LENGTH_SHORT).show();
-                        globalSettings.setCurrency("$");
-                        break;
-                    case R.id.poundToggle:
-                        Toast.makeText(SettingsActivity.this, "POUND", Toast.LENGTH_SHORT).show();
-                        globalSettings.setCurrency("£");
-                        break;
-                }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String currency = (String) parent.getItemAtPosition(position);
+                globalSettings.setCurrency(currency);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-
-        RadioGroup homeTabGroup = findViewById(R.id.homeTabToggleGroup);
-        homeTabGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        Spinner homeTabSpinner = (Spinner) findViewById(R.id.homeTabSpinner);
+        ArrayAdapter<CharSequence> homeTabAdapter = ArrayAdapter.createFromResource(this, R.array.tabs_array, android.R.layout.simple_spinner_item);
+        homeTabAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        homeTabSpinner.setAdapter(homeTabAdapter);
+        homeTabSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Toast.makeText(SettingsActivity.this, checkedId+"", Toast.LENGTH_SHORT).show();
-                switch (checkedId){
-                    case R.id.dbTabToggle:
-                        Toast.makeText(SettingsActivity.this, "DASH", Toast.LENGTH_SHORT).show();
-                        globalSettings.setHomeTab(GlobalSettings.TAB_DASHBOARD);
-                        break;
-                    case R.id.transTabToggle:
-                        Toast.makeText(SettingsActivity.this, "TRANS", Toast.LENGTH_SHORT).show();
-                        globalSettings.setHomeTab(GlobalSettings.TAB_TRANSACTIONS);
-                        break;
-                    case R.id.accTabToggle:
-                        Toast.makeText(SettingsActivity.this, "ACC", Toast.LENGTH_SHORT).show();
-                        globalSettings.setHomeTab(GlobalSettings.TAB_ACCOUNTS);
-                        break;
-                    case R.id.budgTabToggle:
-                        Toast.makeText(SettingsActivity.this, "BUDGET", Toast.LENGTH_SHORT).show();
-                        globalSettings.setHomeTab(GlobalSettings.TAB_BUDGETS);
-                        break;
-                }
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                globalSettings.setHomeTab(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
