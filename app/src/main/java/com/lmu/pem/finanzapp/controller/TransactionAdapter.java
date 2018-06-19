@@ -144,7 +144,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         } else {
             holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
-        holder.moneyTextView.setText(prefix+String.format(Locale.GERMAN, "%,.2f %s",currentTransactionItem.getIncome(), GlobalSettings.getInstance().getCurrency()));
+        holder.moneyTextView.setText(prefix+String.format(Locale.getDefault(), "%,.2f %s",currentTransactionItem.getIncome(), GlobalSettings.getInstance().getCurrency()));
 
         // Description
         if(currentTransactionItem.getDescription().equals("")){
