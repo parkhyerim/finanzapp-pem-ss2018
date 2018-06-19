@@ -21,6 +21,7 @@ import com.lmu.pem.finanzapp.model.Transaction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
@@ -136,13 +137,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Expense or Income
         //TODO Währungssymbol effizienter, kluger zeigen...
+        String prefix = "";
         if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
-            holder.moneyTextView.setText("-" + String.valueOf(currentTransactionItem.getExpense())+ " " + GlobalSettings.getInstance().getCurrency());
+            prefix="-";
             holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
         } else {
-            holder.moneyTextView.setText(String.valueOf(currentTransactionItem.getIncome())+ " " + GlobalSettings.getInstance().getCurrency());
             holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
+        holder.moneyTextView.setText(prefix+String.format(Locale.GERMAN, "%,.2f %s",currentTransactionItem.getIncome(), GlobalSettings.getInstance().getCurrency()));
 
         // Description
         if(currentTransactionItem.getDescription().equals("")){
