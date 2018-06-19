@@ -1,10 +1,17 @@
 <resources>
     <!-- Grundlegendes -->
     <string name="app_name">Financing App</string>
-    <string name="tab_1_label">Dashboard</string>
-    <string name="tab_2_label">Transactions</string>
-    <string name="tab_3_label">Accounts</string>
-    <string name="tab_4_label">Budgets</string>
+    <string-array name="currency_array">
+        <item>€</item>
+        <item>$</item>
+        <item>£</item>
+    </string-array>
+    <string-array name="tabs_array">
+        <item>Dashboard</item>
+        <item>Transactions</item>
+        <item>Accounts</item>
+        <item>Budgets</item>
+    </string-array>
     <string name="action_settings">Settings</string>
     <string name="search_hint">Perform a Quick Action</string>
     <!-- anscheinend nicht benötigt?

@@ -3,7 +3,6 @@ package com.lmu.pem.finanzapp;
 import android.content.Intent;
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,15 +11,16 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.lmu.pem.finanzapp.controller.PagerAdapter;
-import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 public class MainActivity extends AppCompatActivity  {
 
-    //implements DashboardFragment.OnFragmentInteractionListener, AccountFragment.OnFragmentInteractionListener, TransactionFragment.OnFragmentInteractionListener, BudgetFragment.OnFragmentInteractionListener
-
     private ViewPager viewPager;
+    private GlobalSettings globalSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +30,21 @@ public class MainActivity extends AppCompatActivity  {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        globalSettings = GlobalSettings.getInstance();
+        setupTabs();
+    }
+
+    private void setupTabs() {
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getApplicationContext()));
         TabLayout tabs = findViewById(R.id.tabLayoutId);
         tabs.setupWithViewPager(viewPager);
+
         tabs.getTabAt(0).setIcon(R.drawable.tab_dashboard_white);
         tabs.getTabAt(1).setIcon(R.drawable.tab_transactions_black);
         tabs.getTabAt(2).setIcon(R.drawable.tab_accounts_black);
         tabs.getTabAt(3).setIcon(R.drawable.tab_budgets_black);
+
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -76,17 +83,37 @@ public class MainActivity extends AppCompatActivity  {
             }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
+
+        switch (globalSettings.getHomeTab()){
+            case GlobalSettings.TAB_TRANSACTIONS:
+                tabs.getTabAt(1).select();
+                break;
+            case GlobalSettings.TAB_ACCOUNTS:
+                tabs.getTabAt(2).select();
+                break;
+            case GlobalSettings.TAB_BUDGETS:
+                tabs.getTabAt(3).select();
+                break;
+        }
     }
 
-    /*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
+
+        MenuItem settingsButton = menu.findItem(R.id.action_settings);
+        settingsButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = findViewById(R.id.menu_search);
@@ -95,7 +122,7 @@ public class MainActivity extends AppCompatActivity  {
 
         return true;
     }
-    */
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

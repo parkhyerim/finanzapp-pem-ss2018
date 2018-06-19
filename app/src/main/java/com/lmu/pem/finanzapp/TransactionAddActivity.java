@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 import java.util.Calendar;
 
@@ -34,8 +35,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private EditText descriptionEditText;
     private Button expenseButton, incomeButton, doneButton;
     private Spinner accountSpinner, expenseCategorySpinner, incomeCategorySpinner;
-
-    private TextView dateDisplay;
+    private TextView dateDisplay, currencySymbol;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
     private AccountManager accountManager;
@@ -52,6 +52,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         // Alle findViewByIDs
         dateDisplay = (TextView) findViewById(R.id.dateDisplay_textView);
+        currencySymbol = (TextView) findViewById(R.id.expenseAdd_textView);
 
         moneyEditText = (EditText) findViewById(R.id.expenseAdd_editText);
         descriptionEditText = (EditText) findViewById(R.id.description_editView);
@@ -67,6 +68,9 @@ public class TransactionAddActivity extends AppCompatActivity {
         expenseButton = (Button) findViewById(R.id.expense_button);
         incomeButton = (Button) findViewById(R.id.income_button);
         doneButton = (Button) findViewById(R.id.done_button);
+
+        // Currency
+        currencySymbol.setText(GlobalSettings.getInstance().getCurrency());
 
         // Date
         cal = Calendar.getInstance();
