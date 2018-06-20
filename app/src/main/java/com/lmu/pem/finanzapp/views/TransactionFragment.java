@@ -60,8 +60,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    //private Button addButton;
-    private FloatingActionButton addBtn;
+
+    private FloatingActionButton addButton;
 
     private static ArrayList<Transaction> transactionList;
 
@@ -108,8 +108,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
-        //addButton = rootView.findViewById(R.id.transaction_add_button);
-        addBtn = rootView.findViewById(R.id.transaction_add_button2);
+        addButton = rootView.findViewById(R.id.transaction_add_button);
+
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -127,7 +127,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
         // Add Button -> Add Page
-        addBtn.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
