@@ -1,8 +1,6 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,8 +10,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.support.v7.widget.SearchView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -35,8 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import com.jaychang.srv.decoration.SectionHeaderProvider;
-import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelper;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
@@ -261,12 +256,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                /*
-                String date = transactionList.get(position).getDate();
-                String date2 = transactionList.get(position - 1).getDate();
-                return position == 0 || !date.equals(date2);
-                */
 
+                //TODO: Try... Catch... richtig schreiben....
                 if(position > 0 ) {
                     return transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
                 } else {
@@ -277,15 +268,15 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public CharSequence getSectionHeader(int position) {
+                // TODO: Richtige Lösung für Index out of bounds schreiben...
                 if(position >= 0) {
                     date = transactionList.get(position).getDate().toString();
 
                 } else {
-                    date = "00000";
+                    date = "01/01/2018";
                 }
                // date = transactionList.get(position).getDate().toString();
                 return date;
-                //return transactionList.get(position).getDate().subSequence(0, 8);
             }
         };
     }
