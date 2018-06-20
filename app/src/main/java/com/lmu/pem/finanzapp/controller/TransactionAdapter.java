@@ -60,6 +60,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
         }
 
+
         public void onClick(View v) {
 
             // Update(edit) a transaction
