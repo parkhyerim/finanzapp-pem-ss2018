@@ -13,6 +13,7 @@ public class Transaction implements Comparable<Transaction> {
     private double income;
     private double amount;
     private double money;
+    private String trsName;
 
     private String category;
     private String account;
@@ -75,6 +76,11 @@ public class Transaction implements Comparable<Transaction> {
         return money;
     }
 
+    public String getTrsName() {
+        trsName = date + category;
+        return trsName;
+    }
+
     public double addExpense(double expense){
         amount -= expense;
         return amount;
@@ -84,6 +90,7 @@ public class Transaction implements Comparable<Transaction> {
         amount += income;
         return amount;
     }
+
 
 
 

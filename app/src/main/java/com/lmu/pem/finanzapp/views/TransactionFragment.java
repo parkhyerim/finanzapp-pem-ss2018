@@ -1,17 +1,24 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +38,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.jaychang.srv.decoration.SectionHeaderProvider;
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.RecyclerItemTouchHelper;
+import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
@@ -51,7 +60,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener {
 
     DatabaseReference db;
     DatabaseReference transactionRef;
@@ -59,6 +68,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+    private CoordinatorLayout trsView;
 
 
     private FloatingActionButton addButton;
@@ -109,6 +119,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
         addButton = rootView.findViewById(R.id.transaction_add_button);
+        trsView = rootView.findViewById(R.id.trans_fragment);
 
 
         // RecyclerView
@@ -116,7 +127,15 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         layoutManager = new LinearLayoutManager(getActivity());
         adapter = new TransactionAdapter(transactionList, rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallBack = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);
+
+
 
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
@@ -248,12 +267,23 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 return position == 0 || !date.equals(date2);
                 */
 
-                return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
+                if(position > 0 ) {
+                    return transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
+                } else {
+                    return position == 0;
+                }
+               // return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
             }
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                date = transactionList.get(position).getDate().toString();
+                if(position >= 0) {
+                    date = transactionList.get(position).getDate().toString();
+
+                } else {
+                    date = "00000";
+                }
+               // date = transactionList.get(position).getDate().toString();
                 return date;
                 //return transactionList.get(position).getDate().subSequence(0, 8);
             }
@@ -318,4 +348,27 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return  fiteredList;
     }
 
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
+            String name = transactionList.get(viewHolder.getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionList.get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+            adapter.removeItem(deletedIndex);
+
+            Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_SHORT);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adapter.restoreItem(deletedTransaction, deletedIndex);
+                }
+            });
+
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+
+        }
+
+    }
 }

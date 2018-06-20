@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
@@ -25,13 +26,12 @@ import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
 
+    private Context context;
     private ArrayList<Transaction> transactionList;
-    Context context;
-    // private final int rowLayout;
+
 
     public TransactionAdapter(ArrayList<Transaction> transactionList, Context context){
         this.transactionList = transactionList;
-        //this.rowLayout = rowLayout;
         this.context = context;
     }
 
@@ -41,6 +41,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView descriptionTextView;
         private TextView accountTextView;
         private TextView moneyTextView;
+        public RelativeLayout viewForeground;
         ArrayList<Transaction> transactions;
         Context context;
 
@@ -58,6 +59,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
+            viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
         }
 
 
@@ -114,14 +116,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @NonNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transactions_item, parent, false);
-        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(view, context, transactionList);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.transactions_item, parent, false);
+        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(itemView, context, transactionList);
         return transactionViewHolder;
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
+
         Transaction currentTransactionItem = transactionList.get(position);
 
         // Account
@@ -154,11 +158,27 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
+
+
+
     @Override
     public int getItemCount() {
         // Wenn transactionList null ist, dann gibt 0 Wert zurück
         return null!= transactionList? transactionList.size():0;
     }
+
+
+    public void removeItem(int position) {
+        transactionList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
+    public void restoreItem(Transaction transactionItem, int position){
+        transactionList.add(position, transactionItem);
+        notifyItemInserted(position);
+    }
+
 
 
     public void setSearchResult(ArrayList<Transaction> result){
