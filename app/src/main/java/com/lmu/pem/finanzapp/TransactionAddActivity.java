@@ -195,17 +195,11 @@ public class TransactionAddActivity extends AppCompatActivity {
 
             // Category
             if(getIntent().hasExtra("category")){
+                expenseCategoryShow();
                 int expense = getIntent().getIntExtra("category", 0);
                 expenseCategorySpinner.setSelection(expense);
             } else {
                 incomeCategoryShow();
-                /*
-                expenseRelativeLayout.setEnabled(false);
-                expenseRelativeLayout.setVisibility(View.GONE);
-                incomeRelativeLayout.setEnabled(true);
-                incomeRelativeLayout.setVisibility(View.VISIBLE);
-                */
-
                 int income = getIntent().getIntExtra("category2",0);
                 incomeCategorySpinner.setSelection(income);
             }}

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +60,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    private Button addButton;
+    //private Button addButton;
+    private FloatingActionButton addBtn;
 
     private static ArrayList<Transaction> transactionList;
 
@@ -106,7 +108,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
-        addButton = rootView.findViewById(R.id.transaction_add_button);
+        //addButton = rootView.findViewById(R.id.transaction_add_button);
+        addBtn = rootView.findViewById(R.id.transaction_add_button2);
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -124,7 +127,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
         // Add Button -> Add Page
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
