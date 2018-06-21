@@ -38,13 +38,12 @@ import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
-import com.lmu.pem.finanzapp.model.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -68,7 +67,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     private FloatingActionButton addButton;
 
-    private static ArrayList<Transaction> transactionList;
+    private TransactionHistory transactionHistory;
 
     private int position;
     private int imageResource;
@@ -120,7 +119,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         // RecyclerView
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionList, rootView.getContext());
+        adapter = new TransactionAdapter(transactionHistory.getTransactions(), rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -136,7 +135,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
                 new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
                         true,
-                        getSectionCallback(transactionList));
+                        getSectionCallback(transactionHistory.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
@@ -191,7 +190,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
-            position = transactionList.size();
+            position = transactionHistory.getTransactions().size();
 
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
@@ -207,17 +206,17 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
     public void createTransactionList() {
-        transactionList = new ArrayList<>();
+        transactionHistory = TransactionHistory.getInstance();
 
 
         // dummy transaction list
-        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 0, 450));
+        transactionHistory.addTransaction(new Transaction("04/28/2018", R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 0, 450));
         //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
         //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
-        transactionList.add(new Transaction("05/02/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20, 0));
-        transactionList.add(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 0, 180));
-        transactionList.add(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie", "Black Panther", 21, 0));
-        transactionList.add(new Transaction("05/05/2018", R.drawable.gift, "Cash", "Gift", "Muttertag", 38.25, 0));
+        transactionHistory.addTransaction(new Transaction("05/02/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20, 0));
+        transactionHistory.addTransaction(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 0, 180));
+        transactionHistory.addTransaction(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie", "Black Panther", 21, 0));
+        transactionHistory.addTransaction(new Transaction("05/05/2018", R.drawable.gift, "Cash", "Gift", "Muttertag", 38.25, 0));
 
     }
 
@@ -234,7 +233,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         this.expense = expense;
         this.description = description;
         Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income);
-        transactionList.add(transaction);
+        transactionHistory.addTransaction(transaction);
         adapter.notifyItemInserted(position);
 
         // Firebase
@@ -245,10 +244,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public static ArrayList<Transaction> getTransactionSorted() {
-        Collections.sort(transactionList);
-        return transactionList;
-    }
 
 
     // Header-Section by date
@@ -300,7 +295,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                adapter.setSearchResult(transactionList);
+                adapter.setSearchResult(transactionHistory.getTransactions());
                 return true;
             }
         });
@@ -313,7 +308,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        final ArrayList<Transaction> filteredList = filter(transactionList, newText);
+        final ArrayList<Transaction> filteredList = filter(transactionHistory.getTransactions(), newText);
         adapter.setSearchResult(filteredList);
         return false;
     }
@@ -343,8 +338,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
-            String name = transactionList.get(viewHolder.getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionList.get(viewHolder.getAdapterPosition());
+            String name = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
             adapter.removeItem(deletedIndex);
 

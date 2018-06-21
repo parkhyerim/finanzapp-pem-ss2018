@@ -17,11 +17,10 @@ import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
-import com.lmu.pem.finanzapp.model.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{

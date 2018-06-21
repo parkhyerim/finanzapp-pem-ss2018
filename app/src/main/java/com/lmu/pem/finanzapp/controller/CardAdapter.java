@@ -1,5 +1,6 @@
 package com.lmu.pem.finanzapp.controller;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 import com.lmu.pem.finanzapp.model.dashboard.cards.*;
 
 import java.util.ArrayList;
@@ -19,11 +21,10 @@ import java.util.Locale;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
+    private Context context;
+
     private ArrayList<DbCard> dataSet;
 
-    private enum CardType {
-        WELCOME, HIGHESTEXPENSES, MOSTECONOMICALMONTH
-    }
 
     public static abstract class CardViewHolder extends  RecyclerView.ViewHolder {
         public TextView titleText;
@@ -85,7 +86,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                                                    int viewType) {
         View v;
 
-        if (viewType == CardType.WELCOME.hashCode()) {
+        if (viewType == DashboardManager.CardType.WELCOME.hashCode()) {
             v =  LayoutInflater.from(parent.getContext()).inflate(R.layout.db_welcome, parent, false);
             WelcomeCardViewHolder vh = new WelcomeCardViewHolder(v);
             return vh;
@@ -109,7 +110,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         holder.btn1.setText(dataSet.get(position).getBtn1Text());
 
 
-        if (getItemViewType(position) == CardType.WELCOME.hashCode()) {
+        if (getItemViewType(position) == DashboardManager.CardType.WELCOME.hashCode()) {
             WelcomeCardViewHolder h = (WelcomeCardViewHolder) holder;
             WelcomeCard c = (WelcomeCard) dataSet.get(position);
 
@@ -136,7 +137,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     h.amountDescText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_red_light));
                     break;
             }
-
 
             if (c.getAmountDescription() == "")
                 removeView(h.amountDescText);
@@ -170,10 +170,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     public int getItemViewType(int position) {
         DbCard buffer = dataSet.get(position);
 
-        if (buffer instanceof BasicAmountCard)
-            return CardType.HIGHESTEXPENSES.hashCode();
-        else
-            return CardType.WELCOME.hashCode();
+        return buffer.getType().hashCode();
 
     }
 }

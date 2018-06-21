@@ -1,12 +1,12 @@
 package com.lmu.pem.finanzapp.model.dashboard.cards;
 
+import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
+
 public class BasicAmountCard extends DbCard{
 
-    public enum CardType {WELCOME, HIGHESTEXPENSES, MOSTECONOMICALMONTH}
+
 
     public enum AmountType {POSITIVE, NEGATIVE, NEUTRAL}
-
-    public CardType type;
 
     private float amount;
     private AmountType amountType;
@@ -15,18 +15,13 @@ public class BasicAmountCard extends DbCard{
 
     private String btn2Text;
 
-    public BasicAmountCard(CardType type, String title, String primaryText, float amount, AmountType amountType, String amountDescription, String secondaryMessage, String btn1Text, String btn2Text) {
-        super(title, primaryText, btn1Text);
-        this.type = type;
+    public BasicAmountCard(DashboardManager.CardType type, String title, String primaryText, float amount, AmountType amountType, String amountDescription, String secondaryMessage, String btn1Text, String btn2Text) {
+        super(type, title, primaryText, btn1Text);
         this.amount = amount;
         this.amountType = amountType;
         this.amountDescription = amountDescription;
         this.secondaryMessage = secondaryMessage;
         this.btn2Text = btn2Text;
-    }
-
-    public CardType getType() {
-        return type;
     }
 
     public float getAmount() {
