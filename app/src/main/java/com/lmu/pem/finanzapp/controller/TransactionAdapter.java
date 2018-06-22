@@ -143,13 +143,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         // Expense or Income
         //TODO Währungssymbol effizienter, kluger zeigen...
         String prefix = "";
+        double amount;
         if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
             prefix="-";
+            amount = currentTransactionItem.getExpense();
             holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
         } else {
+            amount = currentTransactionItem.getIncome();
             holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
-        holder.moneyTextView.setText(prefix+String.format(Locale.getDefault(), "%,.2f %s",currentTransactionItem.getIncome(), GlobalSettings.getInstance().getCurrency()));
+        holder.moneyTextView.setText(prefix+String.format(Locale.getDefault(), "%,.2f %s",amount, GlobalSettings.getInstance().getCurrency()));
 
         // Description
         if(currentTransactionItem.getDescription().equals("")){

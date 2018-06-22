@@ -1,8 +1,12 @@
 package com.lmu.pem.finanzapp.controller;
 
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +14,7 @@ import android.widget.BaseAdapter;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.views.CircleView;
+import com.lmu.pem.finanzapp.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -58,33 +63,64 @@ public class AccountAdapter extends BaseAdapter {
         circleView.setSubText(subtext);
         circleView.setCircleColor(accounts.get(position).getColor());
 
-        circleView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                switch(event.getAction()){
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        Log.println(Log.INFO, "123123123", "Drag started!");
-                        return false;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.println(Log.INFO, "123123123", "Drag entered!");
-                        //TODO set color (call invalidate!) / ...
-                        return true;
-                    case DragEvent.ACTION_DRAG_LOCATION:
-                        return true;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        return true;
-                    case DragEvent.ACTION_DROP:
-                        Log.println(Log.INFO, "123123123", "Dropped!");
-                        return true;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        Log.println(Log.INFO, "123123123", "Stopped dragging!");
-                        return true;
-                    default:
-                        Log.println(Log.INFO, "123123123", "No idea what that was!");
-                        break;
+
+        circleView.setOnLongClickListener(v -> {
+            ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+            /*
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(){
+                @Override
+                public void onDrawShadow(Canvas canvas) {
+                    Drawable img = context.getResources().getDrawable(R.drawable.bonus);
+                    //img.setBounds(100,100,100,100);
+                    img.draw(canvas);
                 }
+            };*/
+            v.startDrag(data, shadowBuilder, v, 0);
+            return true;
+        });
+
+        /*circleView.setOnTouchListener((view, motionEvent)->{
+            if(motionEvent.getAction()== MotionEvent.ACTION_DOWN){
+                ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(){
+                    @Override
+                    public void onDrawShadow(Canvas canvas) {
+                        //super.onDrawShadow(canvas);
+                        Drawable img = context.getResources().getDrawable(R.drawable.bonus, null);
+                        img.draw(canvas);
+                    }
+                };
+                view.startDrag(data, shadowBuilder, view, 0);
                 return true;
+            }else{
+                return false;
             }
+
+        });*/
+
+        circleView.setOnDragListener((v, event) -> {
+            switch(event.getAction()){
+                case DragEvent.ACTION_DRAG_STARTED:
+                    Log.println(Log.INFO, "123123123", "Started dragging...");
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    Log.println(Log.INFO, "123123123", "Drag entered!");
+                    //TODO set color (call invalidate!) / ...
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    Log.println(Log.INFO, "123123123", "Drag exited!");
+                    //TODO set color (call invalidate!) / ...
+                    break;
+                case DragEvent.ACTION_DROP:
+                    Log.println(Log.INFO, "123123123", "Dropped!");
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    Log.println(Log.INFO, "123123123", "...Stopped dragging!");
+                    //TODO set color (call invalidate!) / ...
+                    break;
+            }
+            return true;
         });
 
         return circleView;

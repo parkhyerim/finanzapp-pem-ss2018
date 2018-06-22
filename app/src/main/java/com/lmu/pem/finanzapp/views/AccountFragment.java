@@ -72,6 +72,7 @@ public class AccountFragment extends Fragment {
         adapter = new AccountAdapter(getContext(), accountManager.getAccounts());
         gridView.setAdapter(adapter);
 
+        /*
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -84,7 +85,7 @@ public class AccountFragment extends Fragment {
                 Toast.makeText(getContext(), "Long Click detected!", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        });
+        });*/
 
         FloatingActionButton fab = v.findViewById(R.id.acc_fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -343,7 +343,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             final int deletedIndex = viewHolder.getAdapterPosition();
             adapter.removeItem(deletedIndex);
 
-            Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
