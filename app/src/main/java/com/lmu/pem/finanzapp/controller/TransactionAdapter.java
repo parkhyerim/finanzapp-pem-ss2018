@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +32,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     private Context context;
     private ArrayList<Transaction> transactionList;
+    private View rootView;
 
 
-    public TransactionAdapter(ArrayList<Transaction> transactionList, Context context){
+    public TransactionAdapter(ArrayList<Transaction> transactionList, Context context, View rootView){
         this.transactionList = transactionList;
         this.context = context;
+        this.rootView = rootView;
     }
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -43,17 +48,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView accountTextView;
         private TextView moneyTextView;
         public RelativeLayout viewForeground;
+        private ImageButton editButton, deleteButton;
         ArrayList<Transaction> transactions;
         Context context;
+        private TransactionAdapter transactionAdapter;
 
 
-        public TransactionViewHolder(View itemView, Context context, ArrayList<Transaction> transactions) {
+        public TransactionViewHolder(View itemView, Context context, ArrayList<Transaction> transactions, TransactionAdapter adapter) {
             super(itemView);
             this.transactions = new ArrayList<>();
             this.transactions = transactions;
             this.context = context;
-
-            itemView.setOnClickListener(this);
+            this.transactionAdapter = adapter;
 
             // Alle findViewByIDs
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
@@ -61,6 +67,35 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
+            editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.delete_icon);
+
+
+
+            itemView.setOnLongClickListener((view)->{
+                viewForeground.setVisibility(View.INVISIBLE);
+
+                editButton.setOnClickListener(this); //TODO delocate
+                deleteButton.setOnClickListener((v)->{
+                    TransactionHistory transactionHistory = TransactionHistory.getInstance();
+                    String name = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
+                    final Transaction deletedTransaction = transactionHistory.getTransactions().get(getAdapterPosition());
+                    final int deletedIndex = getAdapterPosition();
+                    adapter.removeItem(deletedIndex);
+
+                    Snackbar snackbar = Snackbar.make(adapter.rootView, name + " removed from list!", Snackbar.LENGTH_LONG);
+                    snackbar.setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            adapter.restoreItem(deletedTransaction, deletedIndex);
+                        }
+                    });
+
+                    snackbar.setActionTextColor(Color.YELLOW);
+                    snackbar.show();
+                });
+                return true;
+            });
         }
 
 
@@ -119,7 +154,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.transactions_item, parent, false);
-        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(itemView, context, transactionList);
+        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(itemView, context, transactionList, this);
         return transactionViewHolder;
     }
 

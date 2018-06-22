@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp">
 
-
+    <!--
     <RelativeLayout
         android:id="@+id/transaction_add_background"
         android:layout_width="match_parent"
@@ -31,7 +31,36 @@
             android:textSize="14sp"/>
 
     </RelativeLayout>
+    -->
 
+    <LinearLayout
+        android:id="@+id/transaction_interaction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/edit_icon"
+                android:layout_width="0dip"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:src="@drawable/edit"
+                android:background="@color/applegreen"
+                />
+
+            <ImageButton
+                android:id="@+id/delete_icon"
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete_white_24dp"
+                android:background="@color/colorwebsiteTab"
+                />
+
+    </LinearLayout>
+
+<!-- TODO stack layout -->
     <RelativeLayout
         android:id="@+id/transaction_item_layout"
         android:layout_width="match_parent"
