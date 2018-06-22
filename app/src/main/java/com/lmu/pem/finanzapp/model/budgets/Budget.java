@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.model;
+package com.lmu.pem.finanzapp.model.budgets;
 
 import com.lmu.pem.finanzapp.data.categories.Category;
 
@@ -7,16 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Budget {
-    Category category;
+    String category;
 
-    Date from;
-    Date until;
+    private Date from;
+    private Date until;
 
-    float budget;
+    private float budget;
 
-    float currentAmount;
+    private float currentAmount;
 
-    public Budget(Category category, Date from, Date until, float budget, float currentAmount) {
+    public Budget(String category, Date from, Date until, float budget, float currentAmount) {
         this.category = category;
         this.from = from;
         this.until = until;
@@ -24,7 +24,7 @@ public class Budget {
         this.currentAmount = currentAmount;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
@@ -38,6 +38,10 @@ public class Budget {
 
     public float getBudget() {
         return budget;
+    }
+
+    public void setCurrentAmount(float currentAmount) {
+        this.currentAmount = currentAmount;
     }
 
     public float getCurrentAmount() {

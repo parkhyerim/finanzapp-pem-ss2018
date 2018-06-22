@@ -1,27 +1,18 @@
 package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.data.categories.Category;
-import com.lmu.pem.finanzapp.model.Budget;
-import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
-import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
-import com.lmu.pem.finanzapp.model.dashboard.cards.DbCard;
-import com.lmu.pem.finanzapp.model.dashboard.cards.WelcomeCard;
+import com.lmu.pem.finanzapp.model.budgets.Budget;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,7 +76,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
         Budget b = dataSet.get(position);
 
-        holder.titleText.setText(b.getCategory().getName());
+        holder.titleText.setText(b.getCategory());
         holder.startDate.setText(format.format(b.getFrom()));
         holder.endDate.setText(format.format(b.getUntil()));
         holder.startAmount.setText(String.format(Locale.getDefault(), "%.2f %s",0.0f, "€"));
@@ -103,6 +94,21 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
         System.out.println(datePart);
         System.out.println(amountPart);
+
+
+        holder.dateBar.getProgressDrawable().setColorFilter(
+                Color.parseColor("#0085B6"), android.graphics.PorterDuff.Mode.SRC_IN);
+
+        if (amountPart > 1f) {
+            holder.amountBar.getProgressDrawable().setColorFilter(
+                    Color.parseColor("#FF005D"), android.graphics.PorterDuff.Mode.SRC_IN);
+        } else if (amountPart > datePart) {
+            holder.amountBar.getProgressDrawable().setColorFilter(
+                    Color.parseColor("#FEDF03"), android.graphics.PorterDuff.Mode.SRC_IN);
+        } else {
+            holder.amountBar.getProgressDrawable().setColorFilter(
+                    Color.parseColor("#00D49D"), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
 
         holder.dateBar.setProgress((int)(datePart*100));
         holder.amountBar.setProgress((int)(amountPart*100));
