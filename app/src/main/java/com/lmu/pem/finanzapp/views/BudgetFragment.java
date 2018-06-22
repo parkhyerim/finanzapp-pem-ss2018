@@ -47,9 +47,9 @@ public class BudgetFragment extends Fragment {
 
         ArrayList<Budget> budgets = new ArrayList<>();
 
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018, 01, 01), new Date(2018, 02, 01), 110f, 14.5f));
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018, 01, 01), new Date(2018, 02, 01), 24, 14.5f));
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018, 01, 01), new Date(2018, 02, 01), 13, 14.5f));
+        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018 - 1900, 0, 1), new Date(2018 - 1900, 11, 31), 110f, 14.5f));
+        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018  - 1900, 4, 1), new Date(2018  - 1900, 6, 1), 24, 14.5f));
+        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018  - 1900, 1, 1), new Date(2018  - 1900, 3, 1), 13, 14.5f));
 
         adapter = new BudgetAdapter(budgets);
         recyclerView.setAdapter(adapter);

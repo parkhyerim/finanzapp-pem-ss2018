@@ -4,6 +4,7 @@ import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.AbstractMap;
+import java.util.Calendar;
 
 public class Analyzer {
 
@@ -11,15 +12,14 @@ public class Analyzer {
         float [] monthsCounters = new float[12];
 
         for (Transaction transaction : history.getTransactions()) {
+            if (transaction.getYear() != Calendar.getInstance().get(Calendar.YEAR)) continue;
             monthsCounters[transaction.getMonth()] += transaction.getExpense();
         }
 
         int maxMonth = -1;
-        float maxMonthAmount = -1;
+        float maxMonthAmount = 0;
 
         for (int i = 0; i < monthsCounters.length; i++) {
-
-
 
             if (maxMonthAmount < monthsCounters[i]) {
                 maxMonth = i;
@@ -27,6 +27,8 @@ public class Analyzer {
             }
 
         }
+
+        if (maxMonth == -1) return null;
 
         return new AbstractMap.SimpleEntry<Integer, Float>(maxMonth, maxMonthAmount);
 

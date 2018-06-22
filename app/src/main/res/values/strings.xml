@@ -45,7 +45,7 @@
 
     <!--Most economical month Expenses Card-->
     <string name="mem_title">Most economical Month</string>
-    <string name="mem_mainText">Your most economical month is usually </string>
+    <string name="mem_mainText">This year, your most economical Month was </string>
     <string name="mem_amount">87.54 €</string>
     <string name="mem_amountDesc">spent on average.</string>
     <string name="mem_secondaryText">Keep it up!</string>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -44,11 +45,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
         int barWidth;
 
-        CardView dateBar;
-        TextView currentDate;
-
-        CardView amountBar;
-        TextView currentAmount;
+        ProgressBar dateBar;
+        ProgressBar amountBar;
 
         TextView startAmount;
         TextView endAmount;
@@ -60,13 +58,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
             this.startDate = view.findViewById(R.id.startDate);
             this.endDate = view.findViewById(R.id.endDate);
 
-            this.barWidth = view.findViewById(R.id.dateBarBg).getWidth();
 
             this.dateBar = view.findViewById(R.id.dateBar);
-            this.currentDate = view.findViewById(R.id.currentDate);
 
             this.amountBar = view.findViewById(R.id.amountBar);
-            this.currentAmount = view.findViewById(R.id.currentAmount);
 
             this.startAmount = view.findViewById(R.id.startAmount);
             this.endAmount = view.findViewById(R.id.endAmount);
@@ -98,19 +93,19 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
 
 
-        holder.currentDate.setText(format.format(Calendar.getInstance().getTime()));
-        holder.currentAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getCurrentAmount(), "€"));
 
-
-        float datePart = (float)(Calendar.getInstance().getTimeInMillis() / (b.getUntil().getTime() - b.getFrom().getTime()));
+        float datePart = 1f;
+        if (b.getUntil().getTime() != b.getFrom().getTime())
+            datePart = ((float)(Calendar.getInstance().getTime().getTime() - b.getFrom().getTime()) / (b.getUntil().getTime() - b.getFrom().getTime()));
+        System.out.println(b.getFrom().getTime() + " - " + b.getUntil().getTime());
+        System.out.println(Calendar.getInstance().getTime().getTime());
         float amountPart = b.getCurrentAmount() / b.getBudget();
 
         System.out.println(datePart);
         System.out.println(amountPart);
-        holder.dateBar.setLayoutParams(new RelativeLayout.LayoutParams((int)(holder.barWidth * datePart), holder.dateBar.getHeight()));
-        holder.amountBar.setLayoutParams(new RelativeLayout.LayoutParams((int)(holder.barWidth * amountPart), holder.amountBar.getHeight()));
 
-
+        holder.dateBar.setProgress((int)(datePart*100));
+        holder.amountBar.setProgress((int)(amountPart*100));
 
     }
 
