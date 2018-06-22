@@ -69,6 +69,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         incomeButton = (Button) findViewById(R.id.income_button);
         doneButton = (Button) findViewById(R.id.done_button);
 
+
         // Currency
         currencySymbol.setText(GlobalSettings.getInstance().getCurrency());
 
@@ -82,6 +83,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Default-Page for an expense selection
         incomeRelativeLayout.setEnabled(false);
         incomeRelativeLayout.setVisibility(View.GONE);
+
 
 
         dateDisplay.setOnClickListener(new View.OnClickListener() {
@@ -266,7 +268,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                     } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
                         Toast.makeText(TransactionAddActivity.this, "Please select a category", Toast.LENGTH_LONG).show();
 
-                    } else {
+                    }  else {
                         date = dateDisplay.getText().toString();
                         description = descriptionEditText.getText().toString();
 

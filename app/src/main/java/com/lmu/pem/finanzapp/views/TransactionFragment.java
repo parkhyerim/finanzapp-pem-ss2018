@@ -1,17 +1,21 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.support.v7.widget.SearchView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -28,19 +32,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import com.jaychang.srv.decoration.SectionHeaderProvider;
-import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.RecyclerItemTouchHelper;
+import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
-import com.lmu.pem.finanzapp.model.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -51,7 +54,7 @@ import static android.content.ContentValues.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener {
 
     DatabaseReference db;
     DatabaseReference transactionRef;
@@ -59,11 +62,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+    private CoordinatorLayout trsView;
 
-    //private Button addButton;
-    private FloatingActionButton addBtn;
 
-    private static ArrayList<Transaction> transactionList;
+    private FloatingActionButton addButton;
+
+    private TransactionHistory transactionHistory;
 
     private int position;
     private int imageResource;
@@ -108,26 +112,35 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
-        //addButton = rootView.findViewById(R.id.transaction_add_button);
-        addBtn = rootView.findViewById(R.id.transaction_add_button2);
+        addButton = rootView.findViewById(R.id.transaction_add_button);
+        trsView = rootView.findViewById(R.id.trans_fragment);
+
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionList, rootView.getContext());
+        adapter = new TransactionAdapter(transactionHistory.getTransactions(), rootView.getContext());
         recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallBack = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);
+
+
 
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
                 new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
                         true,
-                        getSectionCallback(transactionList));
+                        getSectionCallback(transactionHistory.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
         // Add Button -> Add Page
-        addBtn.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
@@ -177,7 +190,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
-            position = transactionList.size();
+            position = transactionHistory.getTransactions().size();
 
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
@@ -193,17 +206,17 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
     public void createTransactionList() {
-        transactionList = new ArrayList<>();
+        transactionHistory = TransactionHistory.getInstance();
 
 
         // dummy transaction list
-        transactionList.add(new Transaction("04/28/2018", R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 0, 450));
+        transactionHistory.addTransaction(new Transaction("04/28/2018", R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 0, 450));
         //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
         //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
-        transactionList.add(new Transaction("05/02/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20, 0));
-        transactionList.add(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 0, 180));
-        transactionList.add(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie", "Black Panther", 21, 0));
-        transactionList.add(new Transaction("05/05/2018", R.drawable.gift, "Cash", "Gift", "Muttertag", 38.25, 0));
+        transactionHistory.addTransaction(new Transaction("05/02/2018", R.drawable.household, "Cash", "Household", "Edeka", 55.20, 0));
+        transactionHistory.addTransaction(new Transaction("05/02/2018", R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 0, 180));
+        transactionHistory.addTransaction(new Transaction("05/05/2018", R.drawable.movie, "Cash", "Movie", "Black Panther", 21, 0));
+        transactionHistory.addTransaction(new Transaction("05/05/2018", R.drawable.gift, "Cash", "Gift", "Muttertag", 38.25, 0));
 
     }
 
@@ -220,7 +233,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         this.expense = expense;
         this.description = description;
         Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income);
-        transactionList.add(transaction);
+        transactionHistory.addTransaction(transaction);
         adapter.notifyItemInserted(position);
 
         // Firebase
@@ -231,10 +244,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public static ArrayList<Transaction> getTransactionSorted() {
-        Collections.sort(transactionList);
-        return transactionList;
-    }
 
 
     // Header-Section by date
@@ -242,20 +251,27 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                /*
-                String date = transactionList.get(position).getDate();
-                String date2 = transactionList.get(position - 1).getDate();
-                return position == 0 || !date.equals(date2);
-                */
 
-                return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
+                //TODO: Try... Catch... richtig schreiben....
+                if(position > 0 ) {
+                    return transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
+                } else {
+                    return position == 0;
+                }
+               // return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
             }
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                date = transactionList.get(position).getDate().toString();
+                // TODO: Richtige Lösung für Index out of bounds schreiben...
+                if(position >= 0) {
+                    date = transactionList.get(position).getDate().toString();
+
+                } else {
+                    date = "01/01/2018";
+                }
+               // date = transactionList.get(position).getDate().toString();
                 return date;
-                //return transactionList.get(position).getDate().subSequence(0, 8);
             }
         };
     }
@@ -279,7 +295,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                adapter.setSearchResult(transactionList);
+                adapter.setSearchResult(transactionHistory.getTransactions());
                 return true;
             }
         });
@@ -292,7 +308,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        final ArrayList<Transaction> filteredList = filter(transactionList, newText);
+        final ArrayList<Transaction> filteredList = filter(transactionHistory.getTransactions(), newText);
         adapter.setSearchResult(filteredList);
         return false;
     }
@@ -318,4 +334,27 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return  fiteredList;
     }
 
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
+            String name = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition());
+            final int deletedIndex = viewHolder.getAdapterPosition();
+            adapter.removeItem(deletedIndex);
+
+            Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_SHORT);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adapter.restoreItem(deletedTransaction, deletedIndex);
+                }
+            });
+
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+
+        }
+
+    }
 }

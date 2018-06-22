@@ -5,10 +5,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp">
 
+
+    <RelativeLayout
+        android:id="@+id/transaction_add_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@color/colorwebsiteTab">
+
+        <ImageView
+            android:id="@+id/delete_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete_white_24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/delete_icon"
+            android:textColor="#ffffff"
+            android:text="Delete"
+            android:textSize="14sp"/>
+
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/transaction_item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#ffffff"
         android:layout_margin="20dp">
 
         <ImageView
@@ -20,7 +48,7 @@
 
         <TextView
             android:id="@+id/description_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/category_imageView"
@@ -32,7 +60,7 @@
 
         <TextView
             android:id="@+id/account_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/description_textView"
             android:layout_toEndOf="@+id/category_imageView"
@@ -44,7 +72,7 @@
 
         <TextView
             android:id="@+id/money_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerInParent="true"

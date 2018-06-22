@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.model;
+package com.lmu.pem.finanzapp.model.transactions;
 
 import android.support.annotation.NonNull;
 
@@ -20,10 +20,10 @@ public class Transaction implements Comparable<Transaction> {
     private String date;
 
     private int imageResource;
+    private int year, month, day;
 
 
     public Transaction(String date, int imageResource, String account, String category, String description, double expense, double income) {
-
         this.date = date;
         this.imageResource = imageResource;
         this.account = account;
@@ -31,9 +31,19 @@ public class Transaction implements Comparable<Transaction> {
         this.description = description;
         this.expense = expense;
         this.income = income;
-
     }
 
+    public Transaction(int month, int day, int year, int imageResource, String account, String category, String description, double expense, double income) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.imageResource = imageResource;
+        this.account = account;
+        this.category = category;
+        this.description = description;
+        this.expense = expense;
+        this.income = income;
+    }
 
 
     public String getAccount() {
@@ -62,6 +72,12 @@ public class Transaction implements Comparable<Transaction> {
         return date;
     }
 
+    public int getDay() { return day; }
+
+    public int getMonth() { return month; }
+
+    public int getYear() { return year;    }
+
     public String getDescription() {
         return description;
     }
@@ -86,7 +102,6 @@ public class Transaction implements Comparable<Transaction> {
     }
 
 
-
     // for date header
     @Override
     public int compareTo(@NonNull Transaction transaction) {
@@ -107,6 +122,5 @@ public class Transaction implements Comparable<Transaction> {
         result.put("account", account);
         result.put("imageResource", imageResource);
         return result;
-
     }
 }

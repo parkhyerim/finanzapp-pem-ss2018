@@ -1,15 +1,24 @@
 package com.lmu.pem.finanzapp.model.dashboard.cards;
 
-public class DbCard {
+import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
+
+public abstract class DbCard {
+
+    DashboardManager.CardType type;
 
      String title;
      String primaryText;
      String btn1Text;
 
-    public DbCard(String title, String primaryText, String btn1Text) {
+    public DbCard(DashboardManager.CardType type, String title, String primaryText, String btn1Text) {
+        this.type = type;
         this.title = title;
         this.primaryText = primaryText;
         this.btn1Text = btn1Text;
+    }
+
+    public DashboardManager.CardType getType() {
+        return type;
     }
 
     public String getTitle() {
