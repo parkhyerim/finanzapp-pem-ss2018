@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.lmu.pem.finanzapp.controller.PagerAdapter;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
@@ -27,11 +28,24 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        globalSettings = GlobalSettings.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        globalSettings = GlobalSettings.getInstance();
+        setupToolbar();
         setupTabs();
+    }
+
+    private void setupToolbar() {
+        ImageView settingsButton = findViewById(R.id.action_settings);
+        settingsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = findViewById(R.id.menu_search);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
     }
 
     private void setupTabs() {
@@ -86,43 +100,8 @@ public class MainActivity extends AppCompatActivity  {
             public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        switch (globalSettings.getHomeTab()){
-            case GlobalSettings.TAB_TRANSACTIONS:
-                tabs.getTabAt(1).select();
-                break;
-            case GlobalSettings.TAB_ACCOUNTS:
-                tabs.getTabAt(2).select();
-                break;
-            case GlobalSettings.TAB_BUDGETS:
-                tabs.getTabAt(3).select();
-                break;
-        }
+        tabs.getTabAt(globalSettings.getHomeTab()).select();
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
-
-        MenuItem settingsButton = menu.findItem(R.id.action_settings);
-        settingsButton.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            }
-        });
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = findViewById(R.id.menu_search);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-
-        return true;
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

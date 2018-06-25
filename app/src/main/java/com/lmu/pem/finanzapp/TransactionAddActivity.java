@@ -71,7 +71,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
         // Currency
-        currencySymbol.setText(GlobalSettings.getInstance().getCurrency());
+        currencySymbol.setText(GlobalSettings.getInstance(this).getCurrencyString());
 
         // Date
         cal = Calendar.getInstance();

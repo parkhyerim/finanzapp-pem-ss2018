@@ -1,10 +1,12 @@
 package com.lmu.pem.finanzapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -13,18 +15,27 @@ import android.widget.ToggleButton;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 public class SettingsActivity extends AppCompatActivity {
+    private GlobalSettings globalSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        final GlobalSettings globalSettings = GlobalSettings.getInstance();
-
-        setupSpinners(globalSettings);
+        globalSettings = GlobalSettings.getInstance(this);
+        setupToolbar();
+        setupSpinners();
     }
 
-    private void setupSpinners(final GlobalSettings globalSettings) {
+    private void setupToolbar() {
+        ImageView homeButton = findViewById(R.id.action_home);
+        homeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void setupSpinners() {
         Spinner currencySpinner = (Spinner) findViewById(R.id.currencySpinner);
         ArrayAdapter<CharSequence> currencyAdapter = ArrayAdapter.createFromResource(this, R.array.currency_array, android.R.layout.simple_spinner_item);
         currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -32,8 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
         currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String currency = (String) parent.getItemAtPosition(position);
-                globalSettings.setCurrency(currency);
+                globalSettings.setCurrency(position);
             }
 
             @Override
@@ -41,6 +51,8 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+        currencySpinner.setSelection(globalSettings.getCurrency());
+
         Spinner homeTabSpinner = (Spinner) findViewById(R.id.homeTabSpinner);
         ArrayAdapter<CharSequence> homeTabAdapter = ArrayAdapter.createFromResource(this, R.array.tabs_array, android.R.layout.simple_spinner_item);
         homeTabAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -56,5 +68,6 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+        homeTabSpinner.setSelection(globalSettings.getHomeTab());
     }
 }

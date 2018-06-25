@@ -48,7 +48,7 @@ public class DashboardFragment extends Fragment {
 
         // specify an adapter (see also next example)
 
-        adapter = new CardAdapter(dashboardManager.getDataSet(TransactionHistory.getInstance()));
+        adapter = new CardAdapter(dashboardManager.getDataSet(TransactionHistory.getInstance()), getContext());
         recyclerView.setAdapter(adapter);
 
 
