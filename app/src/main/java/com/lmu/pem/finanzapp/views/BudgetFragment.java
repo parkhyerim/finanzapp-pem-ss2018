@@ -10,10 +10,9 @@ import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
-import com.lmu.pem.finanzapp.data.categories.Category;
-import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.data.categories.DefaultCategory;
-import com.lmu.pem.finanzapp.model.Budget;
+import com.lmu.pem.finanzapp.model.budgets.Budget;
+import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,13 +44,7 @@ public class BudgetFragment extends Fragment {
         manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
 
-        ArrayList<Budget> budgets = new ArrayList<>();
-
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018 - 1900, 0, 1), new Date(2018 - 1900, 11, 31), 110f, 14.5f));
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018  - 1900, 4, 1), new Date(2018  - 1900, 6, 1), 24, 14.5f));
-        budgets.add(new Budget(DefaultCategory.FOOD, new Date(2018  - 1900, 1, 1), new Date(2018  - 1900, 3, 1), 13, 14.5f));
-
-        adapter = new BudgetAdapter(budgets);
+        adapter = new BudgetAdapter(BudgetManager.getInstance().getBudgets());
         recyclerView.setAdapter(adapter);
 
         // Inflate the layout for this fragment
