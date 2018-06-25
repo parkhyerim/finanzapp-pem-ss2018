@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        ImageView homeButton = findViewById(R.id.action_home);
+        ImageView homeButton = findViewById(R.id.action_done);
         homeButton.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);

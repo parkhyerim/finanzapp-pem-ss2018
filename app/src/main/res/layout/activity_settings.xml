@@ -13,22 +13,16 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:contentInsetStart="0dp"
+        app:title="@string/action_settings"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <ImageView
-            android:id="@+id/action_home"
+            android:id="@+id/action_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:src="@drawable/home" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:text="@string/action_settings"/>
+            android:layout_gravity="right"
+            android:src="@drawable/check" />
 
     </android.support.v7.widget.Toolbar>
     <GridLayout
