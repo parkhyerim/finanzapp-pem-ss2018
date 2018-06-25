@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,7 +25,6 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -33,6 +33,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private Context context;
     private ArrayList<Transaction> transactionList;
     private View rootView;
+    private TransactionViewHolder selectedItem;
 
 
     public TransactionAdapter(ArrayList<Transaction> transactionList, Context context, View rootView){
@@ -41,14 +42,15 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         this.rootView = rootView;
     }
 
-    public static class TransactionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class TransactionViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView categoryImageView;
         private TextView descriptionTextView;
         private TextView accountTextView;
         private TextView moneyTextView;
         public RelativeLayout viewForeground;
-        private ImageButton editButton, deleteButton;
+        private LinearLayout viewBackground;
+        private ImageButton editButton, deleteButton, backButton;
         ArrayList<Transaction> transactions;
         Context context;
         private TransactionAdapter transactionAdapter;
@@ -67,40 +69,66 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
             moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
+            viewBackground = (LinearLayout) itemView.findViewById(R.id.transaction_interaction);
             editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);
             deleteButton = (ImageButton) itemView.findViewById(R.id.delete_icon);
-
-
+            backButton = (ImageButton) itemView.findViewById(R.id.back_icon);
 
             itemView.setOnLongClickListener((view)->{
-                viewForeground.setVisibility(View.INVISIBLE);
+                showInteractionView();
 
-                editButton.setOnClickListener(this); //TODO delocate
+                editButton.setOnClickListener((v)->{
+                    clickEdit();
+                    hideInteractionView();
+                });
                 deleteButton.setOnClickListener((v)->{
-                    TransactionHistory transactionHistory = TransactionHistory.getInstance();
-                    String name = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
-                    final Transaction deletedTransaction = transactionHistory.getTransactions().get(getAdapterPosition());
-                    final int deletedIndex = getAdapterPosition();
-                    adapter.removeItem(deletedIndex);
-
-                    Snackbar snackbar = Snackbar.make(adapter.rootView, name + " removed from list!", Snackbar.LENGTH_LONG);
-                    snackbar.setAction("UNDO", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            adapter.restoreItem(deletedTransaction, deletedIndex);
-                        }
-                    });
-
-                    snackbar.setActionTextColor(Color.YELLOW);
-                    snackbar.show();
+                    clickDelete(transactionAdapter);
+                    hideInteractionView();
+                });
+                backButton.setOnClickListener((v)->{
+                    hideInteractionView();
                 });
                 return true;
             });
         }
 
+        private void showInteractionView(){
+            viewForeground.setVisibility(View.INVISIBLE);
+            viewBackground.setVisibility(View.VISIBLE);
 
-        public void onClick(View v) {
+            if(transactionAdapter.selectedItem!=null){
+                transactionAdapter.selectedItem.hideInteractionView();
+            }
+            transactionAdapter.selectedItem = this;
+        }
+        private void hideInteractionView(){
+            viewForeground.setVisibility(View.VISIBLE);
+            viewBackground.setVisibility(View.INVISIBLE);
 
+            transactionAdapter.selectedItem = null;
+        }
+
+        private void clickDelete(TransactionAdapter adapter) {
+            TransactionHistory transactionHistory = TransactionHistory.getInstance();
+            String name = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionHistory.getTransactions().get(getAdapterPosition());
+            final int deletedIndex = getAdapterPosition();
+            adapter.removeItem(deletedIndex);
+
+            Snackbar snackbar = Snackbar.make(adapter.rootView, name + " removed from list!", Snackbar.LENGTH_LONG);
+            snackbar.setAction("UNDO", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adapter.restoreItem(deletedTransaction, deletedIndex);
+                }
+            });
+
+            snackbar.setActionTextColor(Color.YELLOW);
+            snackbar.show();
+        }
+
+
+        private void clickEdit() {
             // Update(edit) a transaction
             int position = getAdapterPosition();
             Transaction transaction = this.transactions.get(position);
@@ -176,7 +204,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
         // Expense or Income
-        //TODO Währungssymbol effizienter, kluger zeigen...
         String prefix = "";
         double amount;
         if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
@@ -199,8 +226,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
 
-
-
     @Override
     public int getItemCount() {
         // Wenn transactionList null ist, dann gibt 0 Wert zurück
@@ -218,7 +243,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         transactionList.add(position, transactionItem);
         notifyItemInserted(position);
     }
-
 
 
     public void setSearchResult(ArrayList<Transaction> result){
