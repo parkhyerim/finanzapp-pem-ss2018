@@ -9,31 +9,28 @@ import java.util.Map;
 
 public class Transaction implements Comparable<Transaction> {
 
-    private double expense;
-    private double income;
-    private double amount;
-    private double money;
-
     private String category;
     private String account;
     private String description;
-    private String date;
-
     private int imageResource;
+
+    private double amount;
+    private double balance;
+
+    private String date;
     private int year, month, day;
 
 
-    public Transaction(String date, int imageResource, String account, String category, String description, double expense, double income) {
+    public Transaction(String date, int imageResource, String account, String category, String description, double amount) {
         this.date = date;
         this.imageResource = imageResource;
         this.account = account;
         this.category = category;
         this.description = description;
-        this.expense = expense;
-        this.income = income;
+        this.amount = amount;
     }
 
-    public Transaction(int month, int day, int year, int imageResource, String account, String category, String description, double expense, double income) {
+    public Transaction(int month, int day, int year, int imageResource, String account, String category, String description, double amount) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -41,24 +38,9 @@ public class Transaction implements Comparable<Transaction> {
         this.account = account;
         this.category = category;
         this.description = description;
-        this.expense = expense;
-        this.income = income;
+        this.amount = amount;
     }
 
-
-    public String getAccount() {
-        return account;
-    }
-
-    public double getAmount() { return amount; }
-
-    public double getExpense() {
-        return expense;
-    }
-
-    public double getIncome() {
-        return income;
-    }
 
     public int getImageResource() {
         return imageResource;
@@ -68,9 +50,18 @@ public class Transaction implements Comparable<Transaction> {
         return category;
     }
 
+    public String getAccount() {
+        return account;
+    }
+
     public String getDate() {
         return date;
     }
+
+    public double getAmount() { return amount; }
+
+    public double getBalance() { return balance; }
+
 
     public int getDay() { return day; }
 
@@ -82,25 +73,6 @@ public class Transaction implements Comparable<Transaction> {
         return description;
     }
 
-    public double getMoney() {
-        if(getExpense() > getIncome()){
-            money = getExpense();
-        } else {
-            money = getIncome();
-        }
-        return money;
-    }
-
-    public double addExpense(double expense){
-        amount -= expense;
-        return amount;
-    }
-
-    public double addIncome(double income) {
-        amount += income;
-        return amount;
-    }
-
 
     // for date header
     @Override
@@ -108,19 +80,20 @@ public class Transaction implements Comparable<Transaction> {
 
         return getDate().toString()
                 .compareTo(transaction.getDate().toString());
-
     }
+
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("transactionDate", date);
-        result.put("expense", expense);
-        result.put("income", income);
+        result.put("date", date);
         result.put("description", description);
         result.put("category", category);
         result.put("account", account);
+        result.put("amount", amount);
         result.put("imageResource", imageResource);
+
         return result;
     }
+
 }

@@ -13,7 +13,7 @@ public class Analyzer {
 
         for (Transaction transaction : history.getTransactions()) {
             if (transaction.getYear() != Calendar.getInstance().get(Calendar.YEAR)) continue;
-            monthsCounters[transaction.getMonth()] += transaction.getExpense();
+            monthsCounters[transaction.getMonth()] += transaction.getAmount();
         }
 
         int maxMonth = -1;

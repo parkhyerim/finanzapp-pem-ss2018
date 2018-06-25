@@ -21,7 +21,6 @@ import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -41,7 +40,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private ImageView categoryImageView;
         private TextView descriptionTextView;
         private TextView accountTextView;
-        private TextView moneyTextView;
+        private TextView amountTextView;
         public RelativeLayout viewForeground;
         ArrayList<Transaction> transactions;
         Context context;
@@ -59,7 +58,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
             accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
-            moneyTextView = (TextView) itemView.findViewById(R.id.money_textView);
+            amountTextView = (TextView) itemView.findViewById(R.id.money_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
         }
 
@@ -73,7 +72,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             intent.putExtra("date", transaction.getDate());
             intent.putExtra("account", transaction.getAccount());
             intent.putExtra("description", transaction.getDescription());
-            intent.putExtra("money", transaction.getMoney());
+            intent.putExtra("amount", transaction.getAmount());
 
             int index;
             String[] expenseCategories, incomeCategories;
@@ -143,16 +142,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         // Expense or Income
         //TODO Währungssymbol effizienter, kluger zeigen...
         String prefix = "";
-        double amount;
-        if(currentTransactionItem.getExpense() > currentTransactionItem.getIncome()) {
-            prefix="-";
-            amount = currentTransactionItem.getExpense();
-            holder.moneyTextView.setTextColor(Color.parseColor("#ff0000"));
+        double amount = currentTransactionItem.getAmount();
+
+        if(amount < 0) {
+            //prefix="-";
+            //amount = currentTransactionItem.getAmount();
+            holder.amountTextView.setTextColor(Color.parseColor("#ff0000"));
         } else {
-            amount = currentTransactionItem.getIncome();
-            holder.moneyTextView.setTextColor(Color.parseColor("#2BAB68"));
+           // amount = currentTransactionItem.getAmount();
+            holder.amountTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
-        holder.moneyTextView.setText(prefix+String.format(Locale.getDefault(), "%,.2f %s",amount, GlobalSettings.getInstance().getCurrency()));
+        holder.amountTextView.setText(String.format(Locale.getDefault(), "%,.2f %s", amount, GlobalSettings.getInstance().getCurrency()));
+
 
         // Description
         if(currentTransactionItem.getDescription().equals("")){
