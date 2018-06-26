@@ -77,8 +77,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
-    public CardAdapter(ArrayList<DbCard> dataSet) {
+    public CardAdapter(ArrayList<DbCard> dataSet, Context context) {
         this.dataSet = dataSet;
+        this.context = context;
     }
 
     @Override
@@ -122,7 +123,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             BasicAmountCard c = (BasicAmountCard) dataSet.get(position);
 
             h.primaryText.setText(c.getPrimaryText());
-            h.amountText.setText(String.format(Locale.getDefault(), "%,.2f %s",c.getAmount(), GlobalSettings.getInstance().getCurrency()));
+            h.amountText.setText(String.format(Locale.getDefault(), "%,.2f %s",c.getAmount(), GlobalSettings.getInstance(context).getCurrencyString()));
 
 
             switch (c.getAmountType()) {

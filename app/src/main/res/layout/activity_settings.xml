@@ -10,17 +10,26 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?android:attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:title="Settings"
+        app:title="@string/action_settings"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <ImageView
+            android:id="@+id/action_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_gravity="right"
+            android:src="@drawable/check" />
+
     </android.support.v7.widget.Toolbar>
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        android:padding="5dp"
+        android:padding="7dp"
         android:orientation="horizontal">
         <TextView
             android:layout_height="wrap_content"
@@ -28,12 +37,14 @@
             android:text="Currency: "
             android:textSize="16sp"
             android:layout_marginBottom="10dp"
+            android:layout_marginEnd="5dp"
             />
         <Spinner
             android:id="@+id/currencySpinner"
             android:layout_width="wrap_content"
+            android:layout_gravity="fill_horizontal"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="10dp"
             android:paddingRight="10dp"
             />
         <TextView
@@ -42,12 +53,14 @@
             android:layout_width="wrap_content"
             android:textSize="16sp"
             android:layout_marginBottom="10dp"
+            android:layout_marginEnd="5dp"
             />
         <Spinner
             android:id="@+id/homeTabSpinner"
             android:layout_width="wrap_content"
+            android:layout_gravity="fill_horizontal"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="10dp"
             android:paddingRight="10dp"
             />
     </GridLayout>

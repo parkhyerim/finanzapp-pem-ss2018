@@ -14,7 +14,6 @@ import android.widget.BaseAdapter;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.views.CircleView;
-import com.lmu.pem.finanzapp.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -59,7 +58,7 @@ public class AccountAdapter extends BaseAdapter {
         }
         String text = accounts.get(position).getName();
         circleView.setText(text, accounts.get(position).isDefault());
-        String subtext = String.format(Locale.getDefault(), "%,.2f %s",accounts.get(position).getBalance(), GlobalSettings.getInstance().getCurrency());
+        String subtext = String.format(Locale.getDefault(), "%,.2f %s",accounts.get(position).getBalance(), GlobalSettings.getInstance(context).getCurrencyString());
         circleView.setSubText(subtext);
         circleView.setCircleColor(accounts.get(position).getColor());
 
