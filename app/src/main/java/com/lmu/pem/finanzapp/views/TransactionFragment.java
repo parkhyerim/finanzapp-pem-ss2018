@@ -71,8 +71,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     private int position;
     private int imageResource;
-    private double expense = 0;
-    private double income = 0;
+    private double amount = 0;
     private String category = "";
     private String account = "";
     private String date = "";
@@ -196,11 +195,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             account = data.getStringExtra("account");
             category = data.getStringExtra("category");
             description = data.getStringExtra("description");
-            expense = data.getDoubleExtra("expense", 0);
-            income = data.getDoubleExtra("income", 0);
+            amount = data.getDoubleExtra("amount",0);
 
             //A new transaction can be added to the transaction list
-            insertItem(position, date, account, category, description, expense, income);
+            insertItem(position, date, account, category, description, amount);
         }
     }
 
@@ -214,7 +212,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public void insertItem(int position, String date, String account, String category, String description, double expense, double income){
+    public void insertItem(int position, String date, String account, String category, String description, double amount){
 
         final String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
 
@@ -222,10 +220,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         this.date = date;
         this.account = account;
         this.category = category;
-        this.income = income;
-        this.expense = expense;
+        this.amount = amount;
         this.description = description;
-        Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.expense, this.income);
+        Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.amount);
         transactionHistory.addTransaction(transaction);
         adapter.notifyItemInserted(position);
 
@@ -316,11 +313,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             final String accText = transaction.getAccount().toLowerCase();
             final String cateText = transaction.getCategory().toLowerCase();
             final String dateText = transaction.getDate().toLowerCase();
-            final String expenseText = String.valueOf(transaction.getExpense()).toLowerCase();
-            final String incomeText = String.valueOf(transaction.getIncome()).toLowerCase();
+            final String amountText = String.valueOf(transaction.getAmount()).toLowerCase();
             if(descText.contains(query) || accText.contains(query)
                     ||cateText.contains(query) ||dateText.contains(query)
-                    || expenseText.contains(query) || incomeText.contains(query)){
+                    || amountText.contains(query)){
                 fiteredList.add(transaction);
             }
         }

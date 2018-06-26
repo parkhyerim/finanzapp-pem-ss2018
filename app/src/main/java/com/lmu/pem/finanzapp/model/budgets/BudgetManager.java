@@ -27,14 +27,14 @@ public class BudgetManager implements TransactionHistoryEventListener{
             case ADDED:
                 for (Budget budget : budgets) {
                     if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
-                        budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransaction().getExpense());
+                        budget.setCurrentAmount(budget.getCurrentAmount() - (float)event.getTransaction().getAmount());
                     }
                 }
                 break;
             case REMOVED:
                 for (Budget budget : budgets) {
                     if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
-                        budget.setCurrentAmount(budget.getCurrentAmount() - (float)event.getTransaction().getExpense());
+                        budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransaction().getAmount());
                     }
                 }
                 break;
@@ -55,11 +55,11 @@ public class BudgetManager implements TransactionHistoryEventListener{
 
         for (Transaction transaction : TransactionHistory.getInstance().getTransactions()) {
             if (transaction.getCategory().equalsIgnoreCase(category)) {
-                amount += transaction.getExpense();
+                amount += transaction.getAmount();
             }
         }
 
-        budgets.add(new Budget(category, startingDate, endingDate, budget, amount));
+        budgets.add(new Budget(category, startingDate, endingDate, budget, -amount));
     }
 
 }

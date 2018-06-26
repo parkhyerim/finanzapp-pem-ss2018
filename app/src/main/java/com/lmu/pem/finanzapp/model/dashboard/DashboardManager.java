@@ -123,8 +123,8 @@ public class DashboardManager implements TransactionHistoryEventListener {
         float totalAmount = 0f;
 
         for (Transaction transaction : history.getTransactions()) {
-            totalAmount += transaction.getIncome();
-            totalAmount -= transaction.getExpense();
+            totalAmount += transaction.getAmount();
+           // totalAmount -= transaction.getExpense();
         }
         Log.i("DashboardManager", "TotalAmount: " + totalAmount);
 

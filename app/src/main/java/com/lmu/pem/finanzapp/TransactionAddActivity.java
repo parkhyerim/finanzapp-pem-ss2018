@@ -25,8 +25,7 @@ import java.util.Calendar;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
-    private double expense = 0;
-    private double income = 0;
+    private double amount = 0;
     private String category, account, date, description;
     private int year, month, day;
 
@@ -182,7 +181,7 @@ public class TransactionAddActivity extends AppCompatActivity {
             dateDisplay.setText(date);
             descriptionEditText.setText(description);
             // TODO: Expense and Income
-            moneyEditText.setText(String.valueOf(getIntent().getDoubleExtra("money", 0)));
+            moneyEditText.setText(String.valueOf(getIntent().getDoubleExtra("amount", 0)));
 
             // Account
             String account = accountSpinner.getSelectedItem().toString();
@@ -223,8 +222,9 @@ public class TransactionAddActivity extends AppCompatActivity {
                     expenseCategoryShow();
 
                 } else {
-                    income = 0;
-                    expense = Double.parseDouble(moneyEditText.getText().toString());
+                   // income = 0;
+                    //expense = Double.parseDouble(moneyEditText.getText().toString());
+                    amount = -1 * Double.parseDouble(moneyEditText.getText().toString());
                     expenseCategoryShow();
                     transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
 
@@ -242,8 +242,9 @@ public class TransactionAddActivity extends AppCompatActivity {
                     incomeCategoryShow();
 
                 } else {
-                    expense = 0;
-                    income = Double.parseDouble(moneyEditText.getText().toString());
+                   // expense = 0;
+                   // income = Double.parseDouble(moneyEditText.getText().toString());
+                    amount = Double.parseDouble(moneyEditText.getText().toString());
                     incomeCategoryShow();
                     transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
 
@@ -276,8 +277,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                         resultIntent.putExtra("date", date);
                         resultIntent.putExtra("category", category);
                         resultIntent.putExtra("account", account);
-                        resultIntent.putExtra("expense", expense);
-                        resultIntent.putExtra("income", income);
+                        resultIntent.putExtra("amount", amount);
                         resultIntent.putExtra("description", description);
                         setResult(RESULT_OK, resultIntent);
                         finish();
