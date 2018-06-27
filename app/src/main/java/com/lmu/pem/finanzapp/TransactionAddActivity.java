@@ -1,12 +1,16 @@
 package com.lmu.pem.finanzapp;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,7 +25,10 @@ import android.widget.Toast;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
@@ -38,14 +45,20 @@ public class TransactionAddActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
     private AccountManager accountManager;
-    private ViewPager viewPager;
+
+    private Context context;
 
     private Calendar cal;
+
+    private  String newItem;
+
+    private List<String> expenseArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.transaction_add);
+        context = this;
         //setTitle("Add Transaction");
         accountManager = AccountManager.getInstance();
 
@@ -104,20 +117,6 @@ public class TransactionAddActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 setDateOnDisplay();
             }
-                /*
-                month = month + 1;
-                //Log.d("date", "onDateSet: date: " + year + "/" + month +"/" + dayOfMonth);
-                if (day < 10 && month < 10) {
-                    dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
-                } else if (month < 10) {
-                    dateDisplay.setText("0"+ month + "/" + day + "/" + year);
-                } else if (day < 10) {
-                    dateDisplay.setText(month + "/" +  "0" + day + "/" + year);
-                } else {
-                    dateDisplay.setText(month + "/" + day + "/" + year);
-                }
-            }
-            */
         };
 
 
@@ -132,6 +131,13 @@ public class TransactionAddActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 account = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
                 //Toast.makeText(getBaseContext(), account + " selected", Toast.LENGTH_SHORT).show();
+                /*
+
+                if(accountSpinner.getSelectedItemPosition() == accountManager.getNameArray().length-1) {
+                    Toast.makeText(getBaseContext(), accountSpinner.getSelectedItemPosition() + " selected", Toast.LENGTH_SHORT).show();
+
+                }
+                */
             }
 
             @Override
@@ -142,14 +148,106 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Category-Spinner(Dropdown)
         // Expense-Category
         // getCategorySpinner();
-        ArrayAdapter<CharSequence> expenseCategoryAdaper = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
-        expenseCategoryAdaper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        expenseCategorySpinner.setAdapter(expenseCategoryAdaper);
+        //expenseArray = getResources().getStringArray(R.array.expense_category);
+
+        expenseArray.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "ADD"));
+
+        //expenseArray = Arrays.asList(getResources().getStringArray(R.array.expense_category));
+
+        //List<String> expList = Arrays.asList(getResources().getStringArray(R.array.expense_category));
+        ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenseArray);
+
+       // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
+        expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        expenseCategorySpinner.setAdapter(expenseCategoryAdapter);
         expenseCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
+
+                if(expenseCategorySpinner.getSelectedItemPosition() == expenseArray.size()-1){
+                    LayoutInflater li = LayoutInflater.from(context);
+                    View promptsView = li.inflate(R.layout.prompts, null);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setView(promptsView);
+
+                    final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+                    // set dialog message
+                    AlertDialog.Builder builder = alertDialogBuilder
+                            .setCancelable(false)
+                            .setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // get user input and set it to result
+                                            // edit text
+                                            /*
+                                            String newItem = userInput.getText().toString();
+                                            expList.add(newItem);
+                                            expenseCategoryAdapter.notifyDataSetChanged();
+                                            category = parent.getItemAtPosition(position).toString();
+                                            */
+
+                                             newItem = userInput.getText().toString();
+                                             int pos = expenseArray.size()-1;
+                                             expenseArray.set(pos, newItem);
+
+
+
+                                            /*
+                                            for(int i = 0; i < pos; i++) {
+                                                String[] newArray = new String[pos];
+                                                newArray[i] = expenseArray[i];
+                                                newArray[pos] = newItem;
+                                            }
+                                            */
+
+                                            /*
+                                            for(int i = 0 ; i < pos; i++){
+                                                expenseArray = new String[pos+1];
+                                                expenseArray[i] = expenseArray[i];
+
+                                            }
+                                            */
+
+
+                                            // expenseArray[pos] = "Add";
+
+                                            expenseCategoryAdapter.notifyDataSetChanged();
+                                            category = parent.getItemAtPosition(position).toString();
+
+                                            /*
+                                            for(int i = 0 ; i < pos; i++){
+                                                expenseArray = new String[pos+1];
+                                                expenseArray[i] = expenseArray[i];
+                                                expenseArray[pos] = "Add";
+
+                                            }
+                                            */
+
+
+                                        }
+                                    })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+
+
+                    //Toast.makeText(getBaseContext(), expenseCategorySpinner.getSelectedItemPosition() + " selected", Toast.LENGTH_SHORT).show();
+
+                }
+
+
             }
 
             @Override

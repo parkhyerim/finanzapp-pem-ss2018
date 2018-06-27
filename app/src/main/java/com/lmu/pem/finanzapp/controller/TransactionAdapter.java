@@ -3,6 +3,7 @@ package com.lmu.pem.finanzapp.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -66,13 +67,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             // Alle findViewByIDs
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
-            accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
-            amountTextView = (TextView) itemView.findViewById(R.id.money_textView);
+            accountTextView = itemView.findViewById(R.id.account_textView);
+            amountTextView = itemView.findViewById(R.id.money_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
             viewBackground = (LinearLayout) itemView.findViewById(R.id.transaction_interaction);
             editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.delete_icon);
-            backButton = (ImageButton) itemView.findViewById(R.id.back_icon);
+            deleteButton = itemView.findViewById(R.id.delete_icon);
+            backButton =  itemView.findViewById(R.id.back_icon);
 
             itemView.setOnLongClickListener((view)->{
                 showInteractionView();
@@ -201,6 +202,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         // Category-Image
+
+
         holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
         // Expense or Income

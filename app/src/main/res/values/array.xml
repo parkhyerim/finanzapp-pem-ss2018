@@ -18,6 +18,7 @@
         <item>Car</item>
         <item>Travel</item>
         <item>Other</item>
+        <item>Add</item>
     </string-array>
 
     <string-array name="income_category">
