@@ -52,14 +52,14 @@ public class TransactionAddActivity extends AppCompatActivity {
 
     private  String newItem;
 
-    private List<String> expenseArray = new ArrayList<>();
+    //private List<String> expenseArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.transaction_add);
         context = this;
-        //setTitle("Add Transaction");
+
         accountManager = AccountManager.getInstance();
 
         // Alle findViewByIDs
@@ -148,9 +148,9 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Category-Spinner(Dropdown)
         // Expense-Category
         // getCategorySpinner();
-        //expenseArray = getResources().getStringArray(R.array.expense_category);
+        String[] expenseArray = getResources().getStringArray(R.array.expense_category);
 
-        expenseArray.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "ADD"));
+        //expenseArray.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "ADD"));
 
         //expenseArray = Arrays.asList(getResources().getStringArray(R.array.expense_category));
 
@@ -166,7 +166,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 category = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
 
-                if(expenseCategorySpinner.getSelectedItemPosition() == expenseArray.size()-1){
+                if(expenseCategorySpinner.getSelectedItemPosition() == expenseArray.length-1){
                     LayoutInflater li = LayoutInflater.from(context);
                     View promptsView = li.inflate(R.layout.prompts, null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -189,8 +189,9 @@ public class TransactionAddActivity extends AppCompatActivity {
                                             */
 
                                              newItem = userInput.getText().toString();
-                                             int pos = expenseArray.size()-1;
-                                             expenseArray.set(pos, newItem);
+                                             int pos = expenseArray.length-1;
+                                             //expenseArray.set(pos, newItem);
+                                            expenseArray[pos] = newItem;
 
 
 
@@ -255,7 +256,10 @@ public class TransactionAddActivity extends AppCompatActivity {
         });
 
         // Income-Category
-        ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
+        String[] incomeArray = getResources().getStringArray(R.array.income_category);
+       // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomeArray);
+
         incomeCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         incomeCategorySpinner.setAdapter(incomeCategoryAdapter);
         incomeCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -264,6 +268,49 @@ public class TransactionAddActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
+
+                if(incomeCategorySpinner.getSelectedItemPosition() == incomeArray.length-1){
+                    LayoutInflater li = LayoutInflater.from(context);
+                    View promptsView = li.inflate(R.layout.prompts, null);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    alertDialogBuilder.setView(promptsView);
+
+                    final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+                    // set dialog message
+                    AlertDialog.Builder builder = alertDialogBuilder
+                            .setCancelable(false)
+                            .setPositiveButton("OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // get user input and set it to result
+                                            // edit text
+
+                                            String newItem = userInput.getText().toString();
+                                            int pos = incomeArray.length-1;
+                                            incomeArray[pos] = newItem;
+
+                                            incomeCategoryAdapter.notifyDataSetChanged();
+                                            category = parent.getItemAtPosition(position).toString();
+
+
+                                        }
+                                    })
+                            .setNegativeButton("Cancel",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+                }
+
+
             }
 
             @Override
