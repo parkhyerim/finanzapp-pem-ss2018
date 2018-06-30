@@ -3,7 +3,6 @@ package com.lmu.pem.finanzapp.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -18,11 +17,11 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,9 +109,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         private void clickDelete(TransactionAdapter adapter) {
-            TransactionHistory transactionHistory = TransactionHistory.getInstance();
-            String name = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionHistory.getTransactions().get(getAdapterPosition());
+           // TransactionHistory transactionHistory = TransactionHistory.getInstance();
+            TransactionManager transactionManager = TransactionManager.getInstance();
+            String name = transactionManager.getTransactions().get(getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionManager.getTransactions().get(getAdapterPosition());
             final int deletedIndex = getAdapterPosition();
             adapter.removeItem(deletedIndex);
 
