@@ -13,13 +13,20 @@ public class Transaction implements Comparable<Transaction> {
     private String account;
     private String description;
     private int imageResource;
-
     private double amount;
     private double balance;
 
     private String date;
     private int year, month, day;
 
+    private String transactionId;
+
+    private Map<String, Transaction> trns = new HashMap<>();
+
+
+    public Transaction(){
+        // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
+    }
 
     public Transaction(String date, int imageResource, String account, String category, String description, double amount) {
         this.date = date;
@@ -41,6 +48,15 @@ public class Transaction implements Comparable<Transaction> {
         this.amount = amount;
     }
 
+    public Transaction(String id, String date, int imageResource, String account, String category, String description, double amount) {
+        this.transactionId = id;
+        this.date = date;
+        this.imageResource = imageResource;
+        this.account = account;
+        this.category = category;
+        this.description = description;
+        this.amount = amount;
+    }
 
     public int getImageResource() {
         return imageResource;
@@ -73,11 +89,16 @@ public class Transaction implements Comparable<Transaction> {
         return description;
     }
 
+    public String getTransactionId() { return transactionId; }
+
+
+    public void setTransactionId(String key){
+        this.transactionId = transactionId;
+    }
 
     // for date header
     @Override
     public int compareTo(@NonNull Transaction transaction) {
-
         return getDate().toString()
                 .compareTo(transaction.getDate().toString());
     }
@@ -92,6 +113,7 @@ public class Transaction implements Comparable<Transaction> {
         result.put("account", account);
         result.put("amount", amount);
         result.put("imageResource", imageResource);
+        result.put("trns", trns);
 
         return result;
     }

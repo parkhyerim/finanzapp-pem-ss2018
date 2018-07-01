@@ -1,9 +1,14 @@
 package com.lmu.pem.finanzapp.model.transactions;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -14,8 +19,11 @@ import com.lmu.pem.finanzapp.data.Account;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class TransactionManager {
+import static android.content.ContentValues.TAG;
+
+public class TransactionManager extends Activity {
 
     private static TransactionManager instance;
 
@@ -23,18 +31,18 @@ public class TransactionManager {
     private Transaction defaultTransaction;
     private TransactionHistory transactionHistory;
 
-    DatabaseReference db;
-    DatabaseReference transactionRef;
+    private DatabaseReference db;
+    private DatabaseReference transactionRef;
 
+    private String userId;
 
-    private TransactionManager() {
+    public TransactionManager() {
+        db = FirebaseDatabase.getInstance().getReference();
+        transactionRef = db.child("transactions");
+
         this.transactions = new ArrayList<>();
-        createTransactionList();
-        db = FirebaseDatabase.getInstance().getReference().child("transaction");
-        //transactionRef = db.child("transaction");
-        //transactionHistory = TransactionHistory.getInstance();
 
-        db.addValueEventListener(new ValueEventListener() {
+        transactionRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
@@ -54,7 +62,6 @@ public class TransactionManager {
                         transactions.add(newTransaction);
                     }
                     //defaultTransaction = newTransaction;
-
                 }
             }
 
@@ -65,7 +72,82 @@ public class TransactionManager {
         });
 
 
+
+/*
+ // In order to listen for child events on DatabaseReference, attach a ChildEventListener
+        transactionRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                // Log.d(TAG+"Added", dataSnapshot.getValue(Transaction.class).toString());
+
+                Transaction t = dataSnapshot.getValue(Transaction.class);
+                Transaction newTrans = new Transaction(t.getDate(), t.getImageResource(), t.getAccount(), t.getCategory(), t.getDescription(), t.getAmount());
+                transactions.add(newTrans);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                // Log.d(TAG+"Changed",dataSnapshot.getValue(Transaction.class).toString());
+
+                Transaction t = dataSnapshot.getValue(Transaction.class);
+                String k = dataSnapshot.getKey();
+
+                Transaction newTrans = new Transaction(t.getDate(), t.getImageResource(), t.getAccount(), t.getCategory(), t.getDescription(), t.getAmount());
+                transactions.add(newTrans);
+             }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                // Log.d(TAG+"Removed",dataSnapshot.getValue(Transaction.class).toString());
+                String transactionKey = dataSnapshot.getKey();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //Log.d(TAG+"Moved",dataSnapshot.getValue(Transaction.class).toString());
+                Transaction transaction = dataSnapshot.getValue(Transaction.class);
+                String transactionKey = dataSnapshot.getKey();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Log.d(TAG+"Cancelled",databaseError.toString());
+                Toast.makeText(getApplicationContext(), "Failed to load transactions.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+*/
+
     }
+
+    /*
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        database = FirebaseDatabase.getInstance().getReference();
+        userId = database.child("transactions").push().getKey();
+
+        if(userId != null){
+            database.child("transactions").child(userId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Transaction transaction = dataSnapshot.getValue(Transaction.class);
+                    Log.d(TAG, "Category: " + transaction.getCategory());
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", databaseError.toException());
+                }
+            });
+        }
+
+    }
+*/
 
 
     public static TransactionManager getInstance() {
@@ -76,6 +158,7 @@ public class TransactionManager {
 
     public void addTransaction(Transaction transaction){
         this.transactions.add(transaction);
+        writeNewTransaction(transaction);
     }
 
 
@@ -111,5 +194,24 @@ public class TransactionManager {
         addTransaction(new Transaction("05/05/2018", R.drawable.gift, "Cash", "Gift", "Muttertag", -38.25));
     }
 
+
+    private void writeNewTransaction(Transaction transaction){
+
+        // String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
+
+        String key = transactionRef.push().getKey();
+        transaction.setTransactionId(key);
+
+        // Toast.makeText(getActivity(), "key:"+ key, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), "ID:"+ transaction.getTransactionId(), Toast.LENGTH_LONG).show();
+
+
+        Map<String, Object> transactionValues = transaction.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/transactions/" + key, transactionValues);
+        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+        //transactionRef.updateChildren(childUpdates);
+
+    }
 
 }

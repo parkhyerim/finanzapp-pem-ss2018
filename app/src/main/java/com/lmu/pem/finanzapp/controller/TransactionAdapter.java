@@ -67,7 +67,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
             accountTextView = itemView.findViewById(R.id.account_textView);
-            amountTextView = itemView.findViewById(R.id.money_textView);
+            amountTextView = itemView.findViewById(R.id.amount_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
             viewBackground = (LinearLayout) itemView.findViewById(R.id.transaction_interaction);
             editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);

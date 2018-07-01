@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v7.widget.SearchView;
+import android.widget.TableRow;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,9 +58,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     private TransactionManager transactionManager;
 
-    DatabaseReference db;
-    DatabaseReference transactionRef;
-
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -73,11 +72,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private String account = "";
     private String date = "";
     private String description = "";
+    private String id;
 
 
     public TransactionFragment() {
-       // super();
-        // Required empty public constructor
         this.transactionManager = TransactionManager.getInstance();
     }
 
@@ -100,13 +98,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
         ButterKnife.bind(this,rootView);
 
-
-        // Firebase : get Reference
-        db = FirebaseDatabase.getInstance().getReference();
-        transactionRef = db.child("transaction");
-
-        // transactionList = getTransactionSorted();
-
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
         addButton = rootView.findViewById(R.id.transaction_add_button);
@@ -127,7 +118,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);*/
 
 
-
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
                 new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
@@ -144,39 +134,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 startActivityForResult(intent, 111);
             }
         });
-
-
-        // Firebase
-        transactionRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-               // Log.d(TAG+"Added", dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG+"Changed",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG+"Removed",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG+"Moved",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG+"Cancelled",databaseError.toString());
-            }
-        });
-
         return rootView;
     }
-
 
 
 
@@ -186,6 +145,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
+
             position = transactionManager.getTransactions().size();
 
             date = data.getStringExtra("date");
@@ -196,17 +156,24 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             //A new transaction can be added to the transaction list
             insertItem(position, date, account, category, description, amount);
+            /*
+            position = transactionManager.getTransactions().size();
+
+            date = data.getStringExtra("date");
+            account = data.getStringExtra("account");
+            category = data.getStringExtra("category");
+            description = data.getStringExtra("description");
+            amount = data.getDoubleExtra("amount",0);
+
+            //A new transaction can be added to the transaction list
+            insertItem(position, date, account, category, description, amount);
+            */
 
         }
     }
 
 
-
-
     public void insertItem(int position, String date, String account, String category, String description, double amount){
-
-        final String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
-
         this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         this.date = date;
         this.account = account;
@@ -217,16 +184,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         transactionManager.addTransaction(transaction);
 
         adapter.notifyItemInserted(position);
-
-        // Firebase
-        Map<String, Object> transactionItemValues = transaction.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/transaction/" + key, transactionItemValues);
-        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-
-
-
 
     // Header-Section by date
     private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
