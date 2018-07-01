@@ -1,10 +1,19 @@
 package com.lmu.pem.finanzapp.model.transactions;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.data.Account;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TransactionManager {
 
@@ -14,13 +23,48 @@ public class TransactionManager {
     private Transaction defaultTransaction;
     private TransactionHistory transactionHistory;
 
+    DatabaseReference db;
+    DatabaseReference transactionRef;
+
 
     private TransactionManager() {
         this.transactions = new ArrayList<>();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("transactions");
-        transactionHistory = TransactionHistory.getInstance();
-
         createTransactionList();
+        db = FirebaseDatabase.getInstance().getReference().child("transaction");
+        //transactionRef = db.child("transaction");
+        //transactionHistory = TransactionHistory.getInstance();
+
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
+                for (String key : map.keySet()) {
+
+                    Transaction newTransaction = new Transaction(
+                            dataSnapshot.child(key).child("date").getValue(String.class),
+                            dataSnapshot.child(key).child("imageResource").getValue(Integer.class),
+                            dataSnapshot.child(key).child("account").getValue(String.class),
+                            dataSnapshot.child(key).child("category").getValue(String.class),
+                            dataSnapshot.child(key).child("description").getValue(String.class),
+                            dataSnapshot.child(key).child("amount").getValue(Double.class)
+
+                    );
+                   // if ((boolean) map.get(key).get("isDefault"))
+                    if(!containsTransaction(newTransaction)){
+                        transactions.add(newTransaction);
+                    }
+                    //defaultTransaction = newTransaction;
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("123123123","Cancelled: "+databaseError.toString());
+            }
+        });
+
+
     }
 
 
@@ -37,6 +81,18 @@ public class TransactionManager {
 
     public void removeTransaction(Transaction transaction){
         this.transactions.remove(transaction);
+    }
+
+
+    public boolean containsTransaction(Transaction transaction){
+        for(Transaction t : transactions){
+            // TODO: temporäre Code... "equals" und "==" funktioniert nicht...
+            if(t.getAmount() == transaction.getAmount() && t.getDescription()== transaction.getDescription()){
+                return true;
+            }
+
+        }
+        return false;
     }
 
     public ArrayList<Transaction> getTransactions(){

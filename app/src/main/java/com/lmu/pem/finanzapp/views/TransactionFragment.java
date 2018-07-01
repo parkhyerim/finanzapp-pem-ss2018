@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
@@ -98,6 +99,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
         ButterKnife.bind(this,rootView);
+
 
         // Firebase : get Reference
         db = FirebaseDatabase.getInstance().getReference();
@@ -171,7 +173,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 Log.d(TAG+"Cancelled",databaseError.toString());
             }
         });
-
 
         return rootView;
     }
