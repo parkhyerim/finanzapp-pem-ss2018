@@ -156,19 +156,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             //A new transaction can be added to the transaction list
             insertItem(position, date, account, category, description, amount);
-            /*
-            position = transactionManager.getTransactions().size();
-
-            date = data.getStringExtra("date");
-            account = data.getStringExtra("account");
-            category = data.getStringExtra("category");
-            description = data.getStringExtra("description");
-            amount = data.getDoubleExtra("amount",0);
-
-            //A new transaction can be added to the transaction list
-            insertItem(position, date, account, category, description, amount);
-            */
-
         }
     }
 
