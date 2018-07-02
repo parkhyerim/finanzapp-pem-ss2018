@@ -51,7 +51,7 @@ public class TransactionManager extends Activity {
         this.transactions = new ArrayList<>();
         //createTransactionList();
 
-        /*
+
         transactionRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,11 +78,11 @@ public class TransactionManager extends Activity {
                     Log.d("123123123","Cancelled: "+databaseError.toString());
             }
         });
-*/
 
 
 
 
+/*
  // In order to listen for child events on DatabaseReference, attach a ChildEventListener
         transactionRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -137,7 +137,7 @@ public class TransactionManager extends Activity {
             }
         });
 
-
+*/
 
     }
 
@@ -261,6 +261,13 @@ public class TransactionManager extends Activity {
         this.userId = transaction.getTransactionId();
         transactionRef.child(transaction.get).removeValue();
         */
+    }
+
+
+    public void goAdd(Context context){
+        Intent intent = new Intent(context, TransactionAddActivity.class);
+        //startActivityForResult(intent, 111);
+        startActivity(intent);
     }
 
 }

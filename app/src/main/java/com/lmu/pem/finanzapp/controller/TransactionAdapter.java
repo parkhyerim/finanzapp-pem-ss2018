@@ -190,8 +190,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Category-Image
 
-
-        holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
+         holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
         // Expense or Income
         String prefix = "";

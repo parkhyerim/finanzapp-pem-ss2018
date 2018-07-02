@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
@@ -43,6 +44,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
     private AccountManager accountManager;
+    private CategoryManager categoryManager;
 
     private Context context;
 
@@ -60,6 +62,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         context = this;
 
         accountManager = AccountManager.getInstance();
+        categoryManager = CategoryManager.getInstance();
 
         // Alle findViewByIDs
         dateDisplay = (TextView) findViewById(R.id.dateDisplay_textView);
@@ -147,10 +150,15 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Expense-Category
         // getCategorySpinner();
 
+/*
         if(expenses.isEmpty()) {
-            //expenses.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "Add"));
-            expenses.addAll(Arrays.asList(getResources().getStringArray(R.array.expense_category)));
+
+            //expenses.addAll(Arrays.asList(getResources().getStringArray(R.array.expense_category)));
+            expenses.addAll(categoryManager.getCategories());
         }
+        */
+
+        expenses.addAll(categoryManager.getExpCategories());
         ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
        // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -210,8 +218,8 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Income-Category
         //String[] incomeArray = getResources().getStringArray(R.array.income_category);
         if(incomes.isEmpty()) {
-            //expenses.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "Add"));
-            incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
+           // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
+            incomes.addAll(categoryManager.getIncCategories());
         }
        // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomes);

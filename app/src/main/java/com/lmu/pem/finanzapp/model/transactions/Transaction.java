@@ -12,7 +12,7 @@ public class Transaction implements Comparable<Transaction> {
     private String category;
     private String account;
     private String description;
-    private int imageResource;
+    private int imageResource = 0;
     private double amount;
 
     private String date;

@@ -161,7 +161,13 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
     public void insertItem(int position, String date, String account, String category, String description, double amount){
-        this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        if(img == 0){
+            this.imageResource = getActivity().getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
+        } else {
+            this.imageResource = img;
+        }
+        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         this.date = date;
         this.account = account;
         this.category = category;
