@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ import com.lmu.pem.finanzapp.model.GlobalSettings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
@@ -50,7 +48,8 @@ public class TransactionAddActivity extends AppCompatActivity {
 
     private Calendar cal;
 
-    private  String newItem;
+    private ArrayList<String> expenses = new ArrayList<>();
+    private ArrayList<String> incomes = new ArrayList<>();
 
     //private List<String> expenseArray = new ArrayList<>();
 
@@ -145,18 +144,14 @@ public class TransactionAddActivity extends AppCompatActivity {
         });
 
 
-        // Category-Spinner(Dropdown)
         // Expense-Category
         // getCategorySpinner();
-        String[] expenseArray = getResources().getStringArray(R.array.expense_category);
 
-        //expenseArray.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "ADD"));
-
-        //expenseArray = Arrays.asList(getResources().getStringArray(R.array.expense_category));
-
-        //List<String> expList = Arrays.asList(getResources().getStringArray(R.array.expense_category));
-        ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenseArray);
-
+        if(expenses.isEmpty()) {
+            //expenses.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "Add"));
+            expenses.addAll(Arrays.asList(getResources().getStringArray(R.array.expense_category)));
+        }
+        ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
        // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expenseCategorySpinner.setAdapter(expenseCategoryAdapter);
@@ -165,8 +160,8 @@ public class TransactionAddActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
-
-                if(expenseCategorySpinner.getSelectedItemPosition() == expenseArray.length-1){
+                category = (String) expenseCategorySpinner.getSelectedItem();
+                if(category.equals("Add")){
                     LayoutInflater li = LayoutInflater.from(context);
                     View promptsView = li.inflate(R.layout.prompts, null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -181,52 +176,13 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
                                             // edit text
-                                            /*
+
                                             String newItem = userInput.getText().toString();
-                                            expList.add(newItem);
-                                            expenseCategoryAdapter.notifyDataSetChanged();
-                                            category = parent.getItemAtPosition(position).toString();
-                                            */
-
-                                             newItem = userInput.getText().toString();
-                                             int pos = expenseArray.length-1;
-                                             //expenseArray.set(pos, newItem);
-                                            expenseArray[pos] = newItem;
-
-
-
-                                            /*
-                                            for(int i = 0; i < pos; i++) {
-                                                String[] newArray = new String[pos];
-                                                newArray[i] = expenseArray[i];
-                                                newArray[pos] = newItem;
-                                            }
-                                            */
-
-                                            /*
-                                            for(int i = 0 ; i < pos; i++){
-                                                expenseArray = new String[pos+1];
-                                                expenseArray[i] = expenseArray[i];
-
-                                            }
-                                            */
-
-
-                                            // expenseArray[pos] = "Add";
+                                            int pos = expenses.size()-1;
+                                            expenses.add(pos, newItem);
 
                                             expenseCategoryAdapter.notifyDataSetChanged();
-                                            category = parent.getItemAtPosition(position).toString();
-
-                                            /*
-                                            for(int i = 0 ; i < pos; i++){
-                                                expenseArray = new String[pos+1];
-                                                expenseArray[i] = expenseArray[i];
-                                                expenseArray[pos] = "Add";
-
-                                            }
-                                            */
-
-
+                                            category = parent.getItemAtPosition(pos).toString();
                                         }
                                     })
                             .setNegativeButton("Cancel",
@@ -241,24 +197,24 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                     // show it
                     alertDialog.show();
-
-
-
                     //Toast.makeText(getBaseContext(), expenseCategorySpinner.getSelectedItemPosition() + " selected", Toast.LENGTH_SHORT).show();
 
                 }
-
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
+
         // Income-Category
-        String[] incomeArray = getResources().getStringArray(R.array.income_category);
+        //String[] incomeArray = getResources().getStringArray(R.array.income_category);
+        if(incomes.isEmpty()) {
+            //expenses.addAll(Arrays.asList("Food", "Household", "Transportation", "Health", "Add"));
+            incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
+        }
        // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
-        ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomeArray);
+        ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomes);
 
         incomeCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         incomeCategorySpinner.setAdapter(incomeCategoryAdapter);
@@ -269,7 +225,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 category = parent.getItemAtPosition(position).toString();
                 //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
 
-                if(incomeCategorySpinner.getSelectedItemPosition() == incomeArray.length-1){
+                if(incomeCategorySpinner.getSelectedItemPosition() == incomes.size()-1){
                     LayoutInflater li = LayoutInflater.from(context);
                     View promptsView = li.inflate(R.layout.prompts, null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -284,14 +240,12 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int id) {
                                             // get user input and set it to result
                                             // edit text
-
                                             String newItem = userInput.getText().toString();
-                                            int pos = incomeArray.length-1;
-                                            incomeArray[pos] = newItem;
+                                            int pos = incomes.size()-1;
+                                            incomes.add(pos, newItem);
 
                                             incomeCategoryAdapter.notifyDataSetChanged();
-                                            category = parent.getItemAtPosition(position).toString();
-
+                                            category = parent.getItemAtPosition(pos).toString();
 
                                         }
                                     })
