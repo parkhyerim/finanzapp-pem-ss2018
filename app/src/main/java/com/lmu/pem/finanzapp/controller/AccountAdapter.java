@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.views.AccountFragment;
 import com.lmu.pem.finanzapp.views.CircleView;
 
 import java.util.ArrayList;
@@ -21,11 +22,14 @@ import java.util.Locale;
 public class AccountAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Account> accounts;
+    private AccountFragment fragment;
+
     private final int CIRCLE_SIZE = 400;
 
-    public AccountAdapter(Context context, ArrayList<Account> accounts) {
+    public AccountAdapter(Context context, ArrayList<Account> accounts, AccountFragment fragment) {
         this.context = context;
         this.accounts = accounts;
+        this.fragment = fragment;
     }
 
     public void setAccounts(ArrayList<Account> accounts) {
@@ -79,25 +83,6 @@ public class AccountAdapter extends BaseAdapter {
             return true;
         });
 
-        /*circleView.setOnTouchListener((view, motionEvent)->{
-            if(motionEvent.getAction()== MotionEvent.ACTION_DOWN){
-                ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(){
-                    @Override
-                    public void onDrawShadow(Canvas canvas) {
-                        //super.onDrawShadow(canvas);
-                        Drawable img = context.getResources().getDrawable(R.drawable.bonus, null);
-                        img.draw(canvas);
-                    }
-                };
-                view.startDrag(data, shadowBuilder, view, 0);
-                return true;
-            }else{
-                return false;
-            }
-
-        });*/
-
         circleView.setOnDragListener((v, event) -> {
             switch(event.getAction()){
                 case DragEvent.ACTION_DRAG_STARTED:
@@ -120,6 +105,10 @@ public class AccountAdapter extends BaseAdapter {
                     break;
             }
             return true;
+        });
+
+        circleView.setOnClickListener(view -> {
+            fragment.editAccount(accounts.get(position).getId());
         });
 
         return circleView;

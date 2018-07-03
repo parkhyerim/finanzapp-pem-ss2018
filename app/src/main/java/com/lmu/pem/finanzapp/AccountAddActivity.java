@@ -1,82 +1,77 @@
 package com.lmu.pem.finanzapp;
 
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
+
+import java.util.Locale;
 
 public class AccountAddActivity extends AppCompatActivity {
+
+    private boolean newAccount;
+    private AccountManager accountManager;
+    private String accountID;
+
+    private EditText nameView, balanceView;
+    private TextView balanceText;
+    private CheckBox defaultCheckView;
+    private Button addAccButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_add);
 
-        Button addAccButton = findViewById(R.id.addAccButton);
+        setupViews();
+        balanceText.setText("Balance ("+ GlobalSettings.getInstance(getApplicationContext()).getCurrencyString()+"): ");
+        accountID = "";
+        accountManager = AccountManager.getInstance();
+
+        newAccount = getIntent().getExtras().getBoolean("newAccount");
+        if(!newAccount){
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle("Edit Account");
+            addAccButton.setText("Apply Changes");
+
+            accountID = getIntent().getExtras().getString("accountID");
+            Account acc = accountManager.getAccountById(accountID);
+            nameView.setText(acc.getName());
+            balanceView.setText(String.format(Locale.getDefault(), "%,.2f",acc.getBalance()));
+            defaultCheckView.setChecked(acc.isDefault());
+        }
+
         addAccButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final EditText nameView = findViewById(R.id.nameEdit);
                 String name = nameView.getText().toString();
 
                 if(name.length()<=0) {
-                    nameView.setError("You have to insert a name for the account.");
-                    nameView.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            nameView.setError(null);
-                            nameView.removeTextChangedListener(this);
-                        }
-                    });
-                }else if(AccountManager.getInstance().isNameTaken(name)){
-                    nameView.setError("There is already an account with this name");
-                    nameView.addTextChangedListener(new TextWatcher() {
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                            nameView.setError(null);
-                            nameView.removeTextChangedListener(this);
-                        }
-                    });
+                    showError("You have to insert a name for the account.");
+                }else if(accountManager.isNameTaken(name) && !(accountManager.getAccountIdByName(name).equals(accountID))){
+                    showError("There is already an account with this name.");
                 }else{
-                    EditText balanceView = findViewById(R.id.balanceEdit);
                     double balance = 0;
                     try {
-                        balance = Double.parseDouble(balanceView.getText().toString());
+                        balance = Double.parseDouble(balanceView.getText().toString()); //TODO should a balance be changable? if so, is this a transaction?
                     }catch (Exception e){} //Shouldn't really be necessary because of set inputType, but hey, better safe than sorry.
 
-                    CheckBox defaultCheckView = findViewById(R.id.defaultCheck);
-                    boolean defaultSelected = defaultCheckView.isChecked();
-
+                    boolean defaultSelected = defaultCheckView.isChecked(); //TODO what if a default account was un-defaulted? what if a new default was set?
 
                     Intent resultIntent = new Intent();
+                    resultIntent.putExtra("newAccount", newAccount);
+                    resultIntent.putExtra("accountID", accountID);
                     resultIntent.putExtra("name", name);
                     resultIntent.putExtra("balance", balance);
                     resultIntent.putExtra("default", defaultSelected);
@@ -85,6 +80,31 @@ public class AccountAddActivity extends AppCompatActivity {
                     finish();
                 }
             }
+
+            private void showError(String msg) {
+                nameView.setError(msg);
+                nameView.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        nameView.setError(null);
+                        nameView.removeTextChangedListener(this);
+                    }
+                });
+            }
         });
+    }
+
+    private void setupViews() {
+        nameView = findViewById(R.id.nameEdit);
+        balanceView = findViewById(R.id.balanceEdit);
+        defaultCheckView = findViewById(R.id.defaultCheck);
+        addAccButton = findViewById(R.id.addAccButton);
+        balanceText = findViewById(R.id.balanceText);
     }
 }

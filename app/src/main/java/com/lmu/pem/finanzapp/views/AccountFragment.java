@@ -69,7 +69,7 @@ public class AccountFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.account_fragment, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridview);
-        adapter = new AccountAdapter(getContext(), accountManager.getAccounts());
+        adapter = new AccountAdapter(getContext(), accountManager.getAccounts(), this);
         gridView.setAdapter(adapter);
 
         /*
@@ -88,15 +88,20 @@ public class AccountFragment extends Fragment {
         });*/
 
         FloatingActionButton fab = v.findViewById(R.id.acc_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), AccountAddActivity.class);
-                startActivityForResult(intent, 123);
-            }
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity().getApplicationContext(), AccountAddActivity.class);
+            intent.putExtra("newAccount", true);
+            startActivityForResult(intent, 123);
         });
 
         return v;
+    }
+
+    public void editAccount(String id){
+        Intent intent = new Intent(getActivity().getApplicationContext(), AccountAddActivity.class);
+        intent.putExtra("newAccount", false);
+        intent.putExtra("accountID", id);
+        startActivityForResult(intent, 123);
     }
 
     @Override
@@ -108,12 +113,25 @@ public class AccountFragment extends Fragment {
             String name = data.getStringExtra("name");
             double balance = data.getDoubleExtra("balance", 0);
             boolean defaultAcc = data.getBooleanExtra("default", false);
+            boolean newAccount = data.getBooleanExtra("newAccount", true);
 
-            Account newAcc = new Account(name, defaultAcc, balance);
-            accountManager.addAccount(newAcc); //TODO - color
-            notify=true;
-            DatabaseReference accRef = FirebaseDatabase.getInstance().getReference().child("accounts").child(newAcc.getId());
-            accRef.setValue(newAcc.toMap());
+            Account acc;
+            String accountID;
+            if(newAccount){
+                acc = new Account(name, defaultAcc, balance);
+                accountID=acc.getId();
+                accountManager.addAccount(acc); //TODO - color
+                notify=true;
+            }else{
+                accountID = data.getStringExtra("accountID");
+                acc = accountManager.getAccountById(accountID);
+                acc.setName(name);
+                acc.setBalance(balance);
+                acc.setDefault(defaultAcc);
+                if(defaultAcc && !(accountManager.getDefaultAcc().getId().equals(accountID))) accountManager.setDefaultAcc(acc);
+            }
+            dbRef.child(accountID).setValue(acc.toMap());
+
             adapter.setAccounts(accountManager.getAccounts());
             adapter.notifyDataSetChanged();
         }

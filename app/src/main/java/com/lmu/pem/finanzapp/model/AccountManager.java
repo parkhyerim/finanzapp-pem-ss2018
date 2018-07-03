@@ -21,11 +21,12 @@ public class AccountManager {
 
     private ArrayList<Account> accounts;
     private Account defaultAcc;
+    private DatabaseReference dbRef;
 
     private AccountManager() {
         this.accounts = new ArrayList<Account>();
         //this.accounts.add(new Account("Cash", 0xff00695c, true, 64.45)); //TODO - temporary
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("accounts");
+        dbRef = FirebaseDatabase.getInstance().getReference().child("accounts");
 
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -37,7 +38,8 @@ public class AccountManager {
                             dataSnapshot.child(key).child("name").getValue(String.class),
                             dataSnapshot.child(key).child("color").getValue(Integer.class),
                             dataSnapshot.child(key).child("isDefault").getValue(Boolean.class),
-                            dataSnapshot.child(key).child("balance").getValue(Double.class)
+                            dataSnapshot.child(key).child("balance").getValue(Double.class),
+                            dataSnapshot.child(key).child("id").getValue(String.class)
                     );
                     if((boolean) map.get(key).get("isDefault")) defaultAcc=newAcc;
                     accounts.add(newAcc);
@@ -91,10 +93,7 @@ public class AccountManager {
      */
     public void addAccount(Account acc){
         this.accounts.add(acc);
-        if(acc.isDefault()){
-            this.defaultAcc.setDefault(false);
-            this.defaultAcc = acc;
-        }
+        if(acc.isDefault()) setDefaultAcc(acc);
     }
 
     /**
@@ -151,7 +150,17 @@ public class AccountManager {
      * Get the default Account of this AccountManager
      * @return the Account object set as default
      */
-    public Account getDefault(){
+    public Account getDefaultAcc(){
         return defaultAcc;
+    }
+
+    /**
+     * Sets the default Account of this AccountManager to a new one
+     * @param acc the Account that should become the new default
+     */
+    public void setDefaultAcc(Account acc) {
+        this.defaultAcc.setDefault(false);
+        dbRef.child(defaultAcc.getId()).child("isDefault").setValue(false);
+        this.defaultAcc = acc;
     }
 }
