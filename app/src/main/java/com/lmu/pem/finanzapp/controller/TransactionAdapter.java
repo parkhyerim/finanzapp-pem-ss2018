@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
@@ -34,14 +34,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private ArrayList<Transaction> transactions;
     private View rootView;
     private TransactionViewHolder selectedItem;
-    private TransactionHistory transactionHistory;
+    private TransactionManager transactionManager;
 
 
     public TransactionAdapter(ArrayList<Transaction> transactions, Context context, View rootView){
         this.transactions = transactions;
         this.context = context;
         this.rootView = rootView;
-        transactionHistory = TransactionHistory.getInstance();
+        transactionManager = TransactionManager.getInstance();
     }
 
 
@@ -111,10 +111,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         private void clickDelete(TransactionAdapter adapter) {
-            TransactionHistory transactionHistory = TransactionHistory.getInstance();
-            String description = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
+            TransactionManager transactionManager = TransactionManager.getInstance();
+            String description = transactionManager.getTransactions().get(getAdapterPosition()).getDescription();
             final int deletedIndex = getAdapterPosition();
-            final Transaction deletedTransaction = transactionHistory.getTransactions().get(deletedIndex);
+            final Transaction deletedTransaction = transactionManager.getTransactions().get(deletedIndex);
             adapter.removeItem(deletedIndex);
 
             Snackbar snackbar = Snackbar.make(adapter.rootView, description + " removed from list!", Snackbar.LENGTH_LONG);
@@ -225,7 +225,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
 
     public void removeItem(int position) {
-        transactionHistory.removeTransaction(transactions.get(position));
+        transactionManager.removeTransaction(transactions.get(position));
         //transactions.remove(position);
         notifyItemRemoved(position);
     }

@@ -1,14 +1,14 @@
 package com.lmu.pem.finanzapp.model;
 
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.AbstractMap;
 import java.util.Calendar;
 
 public class Analyzer {
 
-    public static AbstractMap.SimpleEntry<Integer, Float> calculateMostExpensiveMonthFor (TransactionHistory history) {
+    public static AbstractMap.SimpleEntry<Integer, Float> calculateMostExpensiveMonthFor (TransactionManager history) {
         float [] monthsCounters = new float[12];
 
         for (Transaction transaction : history.getTransactions()) {

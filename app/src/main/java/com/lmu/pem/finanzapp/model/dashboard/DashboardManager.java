@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.Analyzer;
 import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
 import com.lmu.pem.finanzapp.model.dashboard.cards.DbCard;
@@ -23,7 +23,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
 
     @Override
     public void handle(TransactionHistoryEvent event) {
-        refreshActiveCards(TransactionHistory.getInstance());
+        refreshActiveCards(TransactionManager.getInstance());
     }
 
     public enum CardType {
@@ -39,7 +39,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
     private ArrayList<DbCard> archivedCards;
 
     private DashboardManager() {
-        TransactionHistory.getInstance().addListener(this);
+        TransactionManager.getInstance().addListener(this);
     }
 
     public static DashboardManager getInstance(Context context) {
@@ -52,7 +52,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
     }
 
 
-    public ArrayList<DbCard> getDataSet(TransactionHistory history) {
+    public ArrayList<DbCard> getDataSet(TransactionManager history) {
         if (activeCards != null)
             return activeCards;
 
@@ -61,7 +61,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
 
     }
 
-    private void refreshActiveCards(TransactionHistory history) {
+    private void refreshActiveCards(TransactionManager history) {
         if (activeCards == null) activeCards = new ArrayList<>();
         activeCards.clear();
         Log.i("DashboardManager", "REFRESHED ACTIVE CARDS");
@@ -119,7 +119,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
                 context.getString(R.string.welcomecard_btn2));
     }
 
-    private DbCard createDebugCard(TransactionHistory history) {
+    private DbCard createDebugCard(TransactionManager history) {
         float totalAmount = 0f;
 
         for (Transaction transaction : history.getTransactions()) {

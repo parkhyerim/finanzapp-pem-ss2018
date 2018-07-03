@@ -1,7 +1,7 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 
@@ -15,7 +15,7 @@ public class BudgetManager implements TransactionHistoryEventListener{
     private final ArrayList<Budget> budgets = new ArrayList<>();
 
     private BudgetManager() {
-        TransactionHistory.getInstance().addListener(this);
+        TransactionManager.getInstance().addListener(this);
 
         addBudget("Household", 100.0f, new Date(2018-1900, 0, 1), new Date(2018-1900, 11, 31));
         addBudget("Movie", 30.0f, new Date(2018-1900, 5, 1), new Date(2018-1900, 5, 30));
@@ -53,7 +53,7 @@ public class BudgetManager implements TransactionHistoryEventListener{
     public void addBudget (String category, float budget, Date startingDate, Date endingDate) {
         float amount = 0f;
 
-        for (Transaction transaction : TransactionHistory.getInstance().getTransactions()) {
+        for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
             if (transaction.getCategory().equalsIgnoreCase(category)) {
                 amount += transaction.getAmount();
             }

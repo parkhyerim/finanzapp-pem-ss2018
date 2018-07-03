@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 
 
@@ -48,7 +48,7 @@ public class DashboardFragment extends Fragment {
 
         // specify an adapter (see also next example)
 
-        adapter = new CardAdapter(dashboardManager.getDataSet(TransactionHistory.getInstance()), getContext());
+        adapter = new CardAdapter(dashboardManager.getDataSet(TransactionManager.getInstance()), getContext());
         recyclerView.setAdapter(adapter);
 
 
