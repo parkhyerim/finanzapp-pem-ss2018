@@ -3,12 +3,12 @@ package com.lmu.pem.finanzapp;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,7 +27,6 @@ import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
 public class TransactionAddActivity extends AppCompatActivity {
@@ -35,7 +35,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     private String category, account, date, description, key;
     private int year, month, day;
 
-    private RelativeLayout expenseRelativeLayout, incomeRelativeLayout, transactionAddRelativeLayout;
+    private RelativeLayout expenseRelativeLayout, incomeRelativeLayout;
+    private LinearLayout transactionAddLayout;
     private EditText moneyEditText;
     private EditText descriptionEditText;
     private Button expenseButton, incomeButton, doneButton;
@@ -73,7 +74,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         incomeRelativeLayout = (RelativeLayout) findViewById(R.id.income_layout);
         expenseRelativeLayout = (RelativeLayout) findViewById(R.id.expense_layout);
-        transactionAddRelativeLayout = (RelativeLayout) findViewById(R.id.transaction_add_layout);
+        transactionAddLayout = (LinearLayout) findViewById(R.id.transaction_add_layout);
 
         expenseCategorySpinner = (Spinner) findViewById(R.id.category_Spinner);
         incomeCategorySpinner = (Spinner) findViewById(R.id.category_Spinner2);
@@ -100,26 +101,18 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
 
-        dateDisplay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Calendar cal = Calendar.getInstance();
-                year = cal.get(Calendar.YEAR);
-                month = cal.get(Calendar.MONTH);
-                day = cal.get(Calendar.DAY_OF_MONTH);
+        dateDisplay.setOnClickListener(v -> {
+            //Calendar cal = Calendar.getInstance();
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH);
+            day = cal.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-                dialog.show();
-            }
+            DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.show();
         });
 
-        dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                setDateOnDisplay();
-            }
-        };
+        dateSetListener = (view, year, month, day) -> setDateOnDisplay();
 
 
         // SPINNER
@@ -268,7 +261,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         });
 
 
-        // Wenn the Add-activitiy is open for updating/editing the transaction
+        // extras indicate that we want to edit an existing transaction instead of creating a new one
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             date = getIntent().getStringExtra("date");
@@ -308,6 +301,10 @@ public class TransactionAddActivity extends AppCompatActivity {
 
             //Key
             key = getIntent().getStringExtra("key");
+
+            //customize Toolbar title
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle("Edit Transaction");
         }
 
         // Buttons (expenseButton, incomeButton, doneButton)
@@ -328,7 +325,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 //expense = Double.parseDouble(moneyEditText.getText().toString());
                 amount = -1 * Double.parseDouble(moneyEditText.getText().toString());
                 expenseCategoryShow();
-                transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
+                transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
 
                 //Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
                 //startActivityForResult(intent, 222);
@@ -345,7 +342,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                // income = Double.parseDouble(moneyEditText.getText().toString());
                 amount = Double.parseDouble(moneyEditText.getText().toString());
                 incomeCategoryShow();
-                transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
+                transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
 
                 // Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
                 //startActivityForResult(intent, 222);

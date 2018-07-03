@@ -177,6 +177,14 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     public void updateTransaction(String key, String date, String account, String category, int imageResource, String description, double amount){
         Transaction transaction = getTransactionByKey(key);
+        Transaction transactionOld = new Transaction(
+                transaction.getDate(),
+                transaction.getImageResource(),
+                transaction.getAccount(),
+                transaction.getCategory(),
+                transaction.getDescription(),
+                transaction.getAmount()
+                );
         if(!(transaction.getDate().equals(date))) transaction.setDate(date);
         if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
         if(!(transaction.getCategory().equals(category))){
@@ -186,7 +194,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
         if(!(transaction.getDescription().equals(description))) transaction.setDescription(description);
         if(!(transaction.getAmount() == amount)) transaction.setAmount(amount);
         updateTransactionInFB(key, transaction);
-        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.UPDATED, this, transaction));
+        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.UPDATED, this, transaction, transactionOld));
     }
 
 

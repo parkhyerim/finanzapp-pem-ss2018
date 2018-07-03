@@ -11,11 +11,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.controller.AccountAdapter;
 import com.lmu.pem.finanzapp.data.Account;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AccountManager {
+public class AccountManager implements TransactionHistoryEventListener {
 
     private static AccountManager instance;
 
@@ -51,6 +55,8 @@ public class AccountManager {
                 Log.d("123123123","Cancelled: "+databaseError.toString());
             }
         });
+
+        TransactionManager.getInstance().addListener(this);
     }
 
     /**
@@ -162,5 +168,32 @@ public class AccountManager {
         this.defaultAcc.setDefault(false);
         dbRef.child(defaultAcc.getId()).child("isDefault").setValue(false);
         this.defaultAcc = acc;
+    }
+
+    @Override
+    public void handle(TransactionHistoryEvent event) {
+        Transaction transaction = event.getTransaction();
+        Account account = getAccountById(transaction.getAccount());
+
+        if(account==null) return;
+
+        switch(event.getType()){
+            case ADDED:
+                account.setBalance(account.getBalance() + transaction.getAmount());
+                break;
+            case REMOVED:
+                account.setBalance(account.getBalance() - transaction.getAmount());
+                break;
+            case UPDATED:
+                Transaction transactionOld = event.getTransactionOld();
+                Account accountOld = getAccountById(transactionOld.getAccount());
+
+                accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
+                account.setBalance(account.getBalance() + transaction.getAmount());
+
+                dbRef.child(transactionOld.getAccount()).child("balance").setValue(accountOld.getBalance());
+                break;
+        }
+        dbRef.child(transaction.getAccount()).child("balance").setValue(account.getBalance());
     }
 }

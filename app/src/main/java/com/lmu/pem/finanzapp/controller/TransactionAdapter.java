@@ -54,7 +54,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView descriptionTextView, accountTextView, amountTextView;
         public RelativeLayout viewForeground;
         private LinearLayout viewBackground;
-        private ImageButton editButton, deleteButton, backButton;
+        private ImageButton deleteButton, backButton;
         ArrayList<Transaction> transactions;
         Context context;
         private TransactionAdapter transactionAdapter;
@@ -75,17 +75,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             amountTextView = itemView.findViewById(R.id.amount_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
             viewBackground = (LinearLayout) itemView.findViewById(R.id.transaction_interaction);
-            editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);
             deleteButton = itemView.findViewById(R.id.delete_icon);
             backButton =  itemView.findViewById(R.id.back_icon);
 
             itemView.setOnLongClickListener((view)->{
                 showInteractionView();
 
-                editButton.setOnClickListener((v)->{
-                    clickEdit();
-                    hideInteractionView();
-                });
                 deleteButton.setOnClickListener((v)->{
                     clickDelete(transactionAdapter);
                     hideInteractionView();
@@ -94,6 +89,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     hideInteractionView();
                 });
                 return true;
+            });
+            itemView.setOnClickListener((view)->{
+                clickEdit();
             });
         }
 

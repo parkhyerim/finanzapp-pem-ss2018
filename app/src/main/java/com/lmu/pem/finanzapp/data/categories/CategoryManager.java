@@ -89,7 +89,7 @@ public class CategoryManager {
      */
     public ArrayList<String> createDefaultExpCategories(){
         ArrayList<String> defaultExpCats = new ArrayList<>();
-        defaultExpCats.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
+        defaultExpCats.addAll(Arrays.asList("", "Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
                 "Car","Travel", "Other","Add"));
         return defaultExpCats;
     }

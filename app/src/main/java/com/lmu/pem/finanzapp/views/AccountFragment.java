@@ -26,6 +26,9 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.AccountAdapter;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.HashMap;
 
@@ -33,8 +36,9 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AccountFragment extends Fragment {
+public class AccountFragment extends Fragment implements TransactionHistoryEventListener {
 
+    public static final int REQUEST_CODE_ACCOUNT_CHANGE = 123;
     private AccountManager accountManager;
     private AccountAdapter adapter;
     private DatabaseReference dbRef;
@@ -42,6 +46,7 @@ public class AccountFragment extends Fragment {
 
     public AccountFragment() {
         this.accountManager = AccountManager.getInstance();
+        TransactionManager.getInstance().addListener(this);
     }
 
     @Override
@@ -91,7 +96,7 @@ public class AccountFragment extends Fragment {
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(getActivity().getApplicationContext(), AccountAddActivity.class);
             intent.putExtra("newAccount", true);
-            startActivityForResult(intent, 123);
+            startActivityForResult(intent, REQUEST_CODE_ACCOUNT_CHANGE);
         });
 
         return v;
@@ -101,14 +106,14 @@ public class AccountFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), AccountAddActivity.class);
         intent.putExtra("newAccount", false);
         intent.putExtra("accountID", id);
-        startActivityForResult(intent, 123);
+        startActivityForResult(intent, REQUEST_CODE_ACCOUNT_CHANGE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 123 && resultCode == Activity.RESULT_OK) {
+        if(requestCode == REQUEST_CODE_ACCOUNT_CHANGE && resultCode == Activity.RESULT_OK) {
 
             String name = data.getStringExtra("name");
             double balance = data.getDoubleExtra("balance", 0);
@@ -137,4 +142,8 @@ public class AccountFragment extends Fragment {
         }
     }
 
+    @Override
+    public void handle(TransactionHistoryEvent event) {
+        adapter.notifyDataSetChanged();
+    }
 }

@@ -49,6 +49,8 @@ public class AccountAddActivity extends AppCompatActivity {
             Account acc = accountManager.getAccountById(accountID);
             nameView.setText(acc.getName());
             balanceView.setText(String.format(Locale.getDefault(), "%,.2f",acc.getBalance()));
+            balanceText.setVisibility(View.GONE);
+            balanceView.setVisibility(View.GONE);
             defaultCheckView.setChecked(acc.isDefault());
         }
 
@@ -64,7 +66,7 @@ public class AccountAddActivity extends AppCompatActivity {
                 }else{
                     double balance = 0;
                     try {
-                        balance = Double.parseDouble(balanceView.getText().toString()); //TODO should a balance be changable? if so, is this a transaction?
+                        balance = Double.parseDouble(balanceView.getText().toString());
                     }catch (Exception e){} //Shouldn't really be necessary because of set inputType, but hey, better safe than sorry.
 
                     boolean defaultSelected = defaultCheckView.isChecked(); //TODO what if a default account was un-defaulted? what if a new default was set?
