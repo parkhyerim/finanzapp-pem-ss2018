@@ -39,7 +39,7 @@ public class AccountManager {
                             dataSnapshot.child(key).child("color").getValue(Integer.class),
                             dataSnapshot.child(key).child("isDefault").getValue(Boolean.class),
                             dataSnapshot.child(key).child("balance").getValue(Double.class),
-                            dataSnapshot.child(key).child("id").getValue(String.class)
+                            key
                     );
                     if((boolean) map.get(key).get("isDefault")) defaultAcc=newAcc;
                     accounts.add(newAcc);

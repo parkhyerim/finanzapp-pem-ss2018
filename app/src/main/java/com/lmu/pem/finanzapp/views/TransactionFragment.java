@@ -51,13 +51,16 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private FloatingActionButton addButton;
 
     private int position;
-    private int imageResource;
     private double amount = 0;
     private String category = "";
     private String account = "";
     private String date = "";
     private String description = "";
+    private String key;
     private String id;
+
+    public final static int REQUEST_CODE_ADD_TRANSACTION = 111;
+    public final static int REQUEST_CODE_EDIT_TRANSACTION = 112;
 
 
     public TransactionFragment() {
@@ -92,7 +95,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         // RecyclerView
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionManager.getTransactions(), rootView.getContext(), rootView);
+        adapter = new TransactionAdapter(transactionManager.getTransactions(), rootView.getContext(), rootView, this);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -112,12 +115,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
         // Add Button -> Add Page
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
-                startActivityForResult(intent, 111);
-            }
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
         });
         return rootView;
     }
@@ -129,7 +129,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         super.onActivityResult(requestCode, resultCode, data);
 
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
-        if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
+        if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
 
             position = transactionManager.getTransactions().size();
 
@@ -141,27 +141,42 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             //A new transaction can be added to the transaction list
             insertItem(position, date, account, category, description, amount);
+        }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
+            date = data.getStringExtra("date");
+            account = data.getStringExtra("account");
+            category = data.getStringExtra("category");
+            description = data.getStringExtra("description");
+            amount = data.getDoubleExtra("amount",0);
+            key = data.getStringExtra("key");
+
+            transactionManager.updateTransaction(key, date, account, category, getImageByCategory(category), description, amount);
+            adapter.notifyItemChanged(transactionManager.getTransactions().indexOf(transactionManager.getTransactionByKey(key)));
         }
     }
 
 
     public void insertItem(int position, String date, String account, String category, String description, double amount){
-        int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
-        if(img == 0){
-            this.imageResource = getActivity().getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
-        } else {
-            this.imageResource = img;
-        }
-        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         this.date = date;
         this.account = account;
         this.category = category;
         this.amount = amount;
         this.description = description;
-        Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.amount);
+        Transaction transaction = new Transaction(this.date, getImageByCategory(category), this.account, this.category, this.description, this.amount);
         transactionManager.addTransaction(transaction);
 
         adapter.notifyItemInserted(position);
+    }
+
+    private int getImageByCategory(String category) {
+        int imageResource;
+        int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        if(img == 0){
+            imageResource = getActivity().getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
+        } else {
+            imageResource = img;
+        }
+        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        return imageResource;
     }
 
     // Header-Section by date
@@ -261,12 +276,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             adapter.removeItem(deletedIndex);
 
             Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    adapter.restoreItem(deletedTransaction, deletedIndex);
-                }
-            });
+            snackbar.setAction("UNDO", v -> adapter.restoreItem(deletedTransaction, deletedIndex));
 
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();

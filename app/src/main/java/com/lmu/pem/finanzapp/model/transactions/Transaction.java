@@ -34,27 +34,7 @@ public class Transaction implements Comparable<Transaction> {
         this.category = category;
         this.description = description;
         this.amount = amount;
-    }
-
-    public Transaction(int month, int day, int year, int imageResource, String account, String category, String description, double amount) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.imageResource = imageResource;
-        this.account = account;
-        this.category = category;
-        this.description = description;
-        this.amount = amount;
-    }
-
-    public Transaction(String key, String date, int imageResource, String account, String category, String description, double amount) {
-        this.key = key;
-        this.date = date;
-        this.imageResource = imageResource;
-        this.account = account;
-        this.category = category;
-        this.description = description;
-        this.amount = amount;
+        //key will be set later when it's created by Firebase
     }
 
     public int getImageResource() {
@@ -88,7 +68,31 @@ public class Transaction implements Comparable<Transaction> {
 
     public String getKey() { return key; }
 
-    public void setTransactionKey(String key){ this.key = key; }
+    public void setKey(String key){ this.key = key; }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setImageResource(int imageResource) {
+        this.imageResource = imageResource;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     // for date header
     @Override
@@ -109,9 +113,5 @@ public class Transaction implements Comparable<Transaction> {
         result.put("imageResource", imageResource);
 
         return result;
-    }
-
-    public void setTransaction(Transaction newT) {
-        Transaction transaction = new Transaction(newT.getDate(), newT.getImageResource(), newT.getAccount(), newT.getCategory(), newT.getDescription(), newT.getAmount());
     }
 }

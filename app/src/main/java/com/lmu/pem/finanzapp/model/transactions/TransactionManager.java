@@ -29,6 +29,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
 
     private TransactionManager() {
+
         db = FirebaseDatabase.getInstance().getReference();
         transactionRef = db.child("transactions");
 
@@ -49,8 +50,8 @@ public class TransactionManager extends TransactionHistoryEventSource{
                             dataSnapshot.child(key).child("category").getValue(String.class),
                             dataSnapshot.child(key).child("description").getValue(String.class),
                             dataSnapshot.child(key).child("amount").getValue(Double.class)
-
                     );
+                    newTransaction.setKey(key);
                     if(!containsTransaction(newTransaction)){
                         transactions.add(newTransaction);
                         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, TransactionManager.getInstance(), newTransaction));
@@ -162,15 +163,34 @@ public class TransactionManager extends TransactionHistoryEventSource{
     }
 
 
+    /**
+     * Adds a Transaction to the Transaction Manager and stores it in Firebase by calling the {@link #writeNewTransactionToFB(Transaction) writeNewTransactionToFB} method.
+     * This method also automatically stores the Firebase key in the given Transaction object.
+     * @param transaction the Transaction object to be added
+     */
     public void addTransaction(Transaction transaction){
         this.transactions.add(transaction);
-        writeNewTransactionToFB(transaction);
+        String key = writeNewTransactionToFB(transaction);
         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
+        transaction.setKey(key);
+    }
+
+    public void updateTransaction(String key, String date, String account, String category, int imageResource, String description, double amount){
+        Transaction transaction = getTransactionByKey(key);
+        if(!(transaction.getDate().equals(date))) transaction.setDate(date);
+        if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
+        if(!(transaction.getCategory().equals(category))){
+            transaction.setCategory(category);
+            transaction.setImageResource(imageResource);
+        }
+        if(!(transaction.getDescription().equals(description))) transaction.setDescription(description);
+        if(!(transaction.getAmount() == amount)) transaction.setAmount(amount);
+        updateTransactionInFB(key, transaction);
+        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.UPDATED, this, transaction));
     }
 
 
     public void removeTransaction(Transaction transaction){
-
         deleteTransactionFromFB(transaction);
         this.transactions.remove(transaction);
         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.REMOVED, this, transaction));
@@ -178,14 +198,20 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
 
     public boolean containsTransaction(Transaction transaction){
-        for(Transaction t : transactions){
-            // TODO: temporäre Code... "equals" und "==" funktioniert nicht...
-            if(t.getAmount() == transaction.getAmount() && t.getDescription().equals(transaction.getDescription())){
-                return true;
-            }
-
+        if(getTransactionByKey(transaction.getKey())!=null){
+            return true;
+        }else{
+            return false;
         }
-        return false;
+    }
+
+    public Transaction getTransactionByKey(String key){
+        for(Transaction t : transactions){
+            if(t.getKey().equals(key)){
+                return t;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Transaction> getTransactions(){
@@ -205,33 +231,29 @@ public class TransactionManager extends TransactionHistoryEventSource{
     }
 
 
-    public void writeNewTransactionToFB(Transaction transaction){
+    /**
+     * Writes a given Transaction into the Firebase Database
+     * @param transaction the Transaction object to be stored in the database
+     * @return the key of the dataset in Firebase (will be added to the Transaction in {@link #addTransaction(Transaction) addTransaction})
+     */
+    public String writeNewTransactionToFB(Transaction transaction) {
 
-        String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
-
-        /*
         String key = transactionRef.push().getKey();
-        transaction.setTransactionKey(key);
-        */
 
         // Toast.makeText(getActivity(), "ke:"+ key, Toast.LENGTH_LONG).show();
         //Toast.makeText(getActivity(), "ID:"+ transaction.getTransactionId(), Toast.LENGTH_LONG).show();
 
-
-       // transactionRef.push().setValue(transaction);
+        // transactionRef.push().setValue(transaction);
 
         Map<String, Object> transactionValues = transaction.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/transactions/" + key, transactionValues);
+        childUpdates.put(key, transactionValues);
         transactionRef.updateChildren(childUpdates);
-        //FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
-
-
-
+        return key;
     }
 
-    public void updateTransactionInFB(Transaction oldT, Transaction newT){
-        transactionRef.child(oldT.getKey()).setValue(newT);
+    public void updateTransactionInFB(String key, Transaction newT){
+        transactionRef.child(key).setValue(newT.toMap());
     }
 
     public void deleteTransactionFromFB(Transaction transaction) {

@@ -22,6 +22,7 @@ import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.views.TransactionFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,12 +36,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     private View rootView;
     private TransactionViewHolder selectedItem;
     private TransactionManager transactionManager;
+    private TransactionFragment transactionFragment;
 
 
-    public TransactionAdapter(ArrayList<Transaction> transactions, Context context, View rootView){
+    public TransactionAdapter(ArrayList<Transaction> transactions, Context context, View rootView, TransactionFragment fragment){
         this.transactions = transactions;
         this.context = context;
         this.rootView = rootView;
+        this.transactionFragment = fragment;
         transactionManager = TransactionManager.getInstance();
     }
 
@@ -140,13 +143,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             intent.putExtra("account", transaction.getAccount());
             intent.putExtra("description", transaction.getDescription());
             intent.putExtra("amount", transaction.getAmount());
+            intent.putExtra("key", transaction.getKey());
 
             int index;
             String[] expenseCategories, incomeCategories;
             expenseCategories = context.getResources().getStringArray(R.array.expense_category);
             incomeCategories = context.getResources().getStringArray(R.array.income_category);
 
-            if (Arrays.asList(expenseCategories).contains(transaction.getCategory())){
+            if (transaction.getAmount()<0){
                 for(int i = 0 ; i < expenseCategories.length; i++) {
                     if(expenseCategories[i].equals(transaction.getCategory())){
                         index = i;
@@ -161,7 +165,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     }
                 }
             }
-            this.context.startActivity(intent);
+            transactionAdapter.transactionFragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_EDIT_TRANSACTION);
         }
     }
 

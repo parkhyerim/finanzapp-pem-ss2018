@@ -76,7 +76,6 @@ public class Account {
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("id", id);
         result.put("name", name);
         result.put("color", color);
         result.put("isDefault", isDefault);

@@ -5,6 +5,7 @@ public class TransactionHistoryEvent {
     public enum EventType {
         ADDED,
         REMOVED,
+        UPDATED
     }
 
     TransactionHistoryEventSource source;

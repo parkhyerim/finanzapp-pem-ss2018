@@ -32,7 +32,7 @@ import java.util.Calendar;
 public class TransactionAddActivity extends AppCompatActivity {
 
     private double amount = 0;
-    private String category, account, date, description;
+    private String category, account, date, description, key;
     private int year, month, day;
 
     private RelativeLayout expenseRelativeLayout, incomeRelativeLayout, transactionAddRelativeLayout;
@@ -180,25 +180,19 @@ public class TransactionAddActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = alertDialogBuilder
                             .setCancelable(false)
                             .setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            // get user input and set it to result
-                                            // edit text
+                                    (dialog, id1) -> {
+                                        // get user input and set it to result
+                                        // edit text
 
-                                            String newItem = userInput.getText().toString();
-                                            int pos = expenses.size()-1;
-                                            expenses.add(pos, newItem);
+                                        String newItem = userInput.getText().toString();
+                                        int pos = expenses.size()-1;
+                                        expenses.add(pos, newItem);
 
-                                            expenseCategoryAdapter.notifyDataSetChanged();
-                                            category = parent.getItemAtPosition(pos).toString();
-                                        }
+                                        expenseCategoryAdapter.notifyDataSetChanged();
+                                        category = parent.getItemAtPosition(pos).toString();
                                     })
                             .setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
+                                    (dialog, id12) -> dialog.cancel());
 
                     // create alert dialog
                     AlertDialog alertDialog = alertDialogBuilder.create();
@@ -244,25 +238,19 @@ public class TransactionAddActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = alertDialogBuilder
                             .setCancelable(false)
                             .setPositiveButton("OK",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            // get user input and set it to result
-                                            // edit text
-                                            String newItem = userInput.getText().toString();
-                                            int pos = incomes.size()-1;
-                                            incomes.add(pos, newItem);
+                                    (dialog, id14) -> {
+                                        // get user input and set it to result
+                                        // edit text
+                                        String newItem = userInput.getText().toString();
+                                        int pos = incomes.size()-1;
+                                        incomes.add(pos, newItem);
 
-                                            incomeCategoryAdapter.notifyDataSetChanged();
-                                            category = parent.getItemAtPosition(pos).toString();
+                                        incomeCategoryAdapter.notifyDataSetChanged();
+                                        category = parent.getItemAtPosition(pos).toString();
 
-                                        }
                                     })
                             .setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
+                                    (dialog, id13) -> dialog.cancel());
 
                     // create alert dialog
                     AlertDialog alertDialog = alertDialogBuilder.create();
@@ -288,7 +276,13 @@ public class TransactionAddActivity extends AppCompatActivity {
             dateDisplay.setText(date);
             descriptionEditText.setText(description);
             // TODO: Expense and Income
-            moneyEditText.setText(String.valueOf(getIntent().getDoubleExtra("amount", 0)));
+            amount = getIntent().getDoubleExtra("amount", 0);
+            moneyEditText.setText(String.valueOf(Math.abs(amount)));
+            if(amount<0){
+                expenseButton.callOnClick();
+            } else {
+                incomeButton.callOnClick();
+            }
 
             // Account
             String account = accountSpinner.getSelectedItem().toString();
@@ -310,86 +304,81 @@ public class TransactionAddActivity extends AppCompatActivity {
                 incomeCategoryShow();
                 int income = getIntent().getIntExtra("category2",0);
                 incomeCategorySpinner.setSelection(income);
-            }}
+            }
 
+            //Key
+            key = getIntent().getStringExtra("key");
+        }
 
         // Buttons (expenseButton, incomeButton, doneButton)
-        expenseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
-                    /*
-                    Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
-                    TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
-                    toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
-                    toast.show();
-                    */
+        expenseButton.setOnClickListener(v -> {
+            if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
+                Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
+                /*
+                Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
+                TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
+                toast.show();
+                */
 
-                    expenseCategoryShow();
+                expenseCategoryShow();
 
-                } else {
-                   // income = 0;
-                    //expense = Double.parseDouble(moneyEditText.getText().toString());
-                    amount = -1 * Double.parseDouble(moneyEditText.getText().toString());
-                    expenseCategoryShow();
-                    transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
+            } else {
+               // income = 0;
+                //expense = Double.parseDouble(moneyEditText.getText().toString());
+                amount = -1 * Double.parseDouble(moneyEditText.getText().toString());
+                expenseCategoryShow();
+                transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
 
-                    //Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
-                    //startActivityForResult(intent, 222);
-                }
+                //Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
+                //startActivityForResult(intent, 222);
             }
         });
 
-        incomeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
-                    incomeCategoryShow();
+        incomeButton.setOnClickListener(v -> {
+            if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
+                Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
+                incomeCategoryShow();
 
-                } else {
-                   // expense = 0;
-                   // income = Double.parseDouble(moneyEditText.getText().toString());
-                    amount = Double.parseDouble(moneyEditText.getText().toString());
-                    incomeCategoryShow();
-                    transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
+            } else {
+               // expense = 0;
+               // income = Double.parseDouble(moneyEditText.getText().toString());
+                amount = Double.parseDouble(moneyEditText.getText().toString());
+                incomeCategoryShow();
+                transactionAddRelativeLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
 
-                    // Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
-                    //startActivityForResult(intent, 222);
-                }
+                // Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
+                //startActivityForResult(intent, 222);
             }
         });
 
 
 
 
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                        Toast.makeText(TransactionAddActivity.this, "Please insert account", Toast.LENGTH_LONG).show();
+        doneButton.setOnClickListener(v -> {
+                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please insert account", Toast.LENGTH_LONG).show();
 
-                    } else if(accountSpinner.getSelectedItem().toString().equals("")){
-                        Toast.makeText(TransactionAddActivity.this, "Please select an account", Toast.LENGTH_LONG).show();
+                } else if(accountSpinner.getSelectedItem().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please select an account", Toast.LENGTH_LONG).show();
 
-                    } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
-                        Toast.makeText(TransactionAddActivity.this, "Please select a category", Toast.LENGTH_LONG).show();
+                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please select a category", Toast.LENGTH_LONG).show();
 
-                    }  else {
-                        date = dateDisplay.getText().toString();
-                        description = descriptionEditText.getText().toString();
+                }  else {
+                    date = dateDisplay.getText().toString();
+                    description = descriptionEditText.getText().toString();
 
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("date", date);
-                        resultIntent.putExtra("category", category);
-                        resultIntent.putExtra("account", account);
-                        resultIntent.putExtra("amount", amount);
-                        resultIntent.putExtra("description", description);
-                        setResult(RESULT_OK, resultIntent);
-                        finish();
-                    }
-            }
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("date", date);
+                    resultIntent.putExtra("category", category);
+                    resultIntent.putExtra("account", account);
+                    resultIntent.putExtra("amount", amount);
+                    resultIntent.putExtra("description", description);
+                    resultIntent.putExtra("key", key);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
         });
     }
 

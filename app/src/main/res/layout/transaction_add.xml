@@ -207,6 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:textAlignment="viewEnd"
+            android:inputType="text"
             android:textSize="18sp" />
 
         <Button
