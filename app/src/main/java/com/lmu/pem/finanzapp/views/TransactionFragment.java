@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +14,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,31 +22,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v7.widget.SearchView;
-import android.widget.TableRow;
-import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
-import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.ButterKnife;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -56,7 +41,7 @@ import static android.content.ContentValues.TAG;
  */
 public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener {
 
-    private TransactionManager transactionManager;
+    private TransactionHistory transactionHistory;
 
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
@@ -76,7 +61,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
     public TransactionFragment() {
-        this.transactionManager = TransactionManager.getInstance();
+        this.transactionHistory = TransactionHistory.getInstance();
     }
 
 
@@ -107,7 +92,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         // RecyclerView
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionManager.getTransactions(), rootView.getContext(), rootView);
+        adapter = new TransactionAdapter(transactionHistory.getTransactions(), rootView.getContext(), rootView);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -122,7 +107,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
                 new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
                         true,
-                        getSectionCallback(transactionManager.getTransactions()));
+                        getSectionCallback(transactionHistory.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
@@ -146,7 +131,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
 
-            position = transactionManager.getTransactions().size();
+            position = transactionHistory.getTransactions().size();
 
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
@@ -174,7 +159,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         this.amount = amount;
         this.description = description;
         Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.amount);
-        transactionManager.addTransaction(transaction);
+        transactionHistory.addTransaction(transaction);
 
         adapter.notifyItemInserted(position);
     }
@@ -228,7 +213,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                adapter.setSearchResult(transactionManager.getTransactions());
+                adapter.setSearchResult(transactionHistory.getTransactions());
                 return true;
             }
         });
@@ -241,7 +226,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        final ArrayList<Transaction> filteredList = filter(transactionManager.getTransactions(), newText);
+        final ArrayList<Transaction> filteredList = filter(transactionHistory.getTransactions(), newText);
         adapter.setSearchResult(filteredList);
         return false;
     }
@@ -270,8 +255,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
-            String name = transactionManager.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionManager.getTransactions().get(viewHolder.getAdapterPosition());
+            String name = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
             adapter.removeItem(deletedIndex);
 

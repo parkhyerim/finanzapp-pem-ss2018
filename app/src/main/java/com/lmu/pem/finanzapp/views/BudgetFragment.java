@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
-import com.lmu.pem.finanzapp.data.categories.DefaultCategory;
-import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 
 import java.util.ArrayList;
