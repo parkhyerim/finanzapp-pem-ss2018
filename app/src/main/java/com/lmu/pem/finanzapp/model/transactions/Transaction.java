@@ -12,14 +12,20 @@ public class Transaction implements Comparable<Transaction> {
     private String category;
     private String account;
     private String description;
-    private int imageResource;
-
+    private int imageResource = 0;
     private double amount;
-    private double balance;
 
     private String date;
     private int year, month, day;
 
+    private String key;
+
+    private Map<String, Transaction> trns = new HashMap<>();
+
+
+    public Transaction(){
+        // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
+    }
 
     public Transaction(String date, int imageResource, String account, String category, String description, double amount) {
         this.date = date;
@@ -41,6 +47,15 @@ public class Transaction implements Comparable<Transaction> {
         this.amount = amount;
     }
 
+    public Transaction(String key, String date, int imageResource, String account, String category, String description, double amount) {
+        this.key = key;
+        this.date = date;
+        this.imageResource = imageResource;
+        this.account = account;
+        this.category = category;
+        this.description = description;
+        this.amount = amount;
+    }
 
     public int getImageResource() {
         return imageResource;
@@ -60,8 +75,6 @@ public class Transaction implements Comparable<Transaction> {
 
     public double getAmount() { return amount; }
 
-    public double getBalance() { return balance; }
-
 
     public int getDay() { return day; }
 
@@ -73,11 +86,13 @@ public class Transaction implements Comparable<Transaction> {
         return description;
     }
 
+    public String getKey() { return key; }
+
+    public void setTransactionKey(String key){ this.key = key; }
 
     // for date header
     @Override
     public int compareTo(@NonNull Transaction transaction) {
-
         return getDate().toString()
                 .compareTo(transaction.getDate().toString());
     }
@@ -96,4 +111,7 @@ public class Transaction implements Comparable<Transaction> {
         return result;
     }
 
+    public void setTransaction(Transaction newT) {
+        Transaction transaction = new Transaction(newT.getDate(), newT.getImageResource(), newT.getAccount(), newT.getCategory(), newT.getDescription(), newT.getAmount());
+    }
 }

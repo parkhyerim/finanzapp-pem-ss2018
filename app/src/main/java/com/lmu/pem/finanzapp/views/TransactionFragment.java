@@ -15,7 +15,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v7.widget.SearchView;
+import android.widget.TableRow;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,17 +33,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.RecyclerItemTouchHelper;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,18 +56,14 @@ import static android.content.ContentValues.TAG;
  */
 public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener {
 
-    DatabaseReference db;
-    DatabaseReference transactionRef;
+    private TransactionManager transactionManager;
 
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private CoordinatorLayout trsView;
 
-
     private FloatingActionButton addButton;
-
-    private TransactionHistory transactionHistory;
 
     private int position;
     private int imageResource;
@@ -76,11 +72,11 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private String account = "";
     private String date = "";
     private String description = "";
+    private String id;
 
 
     public TransactionFragment() {
-        super();
-        // Required empty public constructor
+        this.transactionManager = TransactionManager.getInstance();
     }
 
 
@@ -102,13 +98,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
         ButterKnife.bind(this,rootView);
 
-        // Firebase : get Reference
-        db = FirebaseDatabase.getInstance().getReference();
-        transactionRef = db.child("transaction");
-
-        createTransactionList();
-        // transactionList = getTransactionSorted();
-
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
         addButton = rootView.findViewById(R.id.transaction_add_button);
@@ -118,7 +107,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         // RecyclerView
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getActivity());
-        adapter = new TransactionAdapter(transactionHistory.getTransactions(), rootView.getContext(), rootView);
+        adapter = new TransactionAdapter(transactionManager.getTransactions(), rootView.getContext(), rootView);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -129,12 +118,11 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);*/
 
 
-
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration =
                 new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
                         true,
-                        getSectionCallback(transactionHistory.getTransactions()));
+                        getSectionCallback(transactionManager.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
@@ -146,40 +134,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 startActivityForResult(intent, 111);
             }
         });
-
-
-        // Firebase
-        transactionRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-               // Log.d(TAG+"Added", dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG+"Changed",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG+"Removed",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG+"Moved",dataSnapshot.getValue(Transaction.class).toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG+"Cancelled",databaseError.toString());
-            }
-        });
-
-
         return rootView;
     }
-
 
 
 
@@ -189,7 +145,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == 111 && resultCode == Activity.RESULT_OK) {
-            position = transactionHistory.getTransactions().size();
+
+            position = transactionManager.getTransactions().size();
 
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
@@ -203,38 +160,24 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public void createTransactionList() {
-        transactionHistory = TransactionHistory.getInstance();
-
-
-
-
-    }
-
-
     public void insertItem(int position, String date, String account, String category, String description, double amount){
-
-        final String key = FirebaseDatabase.getInstance().getReference().child("transaction").push().getKey();
-
-        this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
+        if(img == 0){
+            this.imageResource = getActivity().getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
+        } else {
+            this.imageResource = img;
+        }
+        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         this.date = date;
         this.account = account;
         this.category = category;
         this.amount = amount;
         this.description = description;
         Transaction transaction = new Transaction(this.date, this.imageResource, this.account, this.category, this.description, this.amount);
-        transactionHistory.addTransaction(transaction);
+        transactionManager.addTransaction(transaction);
+
         adapter.notifyItemInserted(position);
-
-        // Firebase
-        Map<String, Object> transactionItemValues = transaction.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/transaction/" + key, transactionItemValues);
-        FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
     }
-
-
-
 
     // Header-Section by date
     private RecyclerSectionItemDecoration.SectionCallback getSectionCallback(final ArrayList<Transaction> transactionList){
@@ -285,7 +228,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                adapter.setSearchResult(transactionHistory.getTransactions());
+                adapter.setSearchResult(transactionManager.getTransactions());
                 return true;
             }
         });
@@ -298,7 +241,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        final ArrayList<Transaction> filteredList = filter(transactionHistory.getTransactions(), newText);
+        final ArrayList<Transaction> filteredList = filter(transactionManager.getTransactions(), newText);
         adapter.setSearchResult(filteredList);
         return false;
     }
@@ -327,8 +270,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
-            String name = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionHistory.getTransactions().get(viewHolder.getAdapterPosition());
+            String name = transactionManager.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
+            final Transaction deletedTransaction = transactionManager.getTransactions().get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
             adapter.removeItem(deletedIndex);
 

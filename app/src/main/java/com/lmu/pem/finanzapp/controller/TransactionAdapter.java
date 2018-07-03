@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,23 +31,24 @@ import java.util.Locale;
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>{
 
     private Context context;
-    private ArrayList<Transaction> transactionList;
+    private ArrayList<Transaction> transactions;
     private View rootView;
     private TransactionViewHolder selectedItem;
+    private TransactionManager transactionManager;
 
 
-    public TransactionAdapter(ArrayList<Transaction> transactionList, Context context, View rootView){
-        this.transactionList = transactionList;
+    public TransactionAdapter(ArrayList<Transaction> transactions, Context context, View rootView){
+        this.transactions = transactions;
         this.context = context;
         this.rootView = rootView;
+        transactionManager = TransactionManager.getInstance();
     }
 
-    public static class TransactionViewHolder extends RecyclerView.ViewHolder {
 
+
+    public static class TransactionViewHolder extends RecyclerView.ViewHolder {
         private ImageView categoryImageView;
-        private TextView descriptionTextView;
-        private TextView accountTextView;
-        private TextView amountTextView;
+        private TextView descriptionTextView, accountTextView, amountTextView;
         public RelativeLayout viewForeground;
         private LinearLayout viewBackground;
         private ImageButton editButton, deleteButton, backButton;
@@ -58,21 +59,22 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         public TransactionViewHolder(View itemView, Context context, ArrayList<Transaction> transactions, TransactionAdapter adapter) {
             super(itemView);
-            this.transactions = new ArrayList<>();
+            //this.transactions = new ArrayList<>();
             this.transactions = transactions;
             this.context = context;
             this.transactionAdapter = adapter;
 
+
             // Alle findViewByIDs
             categoryImageView = (ImageView) itemView.findViewById(R.id.category_imageView);
             descriptionTextView = (TextView) itemView.findViewById(R.id.description_textView);
-            accountTextView = (TextView) itemView.findViewById(R.id.account_textView);
-            amountTextView = (TextView) itemView.findViewById(R.id.money_textView);
+            accountTextView = itemView.findViewById(R.id.account_textView);
+            amountTextView = itemView.findViewById(R.id.amount_textView);
             viewForeground = (RelativeLayout) itemView.findViewById(R.id.transaction_item_layout);
             viewBackground = (LinearLayout) itemView.findViewById(R.id.transaction_interaction);
             editButton = (ImageButton) itemView.findViewById(R.id.edit_icon);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.delete_icon);
-            backButton = (ImageButton) itemView.findViewById(R.id.back_icon);
+            deleteButton = itemView.findViewById(R.id.delete_icon);
+            backButton =  itemView.findViewById(R.id.back_icon);
 
             itemView.setOnLongClickListener((view)->{
                 showInteractionView();
@@ -109,13 +111,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         private void clickDelete(TransactionAdapter adapter) {
-            TransactionHistory transactionHistory = TransactionHistory.getInstance();
-            String name = transactionHistory.getTransactions().get(getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionHistory.getTransactions().get(getAdapterPosition());
+            TransactionManager transactionManager = TransactionManager.getInstance();
+            String description = transactionManager.getTransactions().get(getAdapterPosition()).getDescription();
             final int deletedIndex = getAdapterPosition();
+            final Transaction deletedTransaction = transactionManager.getTransactions().get(deletedIndex);
             adapter.removeItem(deletedIndex);
 
-            Snackbar snackbar = Snackbar.make(adapter.rootView, name + " removed from list!", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(adapter.rootView, description + " removed from list!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,6 +133,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private void clickEdit() {
             // Update(edit) a transaction
             int position = getAdapterPosition();
+
             Transaction transaction = this.transactions.get(position);
             Intent intent = new Intent(this.context, TransactionAddActivity.class);
             intent.putExtra("date", transaction.getDate());
@@ -162,27 +165,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
     }
 
-    /*
-    public static class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(View itemView){
-            super(itemView);
-            }
-        }
-    //
-    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        public HeaderViewHolder(View itemView){
-            super(itemView);
-        }
-    }
-*/
-
-
     @NonNull
     @Override
     public TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.transactions_item, parent, false);
-        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(itemView, context, transactionList, this);
+        TransactionViewHolder transactionViewHolder = new TransactionViewHolder(itemView, context, transactions, this);
         return transactionViewHolder;
     }
 
@@ -190,7 +178,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
 
-        Transaction currentTransactionItem = transactionList.get(position);
+        Transaction currentTransactionItem = transactions.get(position);
 
         // Account
         Account account = AccountManager.getInstance().getAccountById(currentTransactionItem.getAccount());
@@ -201,7 +189,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         // Category-Image
-        holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
+
+         holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
         // Expense or Income
         String prefix = "";
@@ -230,25 +219,26 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public int getItemCount() {
-        // Wenn transactionList null ist, dann gibt 0 Wert zurück
-        return null!= transactionList? transactionList.size():0;
+        // Wenn transactions null ist, dann gibt 0 Wert zurück
+        return null!= transactions ? transactions.size():0;
     }
 
 
     public void removeItem(int position) {
-        transactionList.remove(position);
+        transactionManager.removeTransaction(transactions.get(position));
+        //transactions.remove(position);
         notifyItemRemoved(position);
     }
 
 
     public void restoreItem(Transaction transactionItem, int position){
-        transactionList.add(position, transactionItem);
+        transactions.add(position, transactionItem);
         notifyItemInserted(position);
     }
 
 
     public void setSearchResult(ArrayList<Transaction> result){
-        transactionList = result;
+        transactions = result;
         notifyDataSetChanged();
     }
 
