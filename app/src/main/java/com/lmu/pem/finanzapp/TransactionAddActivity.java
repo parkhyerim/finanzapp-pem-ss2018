@@ -6,15 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -93,7 +92,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay();
+        setDateOnDisplay(year, month, day);
 
         // Default-Page for an expense selection
         incomeRelativeLayout.setEnabled(false);
@@ -102,17 +101,17 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
         dateDisplay.setOnClickListener(v -> {
-            //Calendar cal = Calendar.getInstance();
-            year = cal.get(Calendar.YEAR);
-            month = cal.get(Calendar.MONTH);
-            day = cal.get(Calendar.DAY_OF_MONTH);
+            //Calendar cal = Calendar.getInstance()
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
         });
 
-        dateSetListener = (view, year, month, day) -> setDateOnDisplay();
+        dateSetListener = (view, year, month, day) -> setDateOnDisplay(year, month, day);
 
 
         // SPINNER
@@ -400,7 +399,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         incomeRelativeLayout.setVisibility(View.VISIBLE);
     }
 
-    public void setDateOnDisplay() {
+    public void setDateOnDisplay(int year, int month, int day) {
         month ++;
 
         if (day < 10 && month < 10) {
