@@ -7,10 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
@@ -40,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> currencyAdapter = ArrayAdapter.createFromResource(this, R.array.currency_array, android.R.layout.simple_spinner_item);
         currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         currencySpinner.setAdapter(currencyAdapter);
+        currencySpinner.setSelection(globalSettings.getCurrency());
         currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -47,16 +45,14 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-        currencySpinner.setSelection(globalSettings.getCurrency());
 
         Spinner homeTabSpinner = (Spinner) findViewById(R.id.homeTabSpinner);
         ArrayAdapter<CharSequence> homeTabAdapter = ArrayAdapter.createFromResource(this, R.array.tabs_array, android.R.layout.simple_spinner_item);
         homeTabAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         homeTabSpinner.setAdapter(homeTabAdapter);
+        homeTabSpinner.setSelection(globalSettings.getHomeTab());
         homeTabSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -64,10 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-        homeTabSpinner.setSelection(globalSettings.getHomeTab());
     }
 }
