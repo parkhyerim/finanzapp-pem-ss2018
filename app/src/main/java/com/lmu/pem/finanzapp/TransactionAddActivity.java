@@ -6,15 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -34,11 +33,11 @@ public class TransactionAddActivity extends AppCompatActivity {
     private double amount = 0;
     private String category, account, date, description, key;
     private int year, month, day;
+    private Calendar cal;
 
     private RelativeLayout expenseRelativeLayout, incomeRelativeLayout;
     private LinearLayout transactionAddLayout;
-    private EditText moneyEditText;
-    private EditText descriptionEditText;
+    private EditText amountEditText, descriptionEditText;
     private Button expenseButton, incomeButton, doneButton;
     private Spinner accountSpinner, expenseCategorySpinner, incomeCategorySpinner;
     private TextView dateDisplay, currencySymbol;
@@ -46,15 +45,14 @@ public class TransactionAddActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
     private CategoryManager categoryManager;
-
     private Context context;
 
-    private Calendar cal;
 
     private ArrayList<String> expenses = new ArrayList<>();
     private ArrayList<String> incomes = new ArrayList<>();
 
-    //private List<String> expenseArray = new ArrayList<>();
+    private boolean incomeSelected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +64,10 @@ public class TransactionAddActivity extends AppCompatActivity {
         categoryManager = CategoryManager.getInstance();
 
         // Alle findViewByIDs
-        dateDisplay = (TextView) findViewById(R.id.dateDisplay_textView);
-        currencySymbol = (TextView) findViewById(R.id.expenseAdd_textView);
+        dateDisplay = findViewById(R.id.dateDisplay_textView);
+        currencySymbol = findViewById(R.id.expenseAdd_textView);
 
-        moneyEditText = (EditText) findViewById(R.id.expenseAdd_editText);
+        amountEditText = (EditText) findViewById(R.id.expenseAdd_editText);
         descriptionEditText = (EditText) findViewById(R.id.description_editView);
 
         incomeRelativeLayout = (RelativeLayout) findViewById(R.id.income_layout);
@@ -93,26 +91,24 @@ public class TransactionAddActivity extends AppCompatActivity {
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay();
+        setDateOnDisplay(year, month, day);
 
-        // Default-Page for an expense selection
-        incomeRelativeLayout.setEnabled(false);
-        incomeRelativeLayout.setVisibility(View.GONE);
-
-
+        // Default-Page as a expense page
+        categoryShow();
+        categoryButtonClicked();
 
         dateDisplay.setOnClickListener(v -> {
-            //Calendar cal = Calendar.getInstance();
-            year = cal.get(Calendar.YEAR);
-            month = cal.get(Calendar.MONTH);
-            day = cal.get(Calendar.DAY_OF_MONTH);
+            //Calendar cal = Calendar.getInstance()
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
         });
 
-        dateSetListener = (view, year, month, day) -> setDateOnDisplay();
+        dateSetListener = (view, year, month, day) -> setDateOnDisplay(year, month, day);
 
 
         // SPINNER
@@ -270,7 +266,7 @@ public class TransactionAddActivity extends AppCompatActivity {
             descriptionEditText.setText(description);
             // TODO: Expense and Income
             amount = getIntent().getDoubleExtra("amount", 0);
-            moneyEditText.setText(String.valueOf(Math.abs(amount)));
+            amountEditText.setText(String.valueOf(Math.abs(amount)));
             if(amount<0){
                 expenseButton.callOnClick();
             } else {
@@ -309,60 +305,39 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         // Buttons (expenseButton, incomeButton, doneButton)
         expenseButton.setOnClickListener(v -> {
-            if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
-                /*
-                Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
-                TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
-                toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
-                toast.show();
-                */
-
-                expenseCategoryShow();
-
-            } else {
-               // income = 0;
-                //expense = Double.parseDouble(moneyEditText.getText().toString());
-                amount = -1 * Double.parseDouble(moneyEditText.getText().toString());
-                expenseCategoryShow();
-                transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
-
-                //Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
-                //startActivityForResult(intent, 222);
-            }
+            incomeSelected = false;
+            expenseCategoryShow();
+            categoryButtonClicked();
         });
 
         incomeButton.setOnClickListener(v -> {
-            if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                Toast.makeText(TransactionAddActivity.this, "Please insert amount", Toast.LENGTH_LONG).show();
-                incomeCategoryShow();
-
-            } else {
-               // expense = 0;
-               // income = Double.parseDouble(moneyEditText.getText().toString());
-                amount = Double.parseDouble(moneyEditText.getText().toString());
-                incomeCategoryShow();
-                transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
-
-                // Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
-                //startActivityForResult(intent, 222);
-            }
+            incomeSelected = true;
+            incomeCategoryShow();
+            categoryButtonClicked();
         });
 
 
 
 
         doneButton.setOnClickListener(v -> {
-                if(dateDisplay.getText().toString().equals("")|| moneyEditText.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please insert account", Toast.LENGTH_LONG).show();
+                if(dateDisplay.getText().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
+
+                } else if (amountEditText.getText().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
 
                 } else if(accountSpinner.getSelectedItem().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please select an account", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TransactionAddActivity.this, "Please choose an account.", Toast.LENGTH_LONG).show();
 
                 } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please select a category", Toast.LENGTH_LONG).show();
+                    Toast.makeText(TransactionAddActivity.this, "Please choose an category.", Toast.LENGTH_LONG).show();
 
                 }  else {
+                    amount = Double.parseDouble(amountEditText.getText().toString());
+                    if(!incomeSelected){
+                        amount = -1 * amount;
+                    }
+
                     date = dateDisplay.getText().toString();
                     description = descriptionEditText.getText().toString();
 
@@ -380,27 +355,52 @@ public class TransactionAddActivity extends AppCompatActivity {
     }
 
 
+    public void categoryShow(){
+        if(incomeSelected){
+            incomeCategoryShow();
+        } else {
+            expenseCategoryShow();
+        }
+    }
 
     public void expenseCategoryShow() {
+        incomeSelected = false;
         expenseButton.setAlpha(1.0f);
         incomeButton.setAlpha(0.5f);
         incomeRelativeLayout.setEnabled(false);
         incomeRelativeLayout.setVisibility(View.GONE);
         expenseRelativeLayout.setEnabled(true);
         expenseRelativeLayout.setVisibility(View.VISIBLE);
+        transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
     }
 
-
     public void incomeCategoryShow() {
+        incomeSelected = true;
         incomeButton.setAlpha(1.0f);
         expenseButton.setAlpha(0.5f);
         expenseRelativeLayout.setEnabled(false);
         expenseRelativeLayout.setVisibility(View.GONE);
         incomeRelativeLayout.setEnabled(true);
         incomeRelativeLayout.setVisibility(View.VISIBLE);
+        transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
     }
 
-    public void setDateOnDisplay() {
+
+    public void categoryButtonClicked() {
+        if(dateDisplay.getText().toString().equals("")){
+            Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
+        } else if(amountEditText.getText().toString().equals("")){
+            Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
+                /*
+                Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
+                TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
+                toast.show();
+                */
+        }
+    }
+
+    public void setDateOnDisplay(int year, int month, int day) {
         month ++;
 
         if (day < 10 && month < 10) {
