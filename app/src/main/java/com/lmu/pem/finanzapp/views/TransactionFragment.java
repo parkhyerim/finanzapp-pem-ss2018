@@ -55,7 +55,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private String category = "";
     private String account = "";
     private String account2 = "";
-    private String date = "";
     private String description = "";
     private String key;
     private String id;
@@ -134,7 +133,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
 
             position = transactionManager.getTransactions().size();
-            date = data.getStringExtra("date");
             year = data.getIntExtra("year",0);
             month = data.getIntExtra("month", 0);
             day = data.getIntExtra("day",0);
@@ -145,9 +143,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             amount = data.getDoubleExtra("amount",0);
 
             //A new transaction can be added to the transaction list
-            insertItem(position, date, year, month, day, account, account2, category, description, amount);
+            insertItem(position, year, month, day, account, account2, category, description, amount);
         }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
-            date = data.getStringExtra("date");
             year = data.getIntExtra("year",0);
             month = data.getIntExtra("month", 0);
             day = data.getIntExtra("day",0);
@@ -157,14 +154,13 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             amount = data.getDoubleExtra("amount",0);
             key = data.getStringExtra("key");
 
-            transactionManager.updateTransaction(key, date, account, category, getImageByCategory(category), description, amount);
+            transactionManager.updateTransaction(key, year, month, day, account, category, getImageByCategory(category), description, amount);
             adapter.notifyItemChanged(transactionManager.getTransactions().indexOf(transactionManager.getTransactionByKey(key)));
         }
     }
 
 
-    public void insertItem(int position, String date, int year, int month, int day, String account, String account2, String category, String description, double amount){
-        this.date = date;
+    public void insertItem(int position, int year, int month, int day, String account, String account2, String category, String description, double amount){
         this.year = year;
         this.month = month;
         this.day = day;
@@ -176,9 +172,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         Transaction transaction;
         if(account2==null){
-            transaction = new Transaction(this.date, this.year, this.month, this.day, getImageByCategory(category), this.account, this.category, this.description, this.amount);
+            transaction = new Transaction(this.year, this.month, this.day, getImageByCategory(category), this.account, this.category, this.description, this.amount);
         }else{
-            transaction = new Transaction(this.date, this.year, this.month, this.day, getImageByCategory(category), this.account, this.account2, this.category, this.description, this.amount);
+            transaction = new Transaction(this.year, this.month, this.day, getImageByCategory(category), this.account, this.account2, this.category, this.description, this.amount);
         }
         transactionManager.addTransaction(transaction);
 
@@ -202,26 +198,22 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-
-                //TODO: Try... Catch... richtig schreiben....
-                if(position > 0 ) {
-                    return transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
-                } else {
-                    return position == 0;
-                }
-               // return position == 0 || transactionList.get(position).getDate().charAt(0) != transactionList.get(position - 1).getDate().charAt(0);
+                return position == 0
+                        || (transactionList.get(position).getYear() != transactionList.get(position-1).getYear())
+                        || (transactionList.get(position).getMonth() != transactionList.get(position-1).getMonth())
+                        || (transactionList.get(position).getDay()!=transactionList.get(position-1).getDay());
             }
 
             @Override
             public CharSequence getSectionHeader(int position) {
                 // TODO: Richtige Lösung für Index out of bounds schreiben...
+                String date;
                 if(position >= 0) {
-                    date = transactionList.get(position).getDate().toString();
+                    date = transactionList.get(position).getMonth() + "/" + transactionList.get(position).getDay() + "/" + transactionList.get(position).getYear();
 
                 } else {
                     date = "01/01/2018";
                 }
-               // date = transactionList.get(position).getDate().toString();
                 return date;
             }
         };
@@ -269,14 +261,19 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         query = query.toLowerCase();
         final ArrayList<Transaction> fiteredList = new ArrayList<>();
         for(Transaction transaction: transactionList){
-            // TODO: bessere saubere Codes..
             final String descText = transaction.getDescription().toLowerCase();
             final String accText = transaction.getAccount().toLowerCase();
             final String cateText = transaction.getCategory().toLowerCase();
-            final String dateText = transaction.getDate().toLowerCase();
+            final String year = transaction.getYear()+"";
+            final String month = transaction.getMonth()+"";
+            final String day = transaction.getDay()+"";
             final String amountText = String.valueOf(transaction.getAmount()).toLowerCase();
-            if(descText.contains(query) || accText.contains(query)
-                    ||cateText.contains(query) ||dateText.contains(query)
+            if(descText.contains(query)
+                    || accText.contains(query)
+                    || cateText.contains(query)
+                    || year.equals(query) //if one digit should suffice, replace equals() with contains()
+                    || month.equals(query)
+                    || day.equals(query)
                     || amountText.contains(query)){
                 fiteredList.add(transaction);
             }

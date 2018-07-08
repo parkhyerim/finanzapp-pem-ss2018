@@ -36,7 +36,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private static final int SELECTED_SHIFT = 3;
 
     private double amount = 0;
-    private String category, account, account2, date, description, key;
+    private String category, account, account2, description, key;
     private int year, month, day;
     private Calendar cal;
 
@@ -86,9 +86,11 @@ public class TransactionAddActivity extends AppCompatActivity {
         // extras indicate that we want to edit an existing transaction instead of creating a new one
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            date = getIntent().getStringExtra("date");
+            year = getIntent().getIntExtra("year", 2018);
+            month = getIntent().getIntExtra("month", 1);
+            day = getIntent().getIntExtra("day", 1);
             description = getIntent().getStringExtra("description");
-            dateDisplay.setText(date);
+            dateDisplay.setText(month + "/" + day + "/" + year);
             descriptionEditText.setText(description);
             // TODO: Expense and Income
             amount = getIntent().getDoubleExtra("amount", 0);
@@ -175,13 +177,11 @@ public class TransactionAddActivity extends AppCompatActivity {
                         amount = -1 * amount;
                     }
 
-                    date = dateDisplay.getText().toString();
                     description = descriptionEditText.getText().toString();
 
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra("date", date);
                     resultIntent.putExtra("year", year);
-                    resultIntent.putExtra("month", month);
+                    resultIntent.putExtra("month", month+1);
                     resultIntent.putExtra("day", day);
                     resultIntent.putExtra("category", category);
                     resultIntent.putExtra("account", account);
@@ -309,15 +309,15 @@ public class TransactionAddActivity extends AppCompatActivity {
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay(year, month, day);
+        setDateOnDisplay(year, month+1, day);
 
-        dateSetListener = (view, year, month, day) -> setDateOnDisplay(year, month, day);
+        dateSetListener = (view, year, month, day) -> {
+            this.year = year;
+            this.month = month;
+            this.day = day;
+            setDateOnDisplay(year, month+1, day);
+        };
         dateDisplay.setOnClickListener(v -> {
-            //Calendar cal = Calendar.getInstance()
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-
             DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
@@ -430,13 +430,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     }
 
     public void setDateOnDisplay(int year, int month, int day) {
-        month ++;
-        this.year = year;
-        this.month = month;
-        this.day = day;
 
-
-        if (day < 10 && month < 10) {
+        if (day < 10 && month < 10) { //TODO replace with number formatter
             dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
         } else if (month < 10) {
             dateDisplay.setText("0"+ month + "/" + day + "/" + year);

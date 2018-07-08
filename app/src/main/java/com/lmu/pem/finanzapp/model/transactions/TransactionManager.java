@@ -45,7 +45,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
                     for (String key : map.keySet()) {
 
                         Transaction newTransaction = new Transaction(
-                                dataSnapshot.child(key).child("date").getValue(String.class),
                                 dataSnapshot.child(key).child("year").getValue(Integer.class),
                                 dataSnapshot.child(key).child("month").getValue(Integer.class),
                                 dataSnapshot.child(key).child("day").getValue(Integer.class),
@@ -121,10 +120,9 @@ public class TransactionManager extends TransactionHistoryEventSource{
         transaction.setKey(key);
     }
 
-    public void updateTransaction(String key, String date, String account, String category, int imageResource, String description, double amount){
+    public void updateTransaction(String key, int year, int month, int day, String account, String category, int imageResource, String description, double amount){
         Transaction transaction = getTransactionByKey(key);
         Transaction transactionOld = new Transaction(
-                transaction.getDate(),
                 transaction.getYear(),
                 transaction.getMonth(),
                 transaction.getDay(),
@@ -134,7 +132,9 @@ public class TransactionManager extends TransactionHistoryEventSource{
                 transaction.getDescription(),
                 transaction.getAmount()
                 );
-        if(!(transaction.getDate().equals(date))) transaction.setDate(date);
+        if(!(transaction.getYear() == year)) transaction.setYear(year);
+        if(!(transaction.getMonth() == month)) transaction.setYear(month);
+        if(!(transaction.getDay() == day)) transaction.setYear(day);
         if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
         if(!(transaction.getCategory().equals(category))){
             transaction.setCategory(category);
@@ -174,13 +174,11 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     public void createTransactionList(){
         // dummy transaction list
-        addTransaction(new Transaction("04/28/2018", 2018, 4, 28, R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 450));
-        //transactionList.add(new Transaction("04/29/2018", R.drawable.food, "Main", "Food", "Pizza & Burger", 42, 0));
-        //transactionList.add(new Transaction("05/01/2018", R.drawable.music, "Main", "Music", "BTS CD",28, 0));
-        addTransaction(new Transaction("05/02/2018",2018, 5, 2, R.drawable.household, "Cash", "Household", "Edeka", -55.20));
-        addTransaction(new Transaction("05/02/2018", 2018, 5,2, R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 180));
-        addTransaction(new Transaction("05/05/2018", 2018, 5,5,R.drawable.movie, "Cash", "Movie", "Black Panther", -21));
-        addTransaction(new Transaction("05/05/2018", 2018, 5,5,R.drawable.gift, "Cash", "Gift", "Muttertag", -38.25));
+        addTransaction(new Transaction(2018, 4, 28, R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 450));
+        addTransaction(new Transaction(2018, 5, 2, R.drawable.household, "Cash", "Household", "Edeka", -55.20));
+        addTransaction(new Transaction(2018, 5,2, R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 180));
+        addTransaction(new Transaction(2018, 5,5,R.drawable.movie, "Cash", "Movie", "Black Panther", -21));
+        addTransaction(new Transaction(2018, 5,5,R.drawable.gift, "Cash", "Gift", "Muttertag", -38.25));
     }
 
 

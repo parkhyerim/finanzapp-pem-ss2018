@@ -82,7 +82,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         this.context = context;
     }
 
-    @NonNull
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent,
                                                    int viewType) {

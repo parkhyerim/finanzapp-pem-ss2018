@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +17,7 @@ public class Transaction implements Comparable<Transaction> {
     private int imageResource = 0;
     private double amount;
 
-    private String date; //TODO make a real Date object? (might have to store String representation in Firebase though)
-    private int year, month, day; //TODO obsolete, delete as soon as all references are fixed
+    private int year, month, day;
 
     private String key;
 
@@ -28,8 +28,7 @@ public class Transaction implements Comparable<Transaction> {
         // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
     }
 
-    public Transaction(String date, int year, int month, int day, int imageResource, String account, String category, String description, double amount) {
-        this.date = date;
+    public Transaction(int year, int month, int day, int imageResource, String account, String category, String description, double amount) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -42,8 +41,10 @@ public class Transaction implements Comparable<Transaction> {
         //key will be set later when it's created by Firebase
     }
 
-    public Transaction(String date, int imageResource, String account, String account2, String category, String description, double amount) {
-        this.date = date;
+    public Transaction(int year, int month, int day, int imageResource, String account, String account2, String category, String description, double amount) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
         this.imageResource = imageResource;
         this.account = account; //from
         this.account2 = account2; //to
@@ -63,10 +64,6 @@ public class Transaction implements Comparable<Transaction> {
 
     public String getAccount() {
         return account;
-    }
-
-    public String getDate() {
-        return date;
     }
 
     public double getAmount() { return amount; }
@@ -113,22 +110,30 @@ public class Transaction implements Comparable<Transaction> {
         this.amount = amount;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
     }
 
     // for date header
     @Override
     public int compareTo(@NonNull Transaction transaction) {
-        return getDate().toString()
-                .compareTo(transaction.getDate().toString());
+        Date date1 = new Date(this.year, this.month, this.day);
+        Date date2 = new Date(transaction.getYear(), transaction.getMonth(), transaction.getDay());
+        return date1.compareTo(date2);
     }
 
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("date", date);
         result.put("year", year);
         result.put("month", month);
         result.put("day", day);
