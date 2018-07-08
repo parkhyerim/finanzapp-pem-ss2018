@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -201,23 +202,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             }else{
                 acc2 = account2.getName();
             }
-            holder.accountTextView.setText(acc + "\u2B9E" + acc2);
+            holder.accountTextView.setText(Html.fromHtml(acc + "\u2B9E" + acc2));
         }
 
         // Category-Image
 
          holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
-        // Expense or Income
-        String prefix = "";
         double amount = currentTransactionItem.getAmount();
 
         if(amount < 0) {
-            //prefix="-";
-            //amount = currentTransactionItem.getAmount();
             holder.amountTextView.setTextColor(Color.parseColor("#ff0000"));
         } else {
-           // amount = currentTransactionItem.getAmount();
             holder.amountTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
         holder.amountTextView.setText(String.format(Locale.getDefault(), "%,.2f %s", amount, GlobalSettings.getInstance(context).getCurrencyString()));
