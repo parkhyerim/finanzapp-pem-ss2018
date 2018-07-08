@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.DateFormatSymbols;
+
 
 import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
@@ -90,7 +92,9 @@ public class TransactionAddActivity extends AppCompatActivity {
             month = getIntent().getIntExtra("month", 1);
             day = getIntent().getIntExtra("day", 1);
             description = getIntent().getStringExtra("description");
-            dateDisplay.setText(month + "/" + day + "/" + year);
+           // dateDisplay.setText(month + "/" + day + "/" + year);
+            setDateOnDisplay(year, month, day);
+
             descriptionEditText.setText(description);
             // TODO: Expense and Income
             amount = getIntent().getDoubleExtra("amount", 0);
@@ -310,7 +314,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH);
         day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay(year, month+1, day);
+        setDateOnDisplay(year, month, day);
 
         dateSetListener = (view, year, month, day) -> {
             this.year = year;
@@ -431,16 +435,28 @@ public class TransactionAddActivity extends AppCompatActivity {
     }
 
     public void setDateOnDisplay(int year, int month, int day) {
+        String monthStr = getMonth(month);
+        dateDisplay.setText(monthStr + " "  + day + ", " + year);
 
+        /*
         if (day < 10 && month < 10) { //TODO replace with number formatter
-            dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);
+            dateDisplay.setText("0" + month + "/" + "0" + day + "/" + year);
+
         } else if (month < 10) {
-            dateDisplay.setText("0"+ month + "/" + day + "/" + year);
+            dateDisplay.setText("0" + month + "/" + day + "/" + year);
+
         } else if (day < 10) {
-            dateDisplay.setText(month + "/" +  "0" + day + "/" + year);
+            dateDisplay.setText(month + "/" + "0" + day + "/" + year);
+
         } else {
-            dateDisplay.setText(month + "/" + day + "/" + year);
+            dateDisplay.setText(monthStr + "/" + day + "/" + year);
         }
+        */
+
+    }
+
+    public String getMonth(int month) {
+        return new DateFormatSymbols().getMonths()[month - 1];
     }
 
 }
