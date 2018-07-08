@@ -198,6 +198,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
+                if(position==-1) return false; //TODO avoids a strange bug after deleting a Transaction, should investigate at some point...
                 return position == 0
                         || (transactionList.get(position).getYear() != transactionList.get(position-1).getYear())
                         || (transactionList.get(position).getMonth() != transactionList.get(position-1).getMonth())
