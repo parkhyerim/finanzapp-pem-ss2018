@@ -184,10 +184,22 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Account
         Account account = AccountManager.getInstance().getAccountById(currentTransactionItem.getAccount());
+        Account account2 = AccountManager.getInstance().getAccountById(currentTransactionItem.getAccount2());
+        String acc, acc2;
         if(account==null){
-            holder.accountTextView.setText(currentTransactionItem.getAccount());
+            acc = currentTransactionItem.getAccount();
         }else{
-            holder.accountTextView.setText(account.getName());
+            acc = account.getName();
+        }
+        if(currentTransactionItem.getAccount2()==null){
+            holder.accountTextView.setText(acc);
+        }else{
+            if(account2==null){
+                acc2 = currentTransactionItem.getAccount2();
+            }else{
+                acc2 = account2.getName();
+            }
+            holder.accountTextView.setText(acc + "\u2B9E" + acc2);
         }
 
         // Category-Image
