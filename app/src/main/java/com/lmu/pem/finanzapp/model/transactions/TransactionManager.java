@@ -132,9 +132,9 @@ public class TransactionManager extends TransactionHistoryEventSource{
                 transaction.getDescription(),
                 transaction.getAmount()
                 );
-        if(!(transaction.getYear() == year)) transaction.setYear(year);
-        if(!(transaction.getMonth() == month)) transaction.setYear(month);
-        if(!(transaction.getDay() == day)) transaction.setYear(day);
+        if(transaction.getYear() != year) transaction.setYear(year);
+        if(transaction.getMonth() != month) transaction.setMonth(month);
+        if(transaction.getDay() != day) transaction.setDay(day);
         if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
         if(!(transaction.getCategory().equals(category))){
             transaction.setCategory(category);
