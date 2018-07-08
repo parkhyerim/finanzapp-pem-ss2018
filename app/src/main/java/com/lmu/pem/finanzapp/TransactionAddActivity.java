@@ -167,8 +167,9 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                 } else if(accountSpinner.getSelectedItem().toString().equals("")){
                     Toast.makeText(TransactionAddActivity.this, "Please choose an account.", Toast.LENGTH_LONG).show();
-
-                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
+                } else if(account2Spinner.getSelectedItem().toString().equals("") && selection==SELECTED_SHIFT){
+                    Toast.makeText(TransactionAddActivity.this, "Please choose a second account.", Toast.LENGTH_LONG).show();
+                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("") && selection!=SELECTED_SHIFT){
                     Toast.makeText(TransactionAddActivity.this, "Please choose an category.", Toast.LENGTH_LONG).show();
 
                 }  else {
