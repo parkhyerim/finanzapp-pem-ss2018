@@ -92,7 +92,6 @@ public class TransactionAddActivity extends AppCompatActivity {
             month = getIntent().getIntExtra("month", 1);
             day = getIntent().getIntExtra("day", 1);
             description = getIntent().getStringExtra("description");
-           // dateDisplay.setText(month + "/" + day + "/" + year);
             setDateOnDisplay(year, month, day);
 
             descriptionEditText.setText(description);
@@ -312,18 +311,18 @@ public class TransactionAddActivity extends AppCompatActivity {
     private void setupDatePicker() {
         cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH);
+        month = cal.get(Calendar.MONTH)+1;
         day = cal.get(Calendar.DAY_OF_MONTH);
         setDateOnDisplay(year, month, day);
 
         dateSetListener = (view, year, month, day) -> {
             this.year = year;
-            this.month = month;
+            this.month = month+1;
             this.day = day;
             setDateOnDisplay(year, month+1, day);
         };
         dateDisplay.setOnClickListener(v -> {
-            DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
+            DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month-1, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
         });
@@ -437,22 +436,6 @@ public class TransactionAddActivity extends AppCompatActivity {
     public void setDateOnDisplay(int year, int month, int day) {
         String monthStr = getMonth(month);
         dateDisplay.setText(monthStr + " "  + day + ", " + year);
-
-        /*
-        if (day < 10 && month < 10) { //TODO replace with number formatter
-            dateDisplay.setText("0" + month + "/" + "0" + day + "/" + year);
-
-        } else if (month < 10) {
-            dateDisplay.setText("0" + month + "/" + day + "/" + year);
-
-        } else if (day < 10) {
-            dateDisplay.setText(month + "/" + "0" + day + "/" + year);
-
-        } else {
-            dateDisplay.setText(monthStr + "/" + day + "/" + year);
-        }
-        */
-
     }
 
     public String getMonth(int month) {

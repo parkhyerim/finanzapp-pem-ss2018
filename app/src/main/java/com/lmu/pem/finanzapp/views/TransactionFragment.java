@@ -31,6 +31,7 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
@@ -85,7 +86,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this,rootView); //TODO kann das weg?
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
@@ -108,10 +109,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
         // Header-Section
-        RecyclerSectionItemDecoration transactionSectionItemDecoration =
-                new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header),
-                        true,
-                        getSectionCallback(transactionManager.getTransactions()));
+        RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionManager.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
 
 
@@ -209,11 +207,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             public CharSequence getSectionHeader(int position) {
                 // TODO: Richtige Lösung für Index out of bounds schreiben...
                 String date;
+                String[] months = new DateFormatSymbols().getMonths();
                 if(position >= 0) {
-                    date = transactionList.get(position).getMonth() + "/" + transactionList.get(position).getDay() + "/" + transactionList.get(position).getYear();
+                    date = months[transactionList.get(position).getMonth()-1] + " " + transactionList.get(position).getDay() + ", " + transactionList.get(position).getYear();
 
                 } else {
-                    date = "01/01/2018";
+                    date = "January 01, 2018"; //TODO sinnvolle Fehlerbehandlung statt random Datum
                 }
                 return date;
             }
@@ -284,7 +283,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return  fiteredList;
     }
 
-
+    //TODO sollte weg können
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
