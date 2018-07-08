@@ -147,19 +147,16 @@ public class AddBudgetActivity extends AppCompatActivity {
     }
 
     public void initCustomDateEditText() {
-        customDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(
-                        AddBudgetActivity.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        (view, y, m, d) -> setCustomDateValue(new Date(y, m, d)),
-                        customDate.getYear() + 1900,
-                        customDate.getMonth() + 1,
-                        customDate.getDate());
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-                dialog.show();
-            }
+        customDateEditText.setOnClickListener(v -> {
+            DatePickerDialog dialog = new DatePickerDialog(
+                    AddBudgetActivity.this,
+                    android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                    (view, y, m, d) -> setCustomDateValue(new Date(y, m, d)),
+                    customDate.getYear() + 1900,
+                    customDate.getMonth() + 1,
+                    customDate.getDate());
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.show();
         });
     }
 

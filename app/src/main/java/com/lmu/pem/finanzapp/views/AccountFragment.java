@@ -137,7 +137,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             }
             dbRef.child(accountID).setValue(acc.toMap());
 
-            adapter.setAccounts(accountManager.getAccounts());
             adapter.notifyDataSetChanged();
         }
     }

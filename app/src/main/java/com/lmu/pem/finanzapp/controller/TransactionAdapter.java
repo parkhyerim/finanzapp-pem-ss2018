@@ -120,12 +120,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             adapter.removeItem(deletedIndex);
 
             Snackbar snackbar = Snackbar.make(adapter.rootView, description + " removed from list!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    adapter.restoreItem(deletedTransaction, deletedIndex);
-                }
-            });
+            snackbar.setAction("UNDO", v -> adapter.restoreItem(deletedTransaction, deletedIndex));
 
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
