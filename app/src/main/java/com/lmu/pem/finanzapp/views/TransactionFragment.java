@@ -58,6 +58,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private String description = "";
     private String key;
     private String id;
+    private int year,month,day;
 
     public final static int REQUEST_CODE_ADD_TRANSACTION = 111;
     public final static int REQUEST_CODE_EDIT_TRANSACTION = 112;
@@ -132,17 +133,22 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
 
             position = transactionManager.getTransactions().size();
-
             date = data.getStringExtra("date");
+            year = data.getIntExtra("year",0);
+            month = data.getIntExtra("month", 0);
+            day = data.getIntExtra("day",0);
             account = data.getStringExtra("account");
             category = data.getStringExtra("category");
             description = data.getStringExtra("description");
             amount = data.getDoubleExtra("amount",0);
 
             //A new transaction can be added to the transaction list
-            insertItem(position, date, account, category, description, amount);
+            insertItem(position, date, year, month, day, account, category, description, amount);
         }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
             date = data.getStringExtra("date");
+            year = data.getIntExtra("year",0);
+            month = data.getIntExtra("month", 0);
+            day = data.getIntExtra("day",0);
             account = data.getStringExtra("account");
             category = data.getStringExtra("category");
             description = data.getStringExtra("description");
@@ -155,13 +161,16 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public void insertItem(int position, String date, String account, String category, String description, double amount){
+    public void insertItem(int position, String date, int year, int month, int day, String account, String category, String description, double amount){
         this.date = date;
+        this.year = year;
+        this.month = month;
+        this.day = day;
         this.account = account;
         this.category = category;
         this.amount = amount;
         this.description = description;
-        Transaction transaction = new Transaction(this.date, getImageByCategory(category), this.account, this.category, this.description, this.amount);
+        Transaction transaction = new Transaction(this.date, this.year, this.month, this.day, getImageByCategory(category), this.account, this.category, this.description, this.amount);
         transactionManager.addTransaction(transaction);
 
         adapter.notifyItemInserted(position);
