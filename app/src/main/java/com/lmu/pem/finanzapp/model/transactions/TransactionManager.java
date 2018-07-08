@@ -47,6 +47,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
                             dataSnapshot.child(key).child("date").getValue(String.class),
                             dataSnapshot.child(key).child("imageResource").getValue(Integer.class),
                             dataSnapshot.child(key).child("account").getValue(String.class),
+                            dataSnapshot.child(key).child("account2").getValue(String.class),
                             dataSnapshot.child(key).child("category").getValue(String.class),
                             dataSnapshot.child(key).child("description").getValue(String.class),
                             dataSnapshot.child(key).child("amount").getValue(Double.class)
@@ -64,66 +65,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
                     Log.d("123123123","Cancelled: "+databaseError.toString());
             }
         });
-
-
-
-
-/*
- // In order to listen for child events on DatabaseReference, attach a ChildEventListener
-        transactionRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                // Log.d(TAG+"Added", dataSnapshot.getValue(Transaction.class).toString());
-
-                Transaction t = dataSnapshot.getValue(Transaction.class);
-                Transaction newTrans = new Transaction(t.getDate(), t.getImageResource(), t.getAccount(), t.getCategory(), t.getDescription(), t.getAmount());
-                transactions.add(newTrans);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                // Log.d(TAG+"Changed",dataSnapshot.getValue(Transaction.class).toString());
-
-                String key = dataSnapshot.getKey();
-                Transaction newTransaction = dataSnapshot.getValue(Transaction.class);
-                for(Transaction t: transactions){
-                    if(t.getKey().equals(key)){
-                        t.setTransaction(newTransaction);
-                        break;
-                    }
-
-                }
-
-             }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                // Log.d(TAG+"Removed",dataSnapshot.getValue(Transaction.class).toString());
-                String key = dataSnapshot.getKey();
-                for(Transaction t: transactions) {
-                    if(key.equals(t.getKey())) {
-                        transactions.remove(t);
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                //Log.d(TAG+"Moved",dataSnapshot.getValue(Transaction.class).toString());
-                Transaction transaction = dataSnapshot.getValue(Transaction.class);
-                String transactionKey = dataSnapshot.getKey();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                // Log.d(TAG+"Cancelled",databaseError.toString());
-                Toast.makeText(getApplicationContext(), "Failed to load transactions.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-*/
 
     }
 
@@ -155,7 +96,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     }
 */
-
 
     public static TransactionManager getInstance() {
         if(instance == null) instance = new TransactionManager();
@@ -206,11 +146,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
 
     public boolean containsTransaction(Transaction transaction){
-        if(getTransactionByKey(transaction.getKey())!=null){
-            return true;
-        }else{
-            return false;
-        }
+        return getTransactionByKey(transaction.getKey()) != null;
     }
 
     public Transaction getTransactionByKey(String key){
@@ -281,8 +217,4 @@ public class TransactionManager extends TransactionHistoryEventSource{
         transactionRef.child(transaction.get).removeValue();
         */
     }
-
-
-
-
 }

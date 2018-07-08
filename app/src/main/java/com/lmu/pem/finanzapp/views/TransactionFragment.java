@@ -54,6 +54,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private double amount = 0;
     private String category = "";
     private String account = "";
+    private String account2 = "";
     private String date = "";
     private String description = "";
     private String key;
@@ -135,12 +136,13 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
+            account2 = data.getStringExtra("account2");
             category = data.getStringExtra("category");
             description = data.getStringExtra("description");
             amount = data.getDoubleExtra("amount",0);
 
             //A new transaction can be added to the transaction list
-            insertItem(position, date, account, category, description, amount);
+            insertItem(position, date, account, account2, category, description, amount);
         }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
             date = data.getStringExtra("date");
             account = data.getStringExtra("account");
@@ -155,13 +157,21 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
 
-    public void insertItem(int position, String date, String account, String category, String description, double amount){
+    public void insertItem(int position, String date, String account, String account2, String category, String description, double amount){
+        //TODO are the variables really necessary?
         this.date = date;
         this.account = account;
+        this.account2 = account2;
         this.category = category;
         this.amount = amount;
         this.description = description;
-        Transaction transaction = new Transaction(this.date, getImageByCategory(category), this.account, this.category, this.description, this.amount);
+
+        Transaction transaction;
+        if(account2==null){
+            transaction = new Transaction(this.date, getImageByCategory(category), this.account, this.category, this.description, this.amount);
+        }else{
+            transaction = new Transaction(this.date, getImageByCategory(category), this.account, this.account2, this.category, this.description, this.amount);
+        }
         transactionManager.addTransaction(transaction);
 
         adapter.notifyItemInserted(position);

@@ -26,178 +26,238 @@
         android:orientation="vertical"
         android:clipToPadding="false">
 
-        <RelativeLayout
-            android:id="@+id/basic_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:id="@+id/date_textView"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:text="Date"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/dateDisplay_textView"
-                android:layout_width="270dp"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:layout_toRightOf="@+id/date_textView" />
-
-            <TextView
-                android:id="@+id/expenseAdd_textView"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_below="@+id/date_textView"
-                android:text="€"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimary"/>
-
-            <EditText
-                android:id="@+id/expenseAdd_editText"
-                android:layout_width="270dp"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/expenseAdd_textView"
-                android:layout_alignParentEnd="true"
-                android:inputType="numberDecimal"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorPrimary"
-                android:textSize="30sp" />
-
             <LinearLayout
-                android:id="@+id/buttons"
+                android:id="@+id/dateLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="110dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/date_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Date"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/dateDisplay_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:layout_weight="3"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/amountLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:layout_below="@+id/dateLine">
+                <TextView
+                    android:id="@+id/expenseAdd_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:text="€"
+                    android:layout_gravity="bottom"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"/>
+
+                <EditText
+                    android:id="@+id/expenseAdd_editText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:layout_gravity="end|bottom"
+                    android:inputType="numberDecimal"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/buttonLine"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_below="@id/amountLine"
+                android:layout_marginBottom="20dp"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/expense_button"
-                    android:layout_width="170dp"
-                    android:layout_height="75dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:background="@android:color/holo_red_light"
                     android:text="Expense"
                     android:textColor="#ffffff" />
 
                 <Button
+                    android:id="@+id/shift_button"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:background="@android:color/holo_blue_dark"
+                    android:text="Shift"
+                    android:textColor="#ffffff" />
+
+                <Button
                     android:id="@+id/income_button"
-                    android:layout_width="170dp"
-                    android:layout_height="75dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
                     android:background="@color/applegreen"
                     android:text="Income"
                     android:textColor="#ffffff" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/account_textView"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:text="Account"
-                android:layout_below="@+id/buttons"
-                android:layout_marginTop="20dp"
-                android:textSize="18sp" />
-
-            <Spinner
-                android:id="@+id/account_spinner"
-                android:layout_width="270dp"
+            <LinearLayout
+                android:id="@+id/accountLine1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/account_textView"
-                android:textAlignment="viewEnd"
-                android:layout_below="@+id/buttons"
-                android:layout_marginTop="20dp"
-                android:spinnerMode="dialog"></Spinner>
+                android:layout_marginBottom="20dp"
+                android:layout_below="@+id/buttonLine"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/account_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Account"
+                    android:textSize="18sp" />
 
-        </RelativeLayout>
+                <Spinner
+                    android:id="@+id/account_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:textAlignment="viewEnd"
+                    android:spinnerMode="dialog" />
+            </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/expense_layout"
+            <LinearLayout
+                android:id="@+id/accountLine2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_below="@+id/accountLine1"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/account2_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Account (To)"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/account2_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:textAlignment="viewEnd"
+                    android:spinnerMode="dialog" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/catLine_expense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_below="@+id/accountLine2"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/category_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Category"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/category_Spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:textAlignment="viewEnd"
+                    android:spinnerMode="dialog" />
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/catLine_income"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:visibility="visible">
-
-
-            <TextView
-                android:id="@+id/category_textView"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:text="Category"
-                android:textSize="18sp" />
-
-            <Spinner
-                android:id="@+id/category_Spinner"
-                android:layout_width="270dp"
-                android:layout_height="wrap_content"
-                android:textAlignment="viewEnd"
-                android:layout_toRightOf="@+id/category_textView"
-                android:spinnerMode="dialog"></Spinner>
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/income_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_below="@+id/catLine_expense"
+            android:orientation="horizontal"
             android:visibility="gone">
 
             <TextView
                 android:id="@+id/category_textView2"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Category"
                 android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/category_Spinner2"
-                android:layout_width="270dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="3"
                 android:textAlignment="viewEnd"
-                android:layout_toRightOf="@+id/category_textView2"
-                android:spinnerMode="dialog"></Spinner>
+                android:spinnerMode="dialog" />
+        </LinearLayout>
 
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/description_textView"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:text="Description"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/description_editView"
-                android:layout_width="270dp"
+            <LinearLayout
+                android:id="@+id/descriptionLine"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:textAlignment="viewEnd"
-                android:inputType="text"
-                android:textSize="18sp" />
+                android:layout_marginBottom="50dp"
+                android:layout_below="@+id/catLine_income"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/description_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Description"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/description_editView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:textAlignment="viewEnd"
+                    android:inputType="text"
+                    android:textSize="18sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/done_button"
-                android:layout_width="100dp"
-                android:layout_height="70dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:paddingTop="25dp"
+                android:paddingBottom="25dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:layout_height="wrap_content"
                 android:text="DONE"
+                android:layout_gravity="center|bottom"
                 android:textSize="18sp"/>
-
-        </RelativeLayout>
 
     </LinearLayout>
 

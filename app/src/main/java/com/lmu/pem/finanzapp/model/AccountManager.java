@@ -174,26 +174,62 @@ public class AccountManager implements TransactionHistoryEventListener {
     public void handle(TransactionHistoryEvent event) {
         Transaction transaction = event.getTransaction();
         Account account = getAccountById(transaction.getAccount());
+        Account account2 = getAccountById(transaction.getAccount2());
 
         if(account==null) return;
 
         switch(event.getType()){
             case ADDED:
-                account.setBalance(account.getBalance() + transaction.getAmount());
+                if(account2==null){
+                    account.setBalance(account.getBalance() + transaction.getAmount());
+                }else{
+                    account.setBalance(account.getBalance() - transaction.getAmount());
+                    account2.setBalance(account.getBalance() + transaction.getAmount());
+                }
+
                 break;
             case REMOVED:
-                account.setBalance(account.getBalance() - transaction.getAmount());
+                if(account2==null) {
+                    account.setBalance(account.getBalance() - transaction.getAmount());
+                }else{
+                    account.setBalance(account.getBalance() + transaction.getAmount());
+                    account2.setBalance(account.getBalance() - transaction.getAmount());
+                }
                 break;
-            case UPDATED:
+            case UPDATED: //"remove" old transaction, "add" the new one
                 Transaction transactionOld = event.getTransactionOld();
                 Account accountOld = getAccountById(transactionOld.getAccount());
+                Account accountOld2 = getAccountById(transactionOld.getAccount2());
 
-                accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
-                account.setBalance(account.getBalance() + transaction.getAmount());
+                if(account2==null) {
+                    //remove the old transaction
+                    if(accountOld2==null){
+                        accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
+                    }else{
+                        accountOld.setBalance(accountOld.getBalance() + transactionOld.getAmount());
+                        accountOld2.setBalance(accountOld2.getBalance() - transactionOld.getAmount());
+                        dbRef.child(accountOld2.getId()).child("balance").setValue(accountOld2.getBalance());
+                    }
+                    //add the new one
+                    account.setBalance(account.getBalance() + transaction.getAmount());
+                }else{
+                    //remove the old transaction
+                    if(accountOld2==null){
+                        accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
+                    }else{
+                        accountOld.setBalance(accountOld.getBalance() + transactionOld.getAmount());
+                        accountOld2.setBalance(accountOld2.getBalance() - transactionOld.getAmount());
+                        dbRef.child(accountOld2.getId()).child("balance").setValue(accountOld2.getBalance());
+                    }
 
-                dbRef.child(transactionOld.getAccount()).child("balance").setValue(accountOld.getBalance());
-                break;
+                    //add the new one
+                    account.setBalance(account.getBalance() - transaction.getAmount());
+                    account2.setBalance(account.getBalance() + transaction.getAmount());
+
+                    dbRef.child(account2.getId()).child("balance").setValue(account2.getBalance());
+                }
+                dbRef.child(accountOld.getId()).child("balance").setValue(accountOld.getBalance());
         }
-        dbRef.child(transaction.getAccount()).child("balance").setValue(account.getBalance());
+        dbRef.child(account.getId()).child("balance").setValue(account.getBalance());
     }
 }

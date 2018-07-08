@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,23 +23,28 @@ import android.widget.Toast;
 import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
+    private static final int SELECTED_EXPENSE = 1;
+    private static final int SELECTED_INCOME = 2;
+    private static final int SELECTED_SHIFT = 3;
+
     private double amount = 0;
-    private String category, account, date, description, key;
+    private String category, account, account2, date, description, key;
     private int year, month, day;
     private Calendar cal;
 
-    private RelativeLayout expenseRelativeLayout, incomeRelativeLayout;
-    private LinearLayout transactionAddLayout;
+    private LinearLayout expenseLayout, incomeLayout, transactionAddLayout, accountLine2;
     private EditText amountEditText, descriptionEditText;
-    private Button expenseButton, incomeButton, doneButton;
-    private Spinner accountSpinner, expenseCategorySpinner, incomeCategorySpinner;
-    private TextView dateDisplay, currencySymbol;
+    private Button expenseButton, incomeButton, shiftButton, doneButton;
+    private Spinner accountSpinner, account2Spinner, expenseCategorySpinner, incomeCategorySpinner;
+    private TextView dateDisplay, currencySymbol, accountTextView, account2TextView;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
     private AccountManager accountManager;
@@ -51,7 +55,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     private ArrayList<String> expenses = new ArrayList<>();
     private ArrayList<String> incomes = new ArrayList<>();
 
-    private boolean incomeSelected;
+    private int selection = SELECTED_EXPENSE;
 
 
     @Override
@@ -63,93 +67,136 @@ public class TransactionAddActivity extends AppCompatActivity {
         accountManager = AccountManager.getInstance();
         categoryManager = CategoryManager.getInstance();
 
-        // Alle findViewByIDs
-        dateDisplay = findViewById(R.id.dateDisplay_textView);
-        currencySymbol = findViewById(R.id.expenseAdd_textView);
+        findViews();
 
-        amountEditText = (EditText) findViewById(R.id.expenseAdd_editText);
-        descriptionEditText = (EditText) findViewById(R.id.description_editView);
-
-        incomeRelativeLayout = (RelativeLayout) findViewById(R.id.income_layout);
-        expenseRelativeLayout = (RelativeLayout) findViewById(R.id.expense_layout);
-        transactionAddLayout = (LinearLayout) findViewById(R.id.transaction_add_layout);
-
-        expenseCategorySpinner = (Spinner) findViewById(R.id.category_Spinner);
-        incomeCategorySpinner = (Spinner) findViewById(R.id.category_Spinner2);
-        accountSpinner = (Spinner) findViewById(R.id.account_spinner);
-
-        expenseButton = (Button) findViewById(R.id.expense_button);
-        incomeButton = (Button) findViewById(R.id.income_button);
-        doneButton = (Button) findViewById(R.id.done_button);
-
-
-        // Currency
         currencySymbol.setText(GlobalSettings.getInstance(this).getCurrencyString());
 
-        // Date
-        cal = Calendar.getInstance();
-        year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH);
-        day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay(year, month, day);
+        expense_selected(); // expense is selected by default
 
-        // Default-Page as a expense page
-        categoryShow();
-        categoryButtonClicked();
+        setupDatePicker();
+        setupAccountSpinners();
+        setupCategorySpinners();
 
-        dateDisplay.setOnClickListener(v -> {
-            //Calendar cal = Calendar.getInstance()
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
+        checkIfUpdating();
 
-            DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-            dialog.show();
-        });
+        setButtonClickListeners();
+    }
 
-        dateSetListener = (view, year, month, day) -> setDateOnDisplay(year, month, day);
-
-
-        // SPINNER
-        // Account-Spinner(Dropdown)
-        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.account, android.R.layout.simple_spinner_item);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        accountSpinner.setAdapter(adapter);
-        accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                account = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
-                //Toast.makeText(getBaseContext(), account + " selected", Toast.LENGTH_SHORT).show();
-                /*
-
-                if(accountSpinner.getSelectedItemPosition() == accountManager.getNameArray().length-1) {
-                    Toast.makeText(getBaseContext(), accountSpinner.getSelectedItemPosition() + " selected", Toast.LENGTH_SHORT).show();
-
-                }
-                */
+    private void checkIfUpdating() {
+        // extras indicate that we want to edit an existing transaction instead of creating a new one
+        final Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            date = getIntent().getStringExtra("date");
+            description = getIntent().getStringExtra("description");
+            dateDisplay.setText(date);
+            descriptionEditText.setText(description);
+            // TODO: Expense and Income
+            amount = getIntent().getDoubleExtra("amount", 0);
+            amountEditText.setText(String.valueOf(Math.abs(amount)));
+            if(amount<0){
+                expenseButton.callOnClick();
+            } else {
+                incomeButton.callOnClick();
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            // Account
+            String account = accountManager.getAccountById(getIntent().getStringExtra("account")).getName();
+            String[] accounts =  accountManager.getNameArray();
+            for(int i =0; i < accounts.length ; i++){
+                if (accounts[i].equals(account)){
+                    accountSpinner.setSelection(i);
+                } else {
+                    accountSpinner.setSelection(0);
+                }
+            }
+
+            if(getIntent().hasExtra("account2")) {
+                String account2 = getIntent().getStringExtra("account2");
+                shiftButton.callOnClick();
+                for(int i =0; i < accounts.length ; i++){
+                    if (accounts[i].equals(account)){
+                        account2Spinner.setSelection(i);
+                    } else {
+                        account2Spinner.setSelection(0);
+                    }
+                }
+            }
+
+            // Category
+            if(getIntent().hasExtra("category")){
+                expense_selected();
+                int expense = getIntent().getIntExtra("category", 0);
+                expenseCategorySpinner.setSelection(expense);
+            } else {
+                income_selected();
+                int income = getIntent().getIntExtra("category2",0);
+                incomeCategorySpinner.setSelection(income);
+            }
+
+            //Key
+            key = getIntent().getStringExtra("key");
+
+            //customize Toolbar title
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle("Edit Transaction");
+        }
+    }
+
+    private void setButtonClickListeners() {
+        expenseButton.setOnClickListener(v -> {
+            expense_selected();
+        });
+
+        incomeButton.setOnClickListener(v -> {
+            income_selected();
+        });
+
+        shiftButton.setOnClickListener(v -> {
+            shift_selected();
         });
 
 
+        doneButton.setOnClickListener(v -> {
+                if(dateDisplay.getText().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
+
+                } else if (amountEditText.getText().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
+
+                } else if(accountSpinner.getSelectedItem().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please choose an account.", Toast.LENGTH_LONG).show();
+
+                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
+                    Toast.makeText(TransactionAddActivity.this, "Please choose an category.", Toast.LENGTH_LONG).show();
+
+                }  else {
+                    amount = Double.parseDouble(amountEditText.getText().toString());
+                    if(selection==SELECTED_EXPENSE){
+                        amount = -1 * amount;
+                    }
+
+                    date = dateDisplay.getText().toString();
+                    description = descriptionEditText.getText().toString();
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("date", date);
+                    resultIntent.putExtra("category", category);
+                    resultIntent.putExtra("account", account);
+                    resultIntent.putExtra("account2", account2);
+                    resultIntent.putExtra("amount", amount);
+                    resultIntent.putExtra("description", description);
+                    resultIntent.putExtra("key", key);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }
+        });
+    }
+
+    private void setupCategorySpinners() {
         // Expense-Category
-        // getCategorySpinner();
-
-/*
-        if(expenses.isEmpty()) {
-
-            //expenses.addAll(Arrays.asList(getResources().getStringArray(R.array.expense_category)));
-            expenses.addAll(categoryManager.getCategories());
-        }
-        */
-
         expenses.addAll(categoryManager.getExpCategories());
         ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
-       // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
+        // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expenseCategorySpinner.setAdapter(expenseCategoryAdapter);
         expenseCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -204,7 +251,7 @@ public class TransactionAddActivity extends AppCompatActivity {
            // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
             incomes.addAll(categoryManager.getIncCategories());
         }
-       // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
+        // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomes);
 
         incomeCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -246,158 +293,137 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                     // show it
                     alertDialog.show();
-
                 }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+    }
 
+    private void setupDatePicker() {
+        cal = Calendar.getInstance();
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH);
+        day = cal.get(Calendar.DAY_OF_MONTH);
+        setDateOnDisplay(year, month, day);
+
+        dateSetListener = (view, year, month, day) -> setDateOnDisplay(year, month, day);
+        dateDisplay.setOnClickListener(v -> {
+            //Calendar cal = Calendar.getInstance()
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.show();
+        });
+    }
+
+    private void setupAccountSpinners() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        accountSpinner.setAdapter(adapter);
+        accountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                account = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-
-        // extras indicate that we want to edit an existing transaction instead of creating a new one
-        final Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            date = getIntent().getStringExtra("date");
-            description = getIntent().getStringExtra("description");
-            dateDisplay.setText(date);
-            descriptionEditText.setText(description);
-            // TODO: Expense and Income
-            amount = getIntent().getDoubleExtra("amount", 0);
-            amountEditText.setText(String.valueOf(Math.abs(amount)));
-            if(amount<0){
-                expenseButton.callOnClick();
-            } else {
-                incomeButton.callOnClick();
+        account2Spinner.setAdapter(adapter);
+        account2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                account2 = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
             }
 
-            // Account
-            String account = accountSpinner.getSelectedItem().toString();
-            String[] accounts =  AccountManager.getInstance().getNameArray();
-            for(int i =0; i < accounts.length ; i++){
-                if (accounts[i].equals(account)){
-                    accountSpinner.setSelection(i);
-                } else {
-                    accountSpinner.setSelection(0);
-                }
-            }
-
-            // Category
-            if(getIntent().hasExtra("category")){
-                expenseCategoryShow();
-                int expense = getIntent().getIntExtra("category", 0);
-                expenseCategorySpinner.setSelection(expense);
-            } else {
-                incomeCategoryShow();
-                int income = getIntent().getIntExtra("category2",0);
-                incomeCategorySpinner.setSelection(income);
-            }
-
-            //Key
-            key = getIntent().getStringExtra("key");
-
-            //customize Toolbar title
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle("Edit Transaction");
-        }
-
-        // Buttons (expenseButton, incomeButton, doneButton)
-        expenseButton.setOnClickListener(v -> {
-            incomeSelected = false;
-            expenseCategoryShow();
-            categoryButtonClicked();
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
+    }
 
-        incomeButton.setOnClickListener(v -> {
-            incomeSelected = true;
-            incomeCategoryShow();
-            categoryButtonClicked();
-        });
+    private void findViews() {
+        dateDisplay = findViewById(R.id.dateDisplay_textView);
+        currencySymbol = findViewById(R.id.expenseAdd_textView);
+        accountTextView = findViewById(R.id.account_textView);
+        account2TextView = findViewById(R.id.account2_textView);
 
+        amountEditText = findViewById(R.id.expenseAdd_editText);
+        descriptionEditText = findViewById(R.id.description_editView);
 
+        incomeLayout = findViewById(R.id.catLine_income);
+        expenseLayout = findViewById(R.id.catLine_expense);
+        transactionAddLayout = findViewById(R.id.transaction_add_layout);
+        accountLine2 = findViewById(R.id.accountLine2);
 
+        expenseCategorySpinner = findViewById(R.id.category_Spinner);
+        incomeCategorySpinner = findViewById(R.id.category_Spinner2);
+        accountSpinner = findViewById(R.id.account_spinner);
+        account2Spinner = findViewById(R.id.account2_spinner);
 
-        doneButton.setOnClickListener(v -> {
-                if(dateDisplay.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
-
-                } else if (amountEditText.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
-
-                } else if(accountSpinner.getSelectedItem().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose an account.", Toast.LENGTH_LONG).show();
-
-                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose an category.", Toast.LENGTH_LONG).show();
-
-                }  else {
-                    amount = Double.parseDouble(amountEditText.getText().toString());
-                    if(!incomeSelected){
-                        amount = -1 * amount;
-                    }
-
-                    date = dateDisplay.getText().toString();
-                    description = descriptionEditText.getText().toString();
-
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("date", date);
-                    resultIntent.putExtra("category", category);
-                    resultIntent.putExtra("account", account);
-                    resultIntent.putExtra("amount", amount);
-                    resultIntent.putExtra("description", description);
-                    resultIntent.putExtra("key", key);
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                }
-        });
+        expenseButton = findViewById(R.id.expense_button);
+        incomeButton = findViewById(R.id.income_button);
+        shiftButton = findViewById(R.id.shift_button);
+        doneButton = findViewById(R.id.done_button);
     }
 
 
     public void categoryShow(){
-        if(incomeSelected){
-            incomeCategoryShow();
+        if(selection==SELECTED_INCOME){
+            income_selected();
         } else {
-            expenseCategoryShow();
+            expense_selected();
         }
     }
 
-    public void expenseCategoryShow() {
-        incomeSelected = false;
+    public void expense_selected() {
+        selection = SELECTED_EXPENSE;
         expenseButton.setAlpha(1.0f);
         incomeButton.setAlpha(0.5f);
-        incomeRelativeLayout.setEnabled(false);
-        incomeRelativeLayout.setVisibility(View.GONE);
-        expenseRelativeLayout.setEnabled(true);
-        expenseRelativeLayout.setVisibility(View.VISIBLE);
-        transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
+        shiftButton.setAlpha(0.5f);
+        expenseLayout.setEnabled(true);
+        incomeLayout.setEnabled(false);
+        accountLine2.setEnabled(false);
+        incomeLayout.setVisibility(View.GONE);
+        accountLine2.setVisibility(View.GONE);
+        expenseLayout.setVisibility(View.VISIBLE);
+        accountTextView.setText("Account");
+        //transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
     }
 
-    public void incomeCategoryShow() {
-        incomeSelected = true;
+    public void income_selected() {
+        selection = SELECTED_INCOME;
         incomeButton.setAlpha(1.0f);
         expenseButton.setAlpha(0.5f);
-        expenseRelativeLayout.setEnabled(false);
-        expenseRelativeLayout.setVisibility(View.GONE);
-        incomeRelativeLayout.setEnabled(true);
-        incomeRelativeLayout.setVisibility(View.VISIBLE);
-        transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
+        shiftButton.setAlpha(0.5f);
+        incomeLayout.setEnabled(true);
+        expenseLayout.setEnabled(false);
+        accountLine2.setEnabled(false);
+        expenseLayout.setVisibility(View.GONE);
+        accountLine2.setVisibility(View.GONE);
+        incomeLayout.setVisibility(View.VISIBLE);
+        accountTextView.setText("Account");
+        //transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
     }
 
-
-    public void categoryButtonClicked() {
-        if(dateDisplay.getText().toString().equals("")){
-            Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
-        } else if(amountEditText.getText().toString().equals("")){
-            Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
-                /*
-                Toast toast = Toast.makeText(getApplicationContext(), "Please insert amount", Toast.LENGTH_LONG);
-                TextView toastmsg = (TextView) toast.getView().findViewById(android.R.id.message);
-                toastmsg.setTextColor(Color.parseColor("#0B4C5F"));
-                toast.show();
-                */
-        }
+    public void shift_selected(){
+        selection = SELECTED_SHIFT;
+        shiftButton.setAlpha(1.0f);
+        expenseButton.setAlpha(0.5f);
+        incomeButton.setAlpha(0.5f);
+        expenseLayout.setEnabled(false);
+        incomeLayout.setEnabled(false);
+        accountLine2.setEnabled(true);
+        expenseLayout.setVisibility(View.GONE);
+        incomeLayout.setVisibility(View.GONE);
+        accountLine2.setVisibility(View.VISIBLE);
+        accountTextView.setText("Account (From)");
+        category = Transaction.CATEGORY_SHIFT;
     }
 
     public void setDateOnDisplay(int year, int month, int day) {

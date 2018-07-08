@@ -9,14 +9,15 @@ import java.util.Map;
 
 public class Transaction implements Comparable<Transaction> {
 
+    public static final String CATEGORY_SHIFT = "Shift";
     private String category;
-    private String account;
+    private String account, account2;
     private String description;
     private int imageResource = 0;
     private double amount;
 
-    private String date;
-    private int year, month, day;
+    private String date; //TODO make a real Date object? (might have to store String representation in Firebase though)
+    private int year, month, day; //TODO obsolete, delete as soon as all references are fixed
 
     private String key;
 
@@ -31,6 +32,18 @@ public class Transaction implements Comparable<Transaction> {
         this.date = date;
         this.imageResource = imageResource;
         this.account = account;
+        this.account2 = null;
+        this.category = category;
+        this.description = description;
+        this.amount = amount;
+        //key will be set later when it's created by Firebase
+    }
+
+    public Transaction(String date, int imageResource, String account, String account2, String category, String description, double amount) {
+        this.date = date;
+        this.imageResource = imageResource;
+        this.account = account; //from
+        this.account2 = account2; //to
         this.category = category;
         this.description = description;
         this.amount = amount;
@@ -55,6 +68,13 @@ public class Transaction implements Comparable<Transaction> {
 
     public double getAmount() { return amount; }
 
+    public String getAccount2() {
+        return account2;
+    }
+
+    public void setAccount2(String account2) {
+        this.account2 = account2;
+    }
 
     public int getDay() { return day; }
 
@@ -109,6 +129,7 @@ public class Transaction implements Comparable<Transaction> {
         result.put("description", description);
         result.put("category", category);
         result.put("account", account);
+        result.put("account2", account2);
         result.put("amount", amount);
         result.put("imageResource", imageResource);
 
