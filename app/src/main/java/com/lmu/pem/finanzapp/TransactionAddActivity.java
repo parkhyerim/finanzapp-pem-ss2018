@@ -180,6 +180,9 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("date", date);
+                    resultIntent.putExtra("year", year);
+                    resultIntent.putExtra("month", month);
+                    resultIntent.putExtra("day", day);
                     resultIntent.putExtra("category", category);
                     resultIntent.putExtra("account", account);
                     resultIntent.putExtra("account2", account2);
@@ -428,6 +431,10 @@ public class TransactionAddActivity extends AppCompatActivity {
 
     public void setDateOnDisplay(int year, int month, int day) {
         month ++;
+        this.year = year;
+        this.month = month;
+        this.day = day;
+
 
         if (day < 10 && month < 10) {
             dateDisplay.setText("0"+ month + "/" + "0" + day + "/" + year);

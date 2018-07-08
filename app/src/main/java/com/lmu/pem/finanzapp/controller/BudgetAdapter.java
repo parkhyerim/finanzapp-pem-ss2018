@@ -2,6 +2,9 @@ package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,7 +40,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         int barWidth;
 
         ProgressBar dateBar;
+        TextView currentDate;
         ProgressBar amountBar;
+        TextView currentAmount;
+
 
         TextView startAmount;
         TextView endAmount;
@@ -51,8 +57,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
 
             this.dateBar = view.findViewById(R.id.dateBar);
+            this.currentDate = view.findViewById(R.id.currentDate);
 
             this.amountBar = view.findViewById(R.id.amountBar);
+            this.currentAmount = view.findViewById(R.id.currentAmount);
 
             this.startAmount = view.findViewById(R.id.startAmount);
             this.endAmount = view.findViewById(R.id.endAmount);
@@ -63,8 +71,9 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         this.dataSet = dataSet;
     }
 
+    @NonNull
     public BudgetAdapter.BudgetViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
+                                                             int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.budget, parent, false);
         return new BudgetViewHolder(v);
     }
@@ -72,17 +81,18 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
 
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.YY", Locale.getDefault());
 
         Budget b = dataSet.get(position);
 
         holder.titleText.setText(b.getCategory());
         holder.startDate.setText(format.format(b.getFrom()));
+        holder.currentDate.setText(format.format(Calendar.getInstance().getTime()));
+
         holder.endDate.setText(format.format(b.getUntil()));
         holder.startAmount.setText(String.format(Locale.getDefault(), "%.2f %s",0.0f, "€"));
+        holder.currentAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getCurrentAmount(), "€"));
         holder.endAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getBudget(), "€"));
-
-
 
 
         float datePart = 1f;
@@ -96,23 +106,23 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         System.out.println(amountPart);
 
 
-        holder.dateBar.getProgressDrawable().setColorFilter(
-                Color.parseColor("#0085B6"), android.graphics.PorterDuff.Mode.SRC_IN);
+        setProgressBarColor(holder.dateBar, Color.parseColor("#00BBD3"));
 
-        if (amountPart > 1f) {
-            holder.amountBar.getProgressDrawable().setColorFilter(
-                    Color.parseColor("#FF005D"), android.graphics.PorterDuff.Mode.SRC_IN);
-        } else if (amountPart > datePart) {
-            holder.amountBar.getProgressDrawable().setColorFilter(
-                    Color.parseColor("#FEDF03"), android.graphics.PorterDuff.Mode.SRC_IN);
-        } else {
-            holder.amountBar.getProgressDrawable().setColorFilter(
-                    Color.parseColor("#00D49D"), android.graphics.PorterDuff.Mode.SRC_IN);
-        }
+        if (amountPart > 1f) setProgressBarColor(holder.amountBar, Color.parseColor("#EB5757"));
+        else if (amountPart > datePart) setProgressBarColor(holder.amountBar, Color.parseColor("#F2994A"));
+        else setProgressBarColor(holder.amountBar, Color.parseColor("#6FCF97"));
+
+
 
         holder.dateBar.setProgress((int)(datePart*100));
         holder.amountBar.setProgress((int)(amountPart*100));
+    }
 
+    private void setProgressBarColor(ProgressBar bar, int color) {
+        if (!(bar.getProgressDrawable() instanceof LayerDrawable)) return;
+        LayerDrawable layered = (LayerDrawable) bar.getProgressDrawable();
+        Drawable d = layered.getDrawable(2);
+        d.setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
 

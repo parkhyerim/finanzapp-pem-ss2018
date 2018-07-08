@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import com.lmu.pem.finanzapp.controller.PagerAdapter;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity  {
 
     private ViewPager viewPager;

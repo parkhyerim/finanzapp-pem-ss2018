@@ -28,8 +28,11 @@ public class Transaction implements Comparable<Transaction> {
         // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
     }
 
-    public Transaction(String date, int imageResource, String account, String category, String description, double amount) {
+    public Transaction(String date, int year, int month, int day, int imageResource, String account, String category, String description, double amount) {
         this.date = date;
+        this.year = year;
+        this.month = month;
+        this.day = day;
         this.imageResource = imageResource;
         this.account = account;
         this.account2 = null;
@@ -126,6 +129,9 @@ public class Transaction implements Comparable<Transaction> {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("date", date);
+        result.put("year", year);
+        result.put("month", month);
+        result.put("day", day);
         result.put("description", description);
         result.put("category", category);
         result.put("account", account);
