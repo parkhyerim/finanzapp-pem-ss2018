@@ -1,6 +1,8 @@
 package com.lmu.pem.finanzapp.views;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 
@@ -25,6 +28,8 @@ public class BudgetFragment extends Fragment {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager manager;
 
+    FloatingActionButton fab;
+
     public BudgetFragment() {
         // Required empty public constructor
     }
@@ -37,6 +42,12 @@ public class BudgetFragment extends Fragment {
         View aboutView = inflater.inflate(R.layout.budget_fragment, container, false);
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
+        fab = aboutView.findViewById(R.id.addBudget);
+
+        fab.setOnClickListener((v) -> {
+            Intent intent = new Intent(getActivity().getApplicationContext(), AddBudgetActivity.class);
+            startActivity(intent);
+        });
 
         // use a linear layout manager
         manager = new LinearLayoutManager(getActivity());

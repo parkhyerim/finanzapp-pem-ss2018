@@ -50,7 +50,7 @@
     <string name="mem_amountDesc">spent on average.</string>
     <string name="mem_secondaryText">Keep it up!</string>
     <string name="mem_btn1">More about this</string>
-
+    <string name="title_activity_add_budget">AddBudgetActivity</string>
 
 
 </resources>

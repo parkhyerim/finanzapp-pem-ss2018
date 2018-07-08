@@ -1,11 +1,14 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
+import android.util.Log;
+
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class BudgetManager implements TransactionHistoryEventListener{
@@ -17,8 +20,60 @@ public class BudgetManager implements TransactionHistoryEventListener{
     private BudgetManager() {
         TransactionManager.getInstance().addListener(this);
 
-        addBudget("Household", 100.0f, new Date(2018-1900, 0, 1), new Date(2018-1900, 11, 31));
-        addBudget("Movie", 30.0f, new Date(2018-1900, 5, 1), new Date(2018-1900, 5, 30));
+        addBudget("Household", 100.0f,  Budget.RenewalTypes.YEAR);
+        addBudget("Movie", 30.0f, new Date(2018-1900, 6, 30));
+    }
+
+    private void renewBudgets() {
+        Date today = Calendar.getInstance().getTime();
+        ArrayList<Budget> budgetsToRemove = new ArrayList<>();
+        for (Budget budget : this.budgets) {
+            if (today.before(budget.getUntil())) continue;
+            if (budget.getRenewalType() == Budget.RenewalTypes.NONE) {
+                //TODO DON'T REMOVE
+                budgetsToRemove.add(budget);
+                continue;
+            }
+
+            forceRenewSingleBudget(budget);
+        }
+        this.budgets.removeAll(budgetsToRemove);
+    }
+
+    private void forceRenewSingleBudget(Budget budget) {
+
+        budget.setFrom(addTimeByRenewalType(addOneDay(budget.getFrom()), budget.getRenewalType()));
+        budget.setUntil(addTimeByRenewalType(addOneDay(budget.getUntil()), budget.getRenewalType()));
+    }
+
+    private Date addTimeByRenewalType(Date date, Budget.RenewalTypes renewalType) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+
+        switch (renewalType) {
+            case DAY:
+                c.add(Calendar.DATE, 1);
+                break;
+            case WEEK:
+                c.add(Calendar.DATE, 7);
+                break;
+            case MONTH:
+                c.add(Calendar.MONTH, 1);
+                break;
+            case YEAR:
+                c.add(Calendar.YEAR, 1);
+                break;
+        }
+        return c.getTime();
+    }
+
+
+    private Date addOneDay(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, 1);
+        return c.getTime();
     }
 
     @Override
@@ -47,10 +102,11 @@ public class BudgetManager implements TransactionHistoryEventListener{
     }
 
     public ArrayList<Budget> getBudgets() {
+        renewBudgets();
         return budgets;
     }
 
-    public void addBudget (String category, float budget, Date startingDate, Date endingDate) {
+    public void addBudget (String category, float budget, Date endingDate) {
         float amount = 0f;
 
         for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
@@ -59,7 +115,37 @@ public class BudgetManager implements TransactionHistoryEventListener{
             }
         }
 
+        Date startingDate = Calendar.getInstance().getTime();
+        startingDate.setHours(0);
+        startingDate.setMinutes(0);
+        startingDate.setSeconds(0);
+
+        endingDate.setHours(23);
+        endingDate.setMinutes(59);
+        endingDate.setSeconds(59);
+
         budgets.add(new Budget(category, startingDate, endingDate, budget, -amount));
+    }
+    public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
+        float amount = 0f;
+
+        for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
+            if (transaction.getCategory().equalsIgnoreCase(category)) {
+                amount += transaction.getAmount();
+            }
+        }
+        Date startingDate = Calendar.getInstance().getTime();
+        startingDate.setHours(0);
+        startingDate.setMinutes(0);
+        startingDate.setSeconds(0);
+
+        Date endingDate = new Date();
+        endingDate.setHours(23);
+        endingDate.setMinutes(59);
+        endingDate.setSeconds(59);
+        endingDate = addTimeByRenewalType(startingDate, renewalType);
+
+        budgets.add(new Budget(category, startingDate, endingDate, budget, -amount, renewalType));
     }
 
 }

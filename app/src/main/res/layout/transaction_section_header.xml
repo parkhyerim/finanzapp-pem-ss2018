@@ -4,7 +4,7 @@
     android:id="@+id/transaction_date_header"
     android:layout_width="match_parent"
     android:layout_height="@dimen/transaction_recycler_section_header"
-    android:background="@color/colorAccent"
+    android:background="@color/colorPrimaryDark"
     android:textStyle="bold"
     android:textSize="12sp"
     android:layout_centerVertical="true">

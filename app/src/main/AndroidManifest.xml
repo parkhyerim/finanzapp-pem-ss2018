@@ -30,7 +30,11 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".AccountAddActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity
+            android:name=".views.AddBudgetActivity"
+            android:label="@string/title_activity_add_budget"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

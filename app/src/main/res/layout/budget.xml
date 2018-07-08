@@ -51,24 +51,68 @@
                 android:text="XX.XX."/>
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/dateBar"
-            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:progress="25"
-            />
+            android:layout_gravity="center"
+            android:paddingBottom="8dp">
 
-        <ProgressBar
-            android:id="@+id/amountBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:progress="25"/>
+
+            <ProgressBar
+                android:id="@+id/dateBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="25"
+                android:progressDrawable="@layout/budget_datebar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/currentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:alpha="0.8"
+                android:fontFamily="sans-serif"
+                android:text="AMOUNT"
+                android:textAlignment="center"
+                android:textAppearance="@android:style/TextAppearance.Material.Widget.TextView"
+                android:textColor="@android:color/background_light"
+                android:textSize="12sp" />
+
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/amountBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:progressDrawable="@layout/budget_datebar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:progress="25"/>
+            <TextView
+                android:id="@+id/currentAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:alpha="0.8"
+                android:fontFamily="sans-serif"
+                android:text="AMOUNT"
+                android:textAlignment="center"
+                android:textAppearance="@android:style/TextAppearance.Material.Widget.TextView"
+                android:textColor="@android:color/background_light"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
 
 
 
