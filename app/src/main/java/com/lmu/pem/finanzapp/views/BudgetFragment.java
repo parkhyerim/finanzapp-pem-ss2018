@@ -42,6 +42,7 @@ public class BudgetFragment extends Fragment {
         View aboutView = inflater.inflate(R.layout.budget_fragment, container, false);
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
+
         fab = aboutView.findViewById(R.id.addBudget);
 
         fab.setOnClickListener((v) -> {
@@ -53,7 +54,7 @@ public class BudgetFragment extends Fragment {
         manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
 
-        adapter = new BudgetAdapter(BudgetManager.getInstance().getBudgets());
+        adapter = new BudgetAdapter(BudgetManager.getInstance().getBudgets(), getContext());
         recyclerView.setAdapter(adapter);
 
         // Inflate the layout for this fragment

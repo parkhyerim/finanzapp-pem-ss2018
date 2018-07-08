@@ -1,6 +1,7 @@
 package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
+import com.lmu.pem.finanzapp.views.AddBudgetActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,9 +26,9 @@ import java.util.Locale;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>{
 
-    private Context context;
-
     private ArrayList<Budget> dataSet;
+
+    private Context context;
 
 
 
@@ -67,15 +69,20 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         }
     }
 
-    public BudgetAdapter(ArrayList<Budget> dataSet) {
+    public BudgetAdapter(ArrayList<Budget> dataSet, Context context) {
         this.dataSet = dataSet;
+        this.context = context;
     }
 
     @NonNull
     public BudgetAdapter.BudgetViewHolder onCreateViewHolder(ViewGroup parent,
                                                              int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.budget, parent, false);
-        return new BudgetViewHolder(v);
+        BudgetViewHolder buffer = new BudgetViewHolder(v);
+        v.setOnClickListener((view -> {
+            onBudgetClicked(buffer.getAdapterPosition());
+        }));
+        return buffer;
     }
 
     @Override
@@ -134,6 +141,14 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     @Override
     public int getItemCount() {
         return dataSet.size();
+    }
+
+
+    void onBudgetClicked(int position) {
+        Intent i = new Intent(context, AddBudgetActivity.class);
+        i.putExtra("budgetToEdit", dataSet.get(position));
+
+        context.startActivity(i);
     }
 
 

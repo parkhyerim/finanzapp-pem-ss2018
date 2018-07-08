@@ -25,25 +25,32 @@ public class BudgetManager implements TransactionHistoryEventListener{
     }
 
     private void renewBudgets() {
-        Date today = Calendar.getInstance().getTime();
         ArrayList<Budget> budgetsToRemove = new ArrayList<>();
         for (Budget budget : this.budgets) {
-            if (today.before(budget.getUntil())) continue;
-            if (budget.getRenewalType() == Budget.RenewalTypes.NONE) {
+            if (!isBudgetCurrent(budget) && budget.getRenewalType() == Budget.RenewalTypes.NONE) {
                 //TODO DON'T REMOVE
                 budgetsToRemove.add(budget);
                 continue;
             }
 
-            forceRenewSingleBudget(budget);
+            while (!isBudgetCurrent(budget))
+                forceRenewSingleBudget(budget);
         }
         this.budgets.removeAll(budgetsToRemove);
+    }
+
+    private boolean isBudgetCurrent(Budget budget) {
+        Date today = Calendar.getInstance().getTime();
+        return (today.after(budget.getFrom()) && today.before(budget.getUntil()));
+
     }
 
     private void forceRenewSingleBudget(Budget budget) {
 
         budget.setFrom(addTimeByRenewalType(addOneDay(budget.getFrom()), budget.getRenewalType()));
         budget.setUntil(addTimeByRenewalType(addOneDay(budget.getUntil()), budget.getRenewalType()));
+
+
     }
 
     private Date addTimeByRenewalType(Date date, Budget.RenewalTypes renewalType) {
@@ -124,7 +131,7 @@ public class BudgetManager implements TransactionHistoryEventListener{
         endingDate.setMinutes(59);
         endingDate.setSeconds(59);
 
-        budgets.add(new Budget(category, startingDate, endingDate, budget, -amount));
+        budgets.add(new Budget(Calendar.getInstance().getTime().hashCode() + category.hashCode(), category, startingDate, endingDate, budget, -amount));
     }
     public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
         float amount = 0f;
@@ -145,7 +152,41 @@ public class BudgetManager implements TransactionHistoryEventListener{
         endingDate.setSeconds(59);
         endingDate = addTimeByRenewalType(startingDate, renewalType);
 
-        budgets.add(new Budget(category, startingDate, endingDate, budget, -amount, renewalType));
+        budgets.add(new Budget(Calendar.getInstance().getTime().hashCode() + category.hashCode(), category, startingDate, endingDate, budget, -amount, renewalType));
+    }
+
+    public Budget getById(int id) {
+        for (Budget budget : budgets) {
+            if (budget.getId() == id)
+                return budget;
+        }
+        return null;
+    }
+
+    public boolean editById(int id, String category, float budget, Budget.RenewalTypes renewalType) {
+        Budget b = getById(id);
+        if (b == null) return false;
+
+        b.setBudget(budget);
+        b.setCategory(category);
+        b.setRenewalType(renewalType);
+        b.setUntil(addTimeByRenewalType(b.getFrom(), renewalType));
+        renewBudgets();
+
+        return true;
+    }
+
+    public boolean editById(int id, String category, float budget, Date customDate) {
+        Budget b = getById(id);
+        if (b == null) return false;
+
+        b.setBudget(budget);
+        b.setCategory(category);
+        b.setRenewalType(Budget.RenewalTypes.NONE);
+        b.setUntil(customDate);
+        renewBudgets();
+
+        return true;
     }
 
 }

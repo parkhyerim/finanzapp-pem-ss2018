@@ -1,10 +1,12 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Budget {
+public class Budget implements Serializable {
+    final int id;
     String category;
 
     private Date from;
@@ -15,6 +17,7 @@ public class Budget {
     private float currentAmount;
 
     private RenewalTypes renewalType;
+
 
     public enum RenewalTypes {
         NONE,
@@ -35,7 +38,8 @@ public class Budget {
         }
     }
 
-    public Budget(String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
+    Budget(int id, String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
+        this.id = id;
         this.category = category;
         this.from = from;
         this.until = until;
@@ -44,7 +48,8 @@ public class Budget {
         this.renewalType = renewalType;
     }
 
-    public Budget(String category, Date from, Date until, float budget, float currentAmount) {
+    Budget(int id, String category, Date from, Date until, float budget, float currentAmount) {
+        this.id = id;
         this.category = category;
         this.from = from;
         this.until = until;
@@ -53,9 +58,16 @@ public class Budget {
         this.renewalType = RenewalTypes.NONE;
     }
 
+    public int getId() {
+        return id;
+    }
 
     public String getCategory() {
         return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Date getFrom() {
@@ -66,11 +78,9 @@ public class Budget {
         this.from = from;
     }
 
-
     public Date getUntil() {
         return until;
     }
-
 
     public void setUntil(Date until) {
         this.until = until;
@@ -78,6 +88,10 @@ public class Budget {
 
     public float getBudget() {
         return budget;
+    }
+
+    public void setBudget(float budget) {
+        this.budget = budget;
     }
 
     public void setCurrentAmount(float currentAmount) {
@@ -90,6 +104,10 @@ public class Budget {
 
     public RenewalTypes getRenewalType() {
         return renewalType;
+    }
+
+    public void setRenewalType(RenewalTypes renewalType) {
+        this.renewalType = renewalType;
     }
 
     public Map<String, Object> toMap() {

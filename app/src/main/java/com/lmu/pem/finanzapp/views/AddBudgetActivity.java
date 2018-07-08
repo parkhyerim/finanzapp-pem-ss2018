@@ -1,6 +1,7 @@
 package com.lmu.pem.finanzapp.views;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.data.categories.Category;
@@ -47,7 +49,7 @@ public class AddBudgetActivity extends AppCompatActivity {
     Button submitButton;
     //endregion
 
-
+    Budget budgetToEdit = null;
 
     String category;
 
@@ -61,6 +63,11 @@ public class AddBudgetActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().hasExtra("budgetToEdit")) {
+            budgetToEdit = (Budget)getIntent().getSerializableExtra("budgetToEdit");
+        }
+
         setContentView(R.layout.activity_budget_add);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,10 +97,15 @@ public class AddBudgetActivity extends AppCompatActivity {
 
 
     private void initCategorySpinner() {
-        ArrayList<String> expenses = new ArrayList<>(CategoryManager.getInstance().getExpCategories());
-        ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
+        ArrayList<String> categories = new ArrayList<>(CategoryManager.getInstance().getExpCategories());
+        ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categorySpinner.setAdapter(expenseCategoryAdapter);
+
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        if (budgetToEdit != null) {
+            categorySpinner.setSelection(categories.indexOf(budgetToEdit.getCategory()));
+        }
 
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -114,13 +126,21 @@ public class AddBudgetActivity extends AppCompatActivity {
         renewalTypeSpinner.setAdapter(typesAdapter);
         typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        if (budgetToEdit != null)
+            renewalTypeSpinner.setSelection(budgetToEdit.getRenewalType().ordinal());
+
         renewalTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 renewalType = Budget.RenewalTypes.values()[position];
                 setCustomDateActive(renewalType == Budget.RenewalTypes.NONE);
                 Calendar c = Calendar.getInstance();
-                c.setTime(c.getTime());
+
+                if (budgetToEdit == null)
+                    c.setTime(c.getTime());
+                else
+                    c.setTime(budgetToEdit.getFrom());
+
                 switch (renewalType) {
                     case DAY:
                         c.add(Calendar.DATE, 1);
@@ -147,6 +167,9 @@ public class AddBudgetActivity extends AppCompatActivity {
     }
 
     public void initCustomDateEditText() {
+        if (budgetToEdit != null) {
+            setCustomDateValue(budgetToEdit.getUntil());
+        }
         customDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,11 +214,19 @@ public class AddBudgetActivity extends AppCompatActivity {
     private void submit() {
         if (!verify()) return;
 
-        if (renewalType == Budget.RenewalTypes.NONE)
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount(),customDate);
-        else {
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), renewalType);
+        if (budgetToEdit != null) {
+            if (budgetToEdit.getRenewalType() != Budget.RenewalTypes.NONE)
+                BudgetManager.getInstance().editById(budgetToEdit.getId(), category ,getBudgetAmount(), renewalType);
+            else
+                BudgetManager.getInstance().editById(budgetToEdit.getId(), category ,getBudgetAmount(), customDate);
+
         }
+
+        if (renewalType == Budget.RenewalTypes.NONE)
+            BudgetManager.getInstance().addBudget(category, getBudgetAmount() ,customDate);
+        else
+            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), renewalType);
+        finish();
     }
 
     private float getBudgetAmount() {
