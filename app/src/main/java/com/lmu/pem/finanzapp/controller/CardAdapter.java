@@ -16,6 +16,8 @@ import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 import com.lmu.pem.finanzapp.model.dashboard.cards.*;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -156,7 +158,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     private void removeView(View view) {
-        ((ViewManager) view.getParent()).removeView(view);
+        if(view.getParent()!=null){
+            ((ViewManager) view.getParent()).removeView(view);
+        }
     }
 
 
