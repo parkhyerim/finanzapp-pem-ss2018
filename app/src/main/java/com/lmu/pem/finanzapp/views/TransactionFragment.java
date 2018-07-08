@@ -228,6 +228,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         final MenuItem item = menu.findItem(R.id.action_search);
         //
         final SearchView searchView = (SearchView) item.getActionView();
+        searchView.setIconifiedByDefault(false);
+        searchView.setBackgroundColor(Color.parseColor("#ffffff"));
         searchView.setOnQueryTextListener(this);
         item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
