@@ -12,6 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
         this.transactions = new ArrayList<>();
         //createTransactionList();
-
 
         transactionRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -114,10 +114,10 @@ public class TransactionManager extends TransactionHistoryEventSource{
      * @param transaction the Transaction object to be added
      */
     public void addTransaction(Transaction transaction){
-        this.transactions.add(transaction);
         String key = writeNewTransactionToFB(transaction);
         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
         transaction.setKey(key);
+        this.transactions.add(transaction);
     }
 
     public void updateTransaction(String key, int year, int month, int day, String account, String category, int imageResource, String description, double amount){
@@ -168,6 +168,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
     }
 
     public ArrayList<Transaction> getTransactions(){
+        Collections.sort(transactions);
         return transactions;
 
     }
