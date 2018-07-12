@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,31 +32,8 @@ public class AccountManager implements TransactionHistoryEventListener {
     private AccountManager() {
         this.accounts = new ArrayList<Account>();
         //this.accounts.add(new Account("Cash", 0xff00695c, true, 64.45)); //TODO - temporary
-        dbRef = FirebaseDatabase.getInstance().getReference().child("accounts");
-
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
-                for (String key : map.keySet()) {
-
-                    Account newAcc=new Account(
-                            dataSnapshot.child(key).child("name").getValue(String.class),
-                            dataSnapshot.child(key).child("color").getValue(Integer.class),
-                            dataSnapshot.child(key).child("isDefault").getValue(Boolean.class),
-                            dataSnapshot.child(key).child("balance").getValue(Double.class),
-                            key
-                    );
-                    if((boolean) map.get(key).get("isDefault")) defaultAcc=newAcc;
-                    accounts.add(newAcc);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("123123123","Cancelled: "+databaseError.toString());
-            }
-        });
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
 
         TransactionManager.getInstance().addListener(this);
     }
@@ -165,8 +144,10 @@ public class AccountManager implements TransactionHistoryEventListener {
      * @param acc the Account that should become the new default
      */
     public void setDefaultAcc(Account acc) {
-        this.defaultAcc.setDefault(false);
-        dbRef.child(defaultAcc.getId()).child("isDefault").setValue(false);
+        if(defaultAcc!=null){
+            this.defaultAcc.setDefault(false);
+            dbRef.child(defaultAcc.getId()).child("isDefault").setValue(false);
+        }
         this.defaultAcc = acc;
     }
 
@@ -229,5 +210,10 @@ public class AccountManager implements TransactionHistoryEventListener {
         }
         if(account2!=null) dbRef.child(account2.getId()).child("balance").setValue(account2.getBalance());
         dbRef.child(account.getId()).child("balance").setValue(account.getBalance());
+    }
+
+    public void initializeWithCashAccount() {
+        Account cashAcc = new Account("Cash", true, 0);
+        addAccount(cashAcc);
     }
 }

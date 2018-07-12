@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:text="Currency: "
             android:textSize="16sp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginEnd="5dp"
             />
         <Spinner
@@ -46,6 +46,12 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:paddingRight="10dp"
+            />
+        <TextView
+            android:layout_columnSpan="2"
+            android:textSize="12sp"
+            android:layout_marginBottom="20dp"
+            android:text="Please note that changing the currency here does not perform currency conversion but leaves the numeric values as they were."
             />
         <TextView
             android:text="Home Tab: "
@@ -62,6 +68,19 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:paddingRight="10dp"
+            />
+        <TextView
+            android:layout_columnSpan="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/loggedInAsText"
+            />
+        <Button
+            android:layout_columnSpan="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/logoutButton"
+            android:text="@string/logoutText"
             />
     </GridLayout>
 </LinearLayout>

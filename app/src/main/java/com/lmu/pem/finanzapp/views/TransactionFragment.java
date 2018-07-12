@@ -23,10 +23,14 @@ import android.view.ViewGroup;
 
 import android.support.v7.widget.SearchView;
 
+import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
+import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.controller.TransactionAdapter;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
@@ -40,7 +44,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener {
+public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener, TransactionHistoryEventListener {
 
     private TransactionManager transactionManager;
 
@@ -66,7 +70,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
 
     public TransactionFragment() {
-        this.transactionManager = TransactionManager.getInstance();
+        transactionManager = TransactionManager.getInstance();
+        transactionManager.addListener(this);
     }
 
 
@@ -115,8 +120,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         // Add Button -> Add Page
         addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
+            if(AccountManager.getInstance().getAccounts().size()>0){
+                Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
+            }else{
+                Snackbar.make(rootView, "You have to create an account before you can add a transaction!", Snackbar.LENGTH_LONG);
+            }
         });
         return rootView;
     }
@@ -153,7 +162,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             key = data.getStringExtra("key");
 
             transactionManager.updateTransaction(key, year, month, day, account, category, getImageByCategory(category), description, amount);
-            adapter.notifyItemChanged(transactionManager.getTransactions().indexOf(transactionManager.getTransactionByKey(key)));
         }
     }
 
@@ -175,10 +183,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             transaction = new Transaction(this.year, this.month, this.day, getImageByCategory(category), this.account, this.account2, this.category, this.description, this.amount);
         }
         transactionManager.addTransaction(transaction);
-
-        adapter.notifyItemInserted(position);
     }
-
+    /**
+     * Gets an image ResourceID for a given category. Duplicate of this method exists in AccountFragment, so don't forget to apply changes to both. It's a maintenance nightmare, but the Activity framework doesn't really leave us a choice.
+     * @param category the Transaction category to get the image for. If there is no image for this category, a default image will be chosen.
+     * @return the ResourceID for the image
+     */
     private int getImageByCategory(String category) {
         int imageResource;
         int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
@@ -300,5 +310,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         }
 
+    }
+
+    @Override
+    public void handle(TransactionHistoryEvent event) {
+        adapter.notifyDataSetChanged();
     }
 }

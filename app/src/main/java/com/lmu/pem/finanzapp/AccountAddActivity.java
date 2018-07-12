@@ -35,7 +35,7 @@ public class AccountAddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account_add);
 
         setupViews();
-        balanceText.setText("Balance ("+ GlobalSettings.getInstance(getApplicationContext()).getCurrencyString()+"): ");
+        balanceText.setText("Balance ("+ GlobalSettings.getInstance().getCurrencyString()+"): ");
         accountID = "";
         accountManager = AccountManager.getInstance();
 

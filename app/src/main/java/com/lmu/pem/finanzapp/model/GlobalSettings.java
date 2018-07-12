@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,32 +31,21 @@ public class GlobalSettings {
     private int currency;
     private int homeTab;
 
-    public static GlobalSettings getInstance(Context context) {
-        if (instance == null) instance = new GlobalSettings(context);
+    public static GlobalSettings getInstance() {
+        if (instance == null) instance = new GlobalSettings();
         return instance;
     }
 
-    public GlobalSettings(Context context) {
-        this.context = context;
+    public GlobalSettings() {
         this.currency = CURRENCY_EURO;
         this.homeTab = TAB_DASHBOARD;
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("settings");
+    }
 
-        dbRef = FirebaseDatabase.getInstance().getReference().child("settings");
-        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Integer newCurrency = dataSnapshot.child("currency").getValue(Integer.class);
-                if(newCurrency!=null) currency = newCurrency;
-                Integer newHomeTab = dataSnapshot.child("homeTab").getValue(Integer.class);
-                if(newHomeTab!=null) homeTab = newHomeTab;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("123123123","Cancelled: "+databaseError.toString());
-            }
-        });
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public int getCurrency() {
@@ -67,7 +58,7 @@ public class GlobalSettings {
 
     public void setCurrency(int currency) {
         this.currency = currency;
-        dbRef.child("currency").setValue(currency);
+        dbRef.child("currency").child("value").setValue(currency);
     }
 
     public int getHomeTab() {
@@ -76,6 +67,6 @@ public class GlobalSettings {
 
     public void setHomeTab(int homeTab) {
         this.homeTab = homeTab;
-        dbRef.child("homeTab").setValue(homeTab);
+        dbRef.child("homeTab").child("value").setValue(homeTab);
     }
 }

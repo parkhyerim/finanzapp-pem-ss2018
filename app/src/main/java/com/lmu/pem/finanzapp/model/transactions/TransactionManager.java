@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,47 +32,11 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
 
     private TransactionManager() {
-
-        db = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
         transactionRef = db.child("transactions");
 
         this.transactions = new ArrayList<>();
-        //createTransactionList();
-
-        transactionRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
-                if(map != null){
-                    for (String key : map.keySet()) {
-
-                        Transaction newTransaction = new Transaction(
-                                dataSnapshot.child(key).child("year").getValue(Integer.class),
-                                dataSnapshot.child(key).child("month").getValue(Integer.class),
-                                dataSnapshot.child(key).child("day").getValue(Integer.class),
-                                dataSnapshot.child(key).child("imageResource").getValue(Integer.class),
-                                dataSnapshot.child(key).child("account").getValue(String.class),
-                                dataSnapshot.child(key).child("account2").getValue(String.class),
-                                dataSnapshot.child(key).child("category").getValue(String.class),
-                                dataSnapshot.child(key).child("description").getValue(String.class),
-                                dataSnapshot.child(key).child("amount").getValue(Double.class)
-                        );
-                        newTransaction.setKey(key);
-                        if(!containsTransaction(newTransaction)){
-                            transactions.add(newTransaction);
-                            fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, TransactionManager.getInstance(), newTransaction));
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("123123123","Cancelled: "+databaseError.toString());
-            }
-        });
-
     }
 
     /*
@@ -114,10 +80,14 @@ public class TransactionManager extends TransactionHistoryEventSource{
      * @param transaction the Transaction object to be added
      */
     public void addTransaction(Transaction transaction){
+        addTransactionLocally(transaction);
         String key = writeNewTransactionToFB(transaction);
-        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
         transaction.setKey(key);
+    }
+
+    public void addTransactionLocally(Transaction transaction){
         this.transactions.add(transaction);
+        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
     }
 
     public void updateTransaction(String key, int year, int month, int day, String account, String category, int imageResource, String description, double amount){
@@ -173,6 +143,9 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     }
 
+    /**
+     * for debugging / testing purposes
+     */
     public void createTransactionList(){
         // dummy transaction list
         addTransaction(new Transaction(2018, 4, 28, R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 450));

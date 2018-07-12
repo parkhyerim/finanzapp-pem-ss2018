@@ -125,7 +125,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             BasicAmountCard c = (BasicAmountCard) dataSet.get(position);
 
             h.primaryText.setText(c.getPrimaryText());
-            h.amountText.setText(String.format(Locale.getDefault(), "%,.2f %s",c.getAmount(), GlobalSettings.getInstance(context).getCurrencyString()));
+            h.amountText.setText(String.format(Locale.getDefault(), "%,.2f %s",c.getAmount(), GlobalSettings.getInstance().getCurrencyString()));
 
 
             switch (c.getAmountType()) {

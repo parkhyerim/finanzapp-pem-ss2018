@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,11 +23,11 @@ import android.widget.Toast;
 import java.text.DateFormatSymbols;
 
 
+import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,58 +72,60 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         findViews();
 
-        currencySymbol.setText(GlobalSettings.getInstance(this).getCurrencyString());
+        currencySymbol.setText(GlobalSettings.getInstance().getCurrencyString());
 
         expense_selected(); // expense is selected by default
 
         setupDatePicker();
         setupAccountSpinners();
         setupCategorySpinners();
-
-        checkIfUpdating();
-
         setButtonClickListeners();
+        checkForExtras();
     }
 
-    private void checkIfUpdating() {
-        // extras indicate that we want to edit an existing transaction instead of creating a new one
+    private void checkForExtras() {
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            year = getIntent().getIntExtra("year", 2018);
-            month = getIntent().getIntExtra("month", 1);
-            day = getIntent().getIntExtra("day", 1);
-            description = getIntent().getStringExtra("description");
-            setDateOnDisplay(year, month, day);
+            if(getIntent().hasExtra("year") && getIntent().hasExtra("month") && getIntent().hasExtra("day")){
+                year = getIntent().getIntExtra("year", 2018);
+                month = getIntent().getIntExtra("month", 1);
+                day = getIntent().getIntExtra("day", 1);
+                setDateOnDisplay(year, month, day);
+            }
+            if(getIntent().hasExtra("description")){
+                description = getIntent().getStringExtra("description");
+                descriptionEditText.setText(description);
+            }
+            if(getIntent().hasExtra("amount")){
+                amount = getIntent().getDoubleExtra("amount", 0);
+                amountEditText.setText(String.valueOf(Math.abs(amount)));
+                if(amount<0){
+                    expenseButton.callOnClick();
+                } else {
+                    incomeButton.callOnClick();
+                }
 
-            descriptionEditText.setText(description);
-            // TODO: Expense and Income
-            amount = getIntent().getDoubleExtra("amount", 0);
-            amountEditText.setText(String.valueOf(Math.abs(amount)));
-            if(amount<0){
-                expenseButton.callOnClick();
-            } else {
-                incomeButton.callOnClick();
+                //If we have an amount, the Transaction already exists - so customize the Toolbar title
+                Toolbar toolbar = findViewById(R.id.toolbar);
+                toolbar.setTitle("Edit Transaction");
             }
 
-            // Account
-            String account = accountManager.getAccountById(getIntent().getStringExtra("account")).getName();
+            // Accounts
             String[] accounts =  accountManager.getNameArray();
+
+            account = getIntent().getStringExtra("account");
             for(int i =0; i < accounts.length ; i++){
-                if (accounts[i].equals(account)){
+                if (accountManager.getAccountIdByName(accounts[i]).equals(account)){
                     accountSpinner.setSelection(i);
-                } else {
-                    accountSpinner.setSelection(0);
                 }
             }
 
             if(getIntent().hasExtra("account2")) {
-                String account2 = getIntent().getStringExtra("account2");
+                account2 = getIntent().getStringExtra("account2");
                 shiftButton.callOnClick();
                 for(int i =0; i < accounts.length ; i++){
-                    if (accounts[i].equals(account)){
+                    if (accountManager.getAccountIdByName(accounts[i]).equals(account2)){
                         account2Spinner.setSelection(i);
-                    } else {
-                        account2Spinner.setSelection(0);
                     }
                 }
             }
@@ -132,18 +135,16 @@ public class TransactionAddActivity extends AppCompatActivity {
                 expense_selected();
                 int expense = getIntent().getIntExtra("category", 0);
                 expenseCategorySpinner.setSelection(expense);
-            } else {
+                category = expenseCategorySpinner.getItemAtPosition(expense).toString();
+            } else if(getIntent().hasExtra("category2")) {
                 income_selected();
                 int income = getIntent().getIntExtra("category2",0);
                 incomeCategorySpinner.setSelection(income);
+                category = incomeCategorySpinner.getItemAtPosition(income).toString();
             }
 
             //Key
-            key = getIntent().getStringExtra("key");
-
-            //customize Toolbar title
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle("Edit Transaction");
+            if(getIntent().hasExtra("key")) key = getIntent().getStringExtra("key");
         }
     }
 
