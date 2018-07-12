@@ -186,7 +186,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("year", year);
-                    resultIntent.putExtra("month", month+1);
+                    resultIntent.putExtra("month", month);
                     resultIntent.putExtra("day", day);
                     resultIntent.putExtra("category", category);
                     resultIntent.putExtra("account", account);
@@ -440,7 +440,7 @@ public class TransactionAddActivity extends AppCompatActivity {
     }
 
     public String getMonth(int month) {
-        return new DateFormatSymbols().getMonths()[month - 1];
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 
 }
