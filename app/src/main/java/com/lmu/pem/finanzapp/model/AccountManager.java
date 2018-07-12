@@ -184,16 +184,15 @@ public class AccountManager implements TransactionHistoryEventListener {
                     account.setBalance(account.getBalance() + transaction.getAmount());
                 }else{
                     account.setBalance(account.getBalance() - transaction.getAmount());
-                    account2.setBalance(account.getBalance() + transaction.getAmount());
+                    account2.setBalance(account2.getBalance() + transaction.getAmount());
                 }
-
                 break;
             case REMOVED:
                 if(account2==null) {
                     account.setBalance(account.getBalance() - transaction.getAmount());
                 }else{
                     account.setBalance(account.getBalance() + transaction.getAmount());
-                    account2.setBalance(account.getBalance() - transaction.getAmount());
+                    account2.setBalance(account2.getBalance() - transaction.getAmount());
                 }
                 break;
             case UPDATED: //"remove" old transaction, "add" the new one
@@ -224,12 +223,11 @@ public class AccountManager implements TransactionHistoryEventListener {
 
                     //add the new one
                     account.setBalance(account.getBalance() - transaction.getAmount());
-                    account2.setBalance(account.getBalance() + transaction.getAmount());
-
-                    dbRef.child(account2.getId()).child("balance").setValue(account2.getBalance());
+                    account2.setBalance(account2.getBalance() + transaction.getAmount());
                 }
                 dbRef.child(accountOld.getId()).child("balance").setValue(accountOld.getBalance());
         }
+        if(account2!=null) dbRef.child(account2.getId()).child("balance").setValue(account2.getBalance());
         dbRef.child(account.getId()).child("balance").setValue(account.getBalance());
     }
 }

@@ -10,8 +10,10 @@
         android:layout_width="match_parent"
         android:visibility="invisible"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="18dp"
-        android:layout_marginVertical="19dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginBottom="19dp"
         android:orientation="horizontal">
 
             <ImageButton
