@@ -2,11 +2,13 @@ package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,6 +139,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             intent.putExtra("month", transaction.getMonth());
             intent.putExtra("day", transaction.getDay());
             intent.putExtra("account", transaction.getAccount());
+            String acc2 = transaction.getAccount2();
+            if(acc2!=null) intent.putExtra("account2", acc2);
             intent.putExtra("description", transaction.getDescription());
             intent.putExtra("amount", transaction.getAmount());
             intent.putExtra("key", transaction.getKey());
@@ -201,8 +205,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         // Category-Image
+        try{
+            holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
+        }catch(Resources.NotFoundException e){
+            Log.e("123123", "onBindViewHolder: Didn't find Image Resource", e); //TODO should be obsolete when image Resources are no longer in Firebase but created dynamically
+        }
 
-         holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
 
         double amount = currentTransactionItem.getAmount();
 

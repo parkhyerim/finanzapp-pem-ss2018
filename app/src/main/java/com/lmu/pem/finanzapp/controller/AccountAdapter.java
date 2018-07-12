@@ -2,6 +2,7 @@ package com.lmu.pem.finanzapp.controller;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -11,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.views.AccountFragment;
 import com.lmu.pem.finanzapp.views.CircleView;
+import com.lmu.pem.finanzapp.views.TransactionFragment;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -97,7 +100,11 @@ public class AccountAdapter extends BaseAdapter {
                     //TODO set color (call invalidate!) / ...
                     break;
                 case DragEvent.ACTION_DROP:
-                    Log.println(Log.INFO, "123123123", "Dropped!");
+                    Log.println(Log.INFO, "123123123", "Dropped! "+ event.getClipData().getItemAt(0).getText().toString()+" -> "+accounts.get(position).getId());
+                    Intent intent = new Intent(context, TransactionAddActivity.class);
+                    intent.putExtra("account", event.getClipData().getItemAt(0).getText().toString());
+                    intent.putExtra("account2", accounts.get(position).getId());
+                    fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
                     Log.println(Log.INFO, "123123123", "...Stopped dragging!");
