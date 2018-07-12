@@ -219,7 +219,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         } else {
             holder.amountTextView.setTextColor(Color.parseColor("#2BAB68"));
         }
-        holder.amountTextView.setText(String.format(Locale.getDefault(), "%,.2f %s", amount, GlobalSettings.getInstance(context).getCurrencyString()));
+        holder.amountTextView.setText(String.format(Locale.getDefault(), "%,.2f %s", amount, GlobalSettings.getInstance().getCurrencyString()));
 
 
         // Description

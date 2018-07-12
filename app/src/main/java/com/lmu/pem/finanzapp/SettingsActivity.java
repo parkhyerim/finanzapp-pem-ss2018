@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -19,9 +23,25 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        globalSettings = GlobalSettings.getInstance(this);
+        globalSettings = GlobalSettings.getInstance();
+        setupLoggedInText();
+        setupLogoutButton();
         setupToolbar();
         setupSpinners();
+    }
+
+    private void setupLogoutButton() {
+        Button btn = findViewById(R.id.logoutButton);
+        btn.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void setupLoggedInText() {
+        TextView tv = findViewById(R.id.loggedInAsText);
+        tv.setText("You're currently logged in as: "+ FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 
     private void setupToolbar() {

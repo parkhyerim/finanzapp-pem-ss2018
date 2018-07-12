@@ -65,7 +65,7 @@ public class AccountAdapter extends BaseAdapter {
         }
         String text = accounts.get(position).getName();
         circleView.setText(text, accounts.get(position).isDefault());
-        String subtext = String.format(Locale.getDefault(), "%,.2f %s",accounts.get(position).getBalance(), GlobalSettings.getInstance(context).getCurrencyString());
+        String subtext = String.format(Locale.getDefault(), "%,.2f %s",accounts.get(position).getBalance(), GlobalSettings.getInstance().getCurrencyString());
         circleView.setSubText(subtext);
         circleView.setCircleColor(accounts.get(position).getColor());
 

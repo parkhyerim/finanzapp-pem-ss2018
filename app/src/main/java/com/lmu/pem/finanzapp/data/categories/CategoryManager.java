@@ -6,6 +6,8 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -25,7 +27,8 @@ public class CategoryManager {
     private DatabaseReference db;
 
     public CategoryManager() {
-        db = FirebaseDatabase.getInstance().getReference().child("categories");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("categories");
         expCategories = new ArrayList<>();
         incCategories = new ArrayList<>();
         expCategories.addAll(createDefaultExpCategories());

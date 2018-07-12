@@ -82,7 +82,7 @@ public class AddBudgetActivity extends AppCompatActivity {
 
         customDateLayout = findViewById(R.id.customDateLayout);
         customDateEditText = findViewById(R.id.customDateEditText);
-        currencySymbol.setText(GlobalSettings.getInstance(this).getCurrencyString());
+        currencySymbol.setText(GlobalSettings.getInstance().getCurrencyString());
 
         submitButton = findViewById(R.id.submitButton);
     }

@@ -28,6 +28,7 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
@@ -119,8 +120,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         // Add Button -> Add Page
         addButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
-            startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
+            if(AccountManager.getInstance().getAccounts().size()>0){
+                Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
+            }else{
+                Snackbar.make(rootView, "You have to create an account before you can add a transaction!", Snackbar.LENGTH_LONG);
+            }
         });
         return rootView;
     }

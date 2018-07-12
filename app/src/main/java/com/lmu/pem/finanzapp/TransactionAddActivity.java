@@ -72,7 +72,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         findViews();
 
-        currencySymbol.setText(GlobalSettings.getInstance(this).getCurrencyString());
+        currencySymbol.setText(GlobalSettings.getInstance().getCurrencyString());
 
         expense_selected(); // expense is selected by default
 
