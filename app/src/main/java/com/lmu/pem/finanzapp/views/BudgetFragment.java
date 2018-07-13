@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
+import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class BudgetFragment extends Fragment {
     RecyclerView.LayoutManager manager;
 
     FloatingActionButton fab;
+
+    public static final int REQUEST_ADD_BUDGET = 0;
+    public static final int REQUEST_EDIT_BUDGET = 1;
 
     public BudgetFragment() {
         // Required empty public constructor
@@ -47,17 +51,32 @@ public class BudgetFragment extends Fragment {
 
         fab.setOnClickListener((v) -> {
             Intent intent = new Intent(getActivity().getApplicationContext(), AddBudgetActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 0);
         });
 
         // use a linear layout manager
         manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
 
-        adapter = new BudgetAdapter(BudgetManager.getInstance().getBudgets(), getContext());
+        adapter = new BudgetAdapter(getContext(), this, BudgetManager.getInstance().getBudgets());
         recyclerView.setAdapter(adapter);
 
         // Inflate the layout for this fragment
         return aboutView;
+    }
+
+    public void onBudgetClicked(String id) {
+        Intent i = new Intent(getContext(), AddBudgetActivity.class);
+        i.putExtra("budgetToEdit", BudgetManager.getInstance().getById(id));
+
+        startActivityForResult(i, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ADD_BUDGET) adapter.notifyDataSetChanged();
+        if (requestCode == REQUEST_EDIT_BUDGET) adapter.notifyDataSetChanged();
+
     }
 }

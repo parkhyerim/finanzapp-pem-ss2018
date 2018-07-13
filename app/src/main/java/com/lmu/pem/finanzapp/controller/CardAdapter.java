@@ -91,13 +91,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
         if (viewType == DashboardManager.CardType.WELCOME.hashCode()) {
             v =  LayoutInflater.from(parent.getContext()).inflate(R.layout.db_welcome, parent, false);
-            WelcomeCardViewHolder vh = new WelcomeCardViewHolder(v);
-            return vh;
+            return new WelcomeCardViewHolder(v);
         }
         else {
             v =  LayoutInflater.from(parent.getContext()).inflate(R.layout.db_basic_amount, parent, false);
-            BasicAmountViewHolder vh = new BasicAmountViewHolder(v);
-            return vh;
+            return new BasicAmountViewHolder(v);
 
         }
 
@@ -139,17 +137,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                     break;
             }
 
-            if (c.getAmountDescription() == "")
+            if (c.getAmountDescription().equals(""))
                 removeView(h.amountDescText);
             else
                 h.amountDescText.setText(c.getAmountDescription());
 
-            if (c.getSecondaryMessage() == "")
+            if (c.getSecondaryMessage().equals(""))
                 removeView(h.secondaryText);
             else
                 h.secondaryText.setText(c.getSecondaryMessage());
 
-            if (c.getBtn2Text() == "")
+            if (c.getBtn2Text().equals(""))
                 removeView(h.btn2);
             else
                 h.btn2.setText(c.getBtn2Text());

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Budget implements Serializable {
-    final int id;
+    String id;
     String category;
 
     private Date from;
@@ -20,7 +20,7 @@ public class Budget implements Serializable {
 
 
     public enum RenewalTypes {
-        NONE,
+        CUSTOM,
         DAY,
         WEEK,
         MONTH,
@@ -38,8 +38,9 @@ public class Budget implements Serializable {
         }
     }
 
-    Budget(int id, String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
-        this.id = id;
+    public Budget() {}
+
+    Budget(String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
         this.category = category;
         this.from = from;
         this.until = until;
@@ -48,18 +49,21 @@ public class Budget implements Serializable {
         this.renewalType = renewalType;
     }
 
-    Budget(int id, String category, Date from, Date until, float budget, float currentAmount) {
-        this.id = id;
+    Budget(String category, Date from, Date until, float budget, float currentAmount) {
         this.category = category;
         this.from = from;
         this.until = until;
         this.budget = budget;
         this.currentAmount = currentAmount;
-        this.renewalType = RenewalTypes.NONE;
+        this.renewalType = RenewalTypes.CUSTOM;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCategory() {
@@ -110,13 +114,5 @@ public class Budget implements Serializable {
         this.renewalType = renewalType;
     }
 
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> buffer = new HashMap<>();
-        buffer.put("budgetCategory", this.category);
-        buffer.put("budgetStartingDate", this.from);
-        buffer.put("budgetEndingDate", this.until);
-        buffer.put("budgetAmount", this.budget);
-        return buffer;
-    }
 
 }

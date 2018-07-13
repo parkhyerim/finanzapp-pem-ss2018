@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.views.AddBudgetActivity;
+import com.lmu.pem.finanzapp.views.BudgetFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,11 +33,15 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
     private Context context;
 
+    BudgetFragment fragmentHandle;
+
 
 
     public static class BudgetViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         TextView titleText;
+
+        ImageView autoRenew;
 
         TextView startDate;
         TextView endDate;
@@ -54,6 +61,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
             super(view);
             this.titleText = view.findViewById(R.id.title);
 
+            this.autoRenew = view.findViewById(R.id.autoRenew);
+
             this.startDate = view.findViewById(R.id.startDate);
             this.endDate = view.findViewById(R.id.endDate);
 
@@ -69,9 +78,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         }
     }
 
-    public BudgetAdapter(ArrayList<Budget> dataSet, Context context) {
-        this.dataSet = dataSet;
+    public BudgetAdapter(Context context, BudgetFragment handle, ArrayList<Budget> dataSet) {
         this.context = context;
+        this.fragmentHandle = handle;
+        this.dataSet = dataSet;
     }
 
     @NonNull
@@ -93,13 +103,19 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         Budget b = dataSet.get(position);
 
         holder.titleText.setText(b.getCategory());
+
+        if (b.getRenewalType() == Budget.RenewalTypes.CUSTOM)
+            holder.autoRenew.setVisibility(View.GONE);
+        else
+            holder.autoRenew.setVisibility(View.VISIBLE);
+
         holder.startDate.setText(format.format(b.getFrom()));
         holder.currentDate.setText(format.format(Calendar.getInstance().getTime()));
 
         holder.endDate.setText(format.format(b.getUntil()));
-        holder.startAmount.setText(String.format(Locale.getDefault(), "%.2f %s",0.0f, "€"));
-        holder.currentAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getCurrentAmount(), "€"));
-        holder.endAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getBudget(), "€"));
+        holder.startAmount.setText(String.format(Locale.getDefault(), "%.2f %s",0.0f, GlobalSettings.getInstance().getCurrencyString()));
+        holder.currentAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getCurrentAmount(), GlobalSettings.getInstance().getCurrencyString()));
+        holder.endAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getBudget(), GlobalSettings.getInstance().getCurrencyString()));
 
 
         float datePart = 1f;
@@ -112,8 +128,11 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         System.out.println(datePart);
         System.out.println(amountPart);
 
+        if(datePart > 1f)
+            setProgressBarColor(holder.dateBar, Color.parseColor("#888888"));
+        else
+            setProgressBarColor(holder.dateBar, Color.parseColor("#00BBD3"));
 
-        setProgressBarColor(holder.dateBar, Color.parseColor("#00BBD3"));
 
         if (amountPart > 1f) setProgressBarColor(holder.amountBar, Color.parseColor("#EB5757"));
         else if (amountPart > datePart) setProgressBarColor(holder.amountBar, Color.parseColor("#F2994A"));
@@ -144,11 +163,8 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
 
-    void onBudgetClicked(int position) {
-        Intent i = new Intent(context, AddBudgetActivity.class);
-        i.putExtra("budgetToEdit", dataSet.get(position));
-
-        context.startActivity(i);
+    private void onBudgetClicked(int position) {
+        fragmentHandle.onBudgetClicked(dataSet.get(position).getId());
     }
 
 

@@ -1,7 +1,9 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
-import android.util.Log;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
@@ -10,33 +12,37 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BudgetManager implements TransactionHistoryEventListener{
 
     private static BudgetManager instance;
+
+
+    private DatabaseReference db;
+    private DatabaseReference budgetsRef;
 
     private final ArrayList<Budget> budgets = new ArrayList<>();
 
     private BudgetManager() {
         TransactionManager.getInstance().addListener(this);
 
-        addBudget("Household", 100.0f,  Budget.RenewalTypes.YEAR);
-        addBudget("Movie", 30.0f, new Date(2018-1900, 6, 30));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        budgetsRef = db.child("budgets");
+
     }
 
     private void renewBudgets() {
-        ArrayList<Budget> budgetsToRemove = new ArrayList<>();
         for (Budget budget : this.budgets) {
-            if (!isBudgetCurrent(budget) && budget.getRenewalType() == Budget.RenewalTypes.NONE) {
-                //TODO DON'T REMOVE
-                budgetsToRemove.add(budget);
+            if (!isBudgetCurrent(budget) && budget.getRenewalType() == Budget.RenewalTypes.CUSTOM) {
                 continue;
             }
 
             while (!isBudgetCurrent(budget))
                 forceRenewSingleBudget(budget);
         }
-        this.budgets.removeAll(budgetsToRemove);
     }
 
     private boolean isBudgetCurrent(Budget budget) {
@@ -93,6 +99,14 @@ public class BudgetManager implements TransactionHistoryEventListener{
                     }
                 }
                 break;
+            case UPDATED:
+                for (Budget budget : budgets) {
+                    if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
+                        budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransactionOld().getAmount());
+                        budget.setCurrentAmount(budget.getCurrentAmount() - (float)event.getTransaction().getAmount());
+                    }
+                }
+                break;
             case REMOVED:
                 for (Budget budget : budgets) {
                     if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
@@ -113,7 +127,7 @@ public class BudgetManager implements TransactionHistoryEventListener{
         return budgets;
     }
 
-    public void addBudget (String category, float budget, Date endingDate) {
+    public Budget addBudgetLocally(String category, float budget, Date endingDate) {
         float amount = 0f;
 
         for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
@@ -131,9 +145,18 @@ public class BudgetManager implements TransactionHistoryEventListener{
         endingDate.setMinutes(59);
         endingDate.setSeconds(59);
 
-        budgets.add(new Budget(Calendar.getInstance().getTime().hashCode() + category.hashCode(), category, startingDate, endingDate, budget, -amount));
+        Budget newBudget = new Budget(category, startingDate, endingDate, budget, -amount);
+
+        budgets.add(newBudget);
+        return newBudget;
     }
-    public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
+
+    public void addBudget (String category, float budget, Date endingDate) {
+        Budget b = addBudgetLocally(category, budget, endingDate);
+        b.setId(writeNewBudgetToFirebase(b));
+    }
+
+    public Budget addBudgetLocally(String category, float budget, Budget.RenewalTypes renewalType) {
         float amount = 0f;
 
         for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
@@ -152,18 +175,31 @@ public class BudgetManager implements TransactionHistoryEventListener{
         endingDate.setSeconds(59);
         endingDate = addTimeByRenewalType(startingDate, renewalType);
 
-        budgets.add(new Budget(Calendar.getInstance().getTime().hashCode() + category.hashCode(), category, startingDate, endingDate, budget, -amount, renewalType));
+
+        Budget newBudget = new Budget(category, startingDate, endingDate, budget, -amount, renewalType);
+        budgets.add(newBudget);
+        return newBudget;
     }
 
-    public Budget getById(int id) {
+    public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
+        Budget b = addBudgetLocally(category, budget, renewalType);
+        b.setId(writeNewBudgetToFirebase(b));
+    }
+
+    public void addBudgetFromFirebase(String key, Budget budget) {
+        budgets.add(budget);
+    }
+
+
+    public Budget getById(String id) {
         for (Budget budget : budgets) {
-            if (budget.getId() == id)
+            if (budget.getId().equals(id))
                 return budget;
         }
         return null;
     }
 
-    public boolean editById(int id, String category, float budget, Budget.RenewalTypes renewalType) {
+    public boolean editById(String id, String category, float budget, Budget.RenewalTypes renewalType) {
         Budget b = getById(id);
         if (b == null) return false;
 
@@ -171,22 +207,47 @@ public class BudgetManager implements TransactionHistoryEventListener{
         b.setCategory(category);
         b.setRenewalType(renewalType);
         b.setUntil(addTimeByRenewalType(b.getFrom(), renewalType));
+        editInFirebase(b.getId(), b);
         renewBudgets();
 
         return true;
     }
 
-    public boolean editById(int id, String category, float budget, Date customDate) {
+    public boolean editById(String id, String category, float budget, Date customDate) {
         Budget b = getById(id);
         if (b == null) return false;
 
         b.setBudget(budget);
         b.setCategory(category);
-        b.setRenewalType(Budget.RenewalTypes.NONE);
+        b.setRenewalType(Budget.RenewalTypes.CUSTOM);
         b.setUntil(customDate);
+        editInFirebase(b.getId(), b);
         renewBudgets();
 
         return true;
     }
 
+    private void editInFirebase(String id, Budget newBudget) {
+        budgetsRef.child(id).setValue(newBudget);
+    }
+
+    public boolean removeById(String id) {
+        Budget b = getById(id);
+        if (b == null) return false;
+
+        budgets.remove(b);
+        budgetsRef.child(id).removeValue();
+        renewBudgets();
+        return true;
+    }
+
+
+    private String writeNewBudgetToFirebase(Budget budget) {
+        String key = budgetsRef.push().getKey();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key, budget);
+        budgetsRef.updateChildren(childUpdates);
+        return key;
+    }
 }
