@@ -1,10 +1,12 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Budget {
+public class Budget implements Serializable {
+    String id;
     String category;
 
     private Date from;
@@ -16,8 +18,9 @@ public class Budget {
 
     private RenewalTypes renewalType;
 
+
     public enum RenewalTypes {
-        NONE,
+        CUSTOM,
         DAY,
         WEEK,
         MONTH,
@@ -35,7 +38,9 @@ public class Budget {
         }
     }
 
-    public Budget(String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
+    public Budget() {}
+
+    Budget(String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
         this.category = category;
         this.from = from;
         this.until = until;
@@ -44,18 +49,29 @@ public class Budget {
         this.renewalType = renewalType;
     }
 
-    public Budget(String category, Date from, Date until, float budget, float currentAmount) {
+    Budget(String category, Date from, Date until, float budget, float currentAmount) {
         this.category = category;
         this.from = from;
         this.until = until;
         this.budget = budget;
         this.currentAmount = currentAmount;
-        this.renewalType = RenewalTypes.NONE;
+        this.renewalType = RenewalTypes.CUSTOM;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getCategory() {
         return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public Date getFrom() {
@@ -66,11 +82,9 @@ public class Budget {
         this.from = from;
     }
 
-
     public Date getUntil() {
         return until;
     }
-
 
     public void setUntil(Date until) {
         this.until = until;
@@ -78,6 +92,10 @@ public class Budget {
 
     public float getBudget() {
         return budget;
+    }
+
+    public void setBudget(float budget) {
+        this.budget = budget;
     }
 
     public void setCurrentAmount(float currentAmount) {
@@ -92,13 +110,9 @@ public class Budget {
         return renewalType;
     }
 
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> buffer = new HashMap<>();
-        buffer.put("budgetCategory", this.category);
-        buffer.put("budgetStartingDate", this.from);
-        buffer.put("budgetEndingDate", this.until);
-        buffer.put("budgetAmount", this.budget);
-        return buffer;
+    public void setRenewalType(RenewalTypes renewalType) {
+        this.renewalType = renewalType;
     }
+
 
 }
