@@ -39,6 +39,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     public enum CardType {
         WELCOME,
         MEM,
+        HIGHESTINCOME,
         HIGHESTEXPENSE,
         BUDGETWARNING,
         BUDGETFAILED,
@@ -99,6 +100,12 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
         TransactionManager manager = TransactionManager.getInstance();
 
+        HashMap<String, Float> i = Analyzer.calculateBestIncomeCategory(manager);
+        String iCat = i.keySet().iterator().next();
+
+        if (!iCat.isEmpty())
+            activeCards.add(createHighestIncomeCard(iCat, i.get(iCat)));
+
         HashMap<String, Float> h = Analyzer.calculateMostExpensiveCategory(manager);
         String cat = h.keySet().iterator().next();
 
@@ -120,10 +127,23 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     //region Card Factories
 
+    private BasicAmountCard createHighestIncomeCard(String category, float amount) {
+        String title = context.getString(R.string.highestincome_title);
+        String primaryMessage = context.getString(R.string.highestincome_mainText) + " " + category + ":";
+
+        return new BasicAmountCard(
+                CardType.HIGHESTINCOME,
+                title,
+                primaryMessage,
+                Math.abs(amount),
+                BasicAmountCard.AmountType.POSITIVE,
+                "",
+                "");
+    }
+
     private BasicAmountCard createHighestExpensesCard(String category, float amount) {
         String title = context.getString(R.string.highestexpenses_title);
         String primaryMessage = context.getString(R.string.highestexpenses_mainText) + " " + category + ":";
-        String btn1Text = context.getString(R.string.highestexpenses_btn1);
 
         return new BasicAmountCard(
                 CardType.HIGHESTEXPENSE,

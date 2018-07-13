@@ -37,11 +37,14 @@
     <string name="welcomecard_btn1">YES</string>
     <string name="welcomecard_btn2">NO</string>
 
+
+    <!--Highest Income Card-->
+    <string name="highestincome_title">Your biggest Income</string>
+    <string name="highestincome_mainText">You are earning most money from </string>
+
     <!--Highest Expenses Card-->
     <string name="highestexpenses_title">Most Expensive Category</string>
-    <string name="highestexpenses_mainText">Overall, you spent most money on</string>
-    <string name="highestexpenses_amount">87.54 €</string>
-    <string name="highestexpenses_btn1">More about this</string>
+    <string name="highestexpenses_mainText">Over all, you spent the most money on</string>
 
     <!--Most economical month Expenses Card-->
     <string name="mem_title">Most economical Month</string>
