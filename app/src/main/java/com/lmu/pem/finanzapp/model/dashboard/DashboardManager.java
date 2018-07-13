@@ -129,7 +129,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 CardType.HIGHESTEXPENSE,
                 title,
                 primaryMessage,
-                amount,
+                Math.abs(amount),
                 BasicAmountCard.AmountType.NEGATIVE,
                 "",
                 "");

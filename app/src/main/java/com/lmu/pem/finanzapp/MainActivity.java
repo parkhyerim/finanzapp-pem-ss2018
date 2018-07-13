@@ -112,6 +112,6 @@ public class MainActivity extends AppCompatActivity  {
 
     @Override
     public void onBackPressed() {
-        // Do some operations here
+         this.finishAffinity();
     }
 }

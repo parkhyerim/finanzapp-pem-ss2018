@@ -21,7 +21,8 @@ public  class Analyzer {
         float [] categoryCounters = new float[cat.size()];
 
         for (Transaction transaction : manager.getTransactions()) {
-            categoryCounters[cat.indexOf(transaction.getCategory())] += transaction.getAmount();
+            if (cat.contains(transaction.getCategory()))
+                categoryCounters[cat.indexOf(transaction.getCategory())] += transaction.getAmount();
         }
 
         int mostExpensive = 0;
