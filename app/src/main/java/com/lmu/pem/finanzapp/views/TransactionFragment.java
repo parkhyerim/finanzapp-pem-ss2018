@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.support.v7.widget.SearchView;
+import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
@@ -92,6 +93,11 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
         ButterKnife.bind(this,rootView); //TODO kann das weg?
+
+        if(transactionManager.getTransactions().size()<1){
+            TextView emptyListText = rootView.findViewById(R.id.emptyListText);
+            emptyListText.setVisibility(View.VISIBLE);
+        }
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);

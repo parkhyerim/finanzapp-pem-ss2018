@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
@@ -26,6 +27,8 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
     RecyclerView.LayoutManager manager;
 
     DashboardManager dashboardManager;
+    private TransactionManager transactionManager;
+
     public DashboardFragment() {
         // Required empty public constructor
     }
@@ -39,8 +42,11 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
         dashboardManager = DashboardManager.getInstance(this.getContext());
         dashboardManager.addListener(this);
-
-
+        transactionManager = TransactionManager.getInstance();
+        if(dashboardManager.getDataSet(transactionManager).size()<1){
+            TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
+            emptyListText.setVisibility(View.VISIBLE);
+        }
 
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
@@ -51,7 +57,7 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
         // specify an adapter (see also next example)
 
-        adapter = new CardAdapter(dashboardManager.getDataSet(TransactionManager.getInstance()), getContext());
+        adapter = new CardAdapter(dashboardManager.getDataSet(transactionManager), getContext());
         recyclerView.setAdapter(adapter);
 
 

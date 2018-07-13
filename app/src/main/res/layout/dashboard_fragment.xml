@@ -16,7 +16,14 @@
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
-
+    <TextView
+        android:id="@+id/emptyListText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:text="@string/dashboard_empty"
+        android:textSize="16sp"
+        android:padding="10dp"/>
 
 
 

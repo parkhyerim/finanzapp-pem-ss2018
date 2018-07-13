@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
@@ -47,8 +48,12 @@ public class BudgetFragment extends Fragment {
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
 
-        fab = aboutView.findViewById(R.id.addBudget);
+        if(BudgetManager.getInstance().getBudgets().size()<1){
+            TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
+            emptyListText.setVisibility(View.VISIBLE);
+        }
 
+        fab = aboutView.findViewById(R.id.addBudget);
         fab.setOnClickListener((v) -> {
             Intent intent = new Intent(getActivity().getApplicationContext(), AddBudgetActivity.class);
             startActivityForResult(intent, 0);
