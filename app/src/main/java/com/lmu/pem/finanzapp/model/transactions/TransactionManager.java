@@ -80,14 +80,14 @@ public class TransactionManager extends TransactionHistoryEventSource{
      * @param transaction the Transaction object to be added
      */
     public void addTransaction(Transaction transaction){
-        addTransactionLocally(transaction);
+        addTransactionLocally(transaction, true);
         String key = writeNewTransactionToFB(transaction);
         transaction.setKey(key);
     }
 
-    public void addTransactionLocally(Transaction transaction){
+    public void addTransactionLocally(Transaction transaction, boolean fireEvent){
         this.transactions.add(transaction);
-        fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
+        if(fireEvent) fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
     }
 
     public void updateTransaction(String key, int year, int month, int day, String account, String category, int imageResource, String description, double amount){

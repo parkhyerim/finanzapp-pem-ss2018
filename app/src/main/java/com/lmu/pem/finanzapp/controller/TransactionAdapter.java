@@ -201,7 +201,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             }else{
                 acc2 = account2.getName();
             }
-            holder.accountTextView.setText(Html.fromHtml(acc + "\u2B9E" + acc2));
+            holder.accountTextView.setText(Html.fromHtml(acc + " to " + acc2));
         }
 
         // Category-Image

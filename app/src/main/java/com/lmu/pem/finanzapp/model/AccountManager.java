@@ -215,5 +215,8 @@ public class AccountManager implements TransactionHistoryEventListener {
     public void initializeWithCashAccount() {
         Account cashAcc = new Account("Cash", true, 0);
         addAccount(cashAcc);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
+        dbRef.child(cashAcc.getId()).setValue(cashAcc.toMap());
     }
 }

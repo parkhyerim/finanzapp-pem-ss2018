@@ -7,11 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
@@ -56,12 +61,28 @@ public class AccountAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         CircleView circleView;
+        RelativeLayout relativeLayout;
+        ImageView imageView;
         if(convertView == null){ //not a recycled view
             circleView = new CircleView(this.context);
             circleView.setLayoutParams(new ViewGroup.LayoutParams(CIRCLE_SIZE,CIRCLE_SIZE));
+
+            circleView.setId(View.generateViewId());
+            relativeLayout = new RelativeLayout(context);
+            relativeLayout.addView(circleView);
+            imageView = new ImageView(context);
+            imageView.setImageResource(R.drawable.bonus);
+            relativeLayout.addView(imageView);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(150, 150);
+            layoutParams.addRule(RelativeLayout.ALIGN_END, circleView.getId());
+            layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, circleView.getId());
+            imageView.setLayoutParams(layoutParams);
         }else{
-            circleView = (CircleView) convertView;
+            relativeLayout = (RelativeLayout) convertView;
+            circleView = (CircleView) ((RelativeLayout) convertView).getChildAt(0);
+            imageView = (ImageView) ((RelativeLayout) convertView).getChildAt(1);
         }
         String text = accounts.get(position).getName();
         circleView.setText(text, accounts.get(position).isDefault());
@@ -69,8 +90,12 @@ public class AccountAdapter extends BaseAdapter {
         circleView.setSubText(subtext);
         circleView.setCircleColor(accounts.get(position).getColor());
 
+        circleView.setOnClickListener(view -> {
+            fragment.editAccount(accounts.get(position).getId());
+        });
 
-        circleView.setOnLongClickListener(v -> {
+
+        imageView.setOnLongClickListener(v -> {
             ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
             /*
@@ -114,10 +139,6 @@ public class AccountAdapter extends BaseAdapter {
             return true;
         });
 
-        circleView.setOnClickListener(view -> {
-            fragment.editAccount(accounts.get(position).getId());
-        });
-
-        return circleView;
+        return relativeLayout;
     }
 }

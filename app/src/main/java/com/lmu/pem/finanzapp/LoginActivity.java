@@ -193,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                                 dataSnapshot.child("transactions").child(key).child("amount").getValue(Double.class)
                         );
                         newTransaction.setKey(key);
-                        transactionManager.addTransactionLocally(newTransaction);
+                        transactionManager.addTransactionLocally(newTransaction, false);
                     }
 
                     //settings
