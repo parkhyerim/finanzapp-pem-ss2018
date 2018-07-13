@@ -13,19 +13,29 @@
         android:background="?android:attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.SearchView
+            <!--android.support.v7.widget.SearchView
                 android:layout_marginEnd="5dp"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="50dp"
                 android:id="@+id/menu_search"
                 android:queryHint="@string/search_hint"
-                android:background="@color/cardview_light_background"/>
+                android:background="@color/cardview_light_background"/-->
+
+            <TextView
+                android:id="@+id/dateDisplayView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center_horizontal"
+                android:textAlignment="center"
+                android:textColor="@color/cardview_light_background"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/action_settings"
@@ -33,9 +43,13 @@
                 android:layout_height="50dp"
                 android:padding="5dp"
                 android:baselineAlignBottom="true"
-                android:src="@drawable/settings" />
+                android:src="@drawable/settings"
+                android:layout_alignParentEnd="true"
+                android:paddingRight="15dp"
+                android:contentDescription="settings"
+                tools:ignore="HardcodedText" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
 
