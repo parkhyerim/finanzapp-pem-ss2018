@@ -89,12 +89,7 @@ public class LoginActivity extends AppCompatActivity {
     private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Snackbar.make(loginScreen, "Logged in as "+user.getEmail()+"!", Snackbar.LENGTH_LONG);
-                        Log.i("123123123", "signIn: Logged in");
-                        uid = user.getUid();
-                        loadFirebaseData();
+                    if (task.isSuccessful()) { //mAuthListener handles this already
                     } else {
                         Snackbar.make(loginScreen, "Authentication failed.", Snackbar.LENGTH_LONG);
                     }
@@ -173,15 +168,17 @@ public class LoginActivity extends AppCompatActivity {
                         //accounts
                         HashMap<String, HashMap<String, Object>> accMap = map.get("accounts");
                         for (String key : accMap.keySet()) {
-
-                            Account newAcc=new Account(
-                                    dataSnapshot.child("accounts").child(key).child("name").getValue(String.class),
-                                    dataSnapshot.child("accounts").child(key).child("color").getValue(Integer.class),
-                                    dataSnapshot.child("accounts").child(key).child("isDefault").getValue(Boolean.class),
-                                    dataSnapshot.child("accounts").child(key).child("balance").getValue(Double.class),
-                                    key
-                            );
-                            accountManager.addAccount(newAcc);
+                            if(accountManager.getAccountById(key)==null){
+                                Account newAcc=new Account(
+                                        dataSnapshot.child("accounts").child(key).child("name").getValue(String.class),
+                                        dataSnapshot.child("accounts").child(key).child("color").getValue(Integer.class),
+                                        dataSnapshot.child("accounts").child(key).child("isDefault").getValue(Boolean.class),
+                                        dataSnapshot.child("accounts").child(key).child("balance").getValue(Double.class),
+                                        key
+                                );
+                                Log.i("123123", "loadFirebaseData -> onDataChange called!");
+                                accountManager.addAccount(newAcc);
+                            }
                         }
 
                     }

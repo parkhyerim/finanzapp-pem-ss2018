@@ -128,10 +128,12 @@ public class AccountAdapter extends BaseAdapter {
                     break;
                 case DragEvent.ACTION_DROP:
                     Log.println(Log.INFO, "123123123", "Dropped! "+ event.getClipData().getItemAt(0).getText().toString()+" -> "+accounts.get(position).getId());
-                    Intent intent = new Intent(context, TransactionAddActivity.class);
-                    intent.putExtra("account", event.getClipData().getItemAt(0).getText().toString());
-                    intent.putExtra("account2", accounts.get(position).getId());
-                    fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
+                    if(!(event.getClipData().getItemAt(0).getText().toString().equals(accounts.get(position).getId()))){
+                        Intent intent = new Intent(context, TransactionAddActivity.class);
+                        intent.putExtra("account", event.getClipData().getItemAt(0).getText().toString());
+                        intent.putExtra("account2", accounts.get(position).getId());
+                        fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
+                    }
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
                     Log.println(Log.INFO, "123123123", "...Stopped dragging!");

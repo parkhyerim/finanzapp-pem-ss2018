@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity  {
 
     private ViewPager viewPager;
     private GlobalSettings globalSettings;
-    private TextView dateDisplay;
-    private Calendar cal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +48,6 @@ public class MainActivity extends AppCompatActivity  {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
         });
-
-        /*
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = findViewById(R.id.menu_search);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-        */
     }
 
     private void setupTabs() {
@@ -117,9 +108,5 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public String getMonth(int month) {
-        return new DateFormatSymbols().getMonths()[month-1];
     }
 }
