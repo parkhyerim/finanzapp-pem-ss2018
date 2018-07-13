@@ -22,10 +22,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.budgets.Budget;
+import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
@@ -166,36 +169,49 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 HashMap<String, HashMap<String, HashMap<String, Object>>> map = (HashMap<String, HashMap<String, HashMap<String, Object>>>) dataSnapshot.getValue();
                 try{
-                    //accounts
-                    HashMap<String, HashMap<String, Object>> accMap = map.get("accounts");
-                    for (String key : accMap.keySet()) {
+                    if (map.get("accounts") != null) {
+                        //accounts
+                        HashMap<String, HashMap<String, Object>> accMap = map.get("accounts");
+                        for (String key : accMap.keySet()) {
 
-                        Account newAcc=new Account(
-                                dataSnapshot.child("accounts").child(key).child("name").getValue(String.class),
-                                dataSnapshot.child("accounts").child(key).child("color").getValue(Integer.class),
-                                dataSnapshot.child("accounts").child(key).child("isDefault").getValue(Boolean.class),
-                                dataSnapshot.child("accounts").child(key).child("balance").getValue(Double.class),
-                                key
-                        );
-                        accountManager.addAccount(newAcc);
+                            Account newAcc=new Account(
+                                    dataSnapshot.child("accounts").child(key).child("name").getValue(String.class),
+                                    dataSnapshot.child("accounts").child(key).child("color").getValue(Integer.class),
+                                    dataSnapshot.child("accounts").child(key).child("isDefault").getValue(Boolean.class),
+                                    dataSnapshot.child("accounts").child(key).child("balance").getValue(Double.class),
+                                    key
+                            );
+                            accountManager.addAccount(newAcc);
+                        }
+
                     }
 
-                    //transactions
-                    HashMap<String, HashMap<String, Object>> transMap = map.get("transactions");
-                    for (String key : transMap.keySet()) {
-                        Transaction newTransaction = new Transaction(
-                                dataSnapshot.child("transactions").child(key).child("year").getValue(Integer.class),
-                                dataSnapshot.child("transactions").child(key).child("month").getValue(Integer.class),
-                                dataSnapshot.child("transactions").child(key).child("day").getValue(Integer.class),
-                                dataSnapshot.child("transactions").child(key).child("imageResource").getValue(Integer.class),
-                                dataSnapshot.child("transactions").child(key).child("account").getValue(String.class),
-                                dataSnapshot.child("transactions").child(key).child("account2").getValue(String.class),
-                                dataSnapshot.child("transactions").child(key).child("category").getValue(String.class),
-                                dataSnapshot.child("transactions").child(key).child("description").getValue(String.class),
-                                dataSnapshot.child("transactions").child(key).child("amount").getValue(Double.class)
-                        );
-                        newTransaction.setKey(key);
-                        transactionManager.addTransactionLocally(newTransaction, false);
+                    if (map.get("transactions") != null) {
+                        //transactions
+                        HashMap<String, HashMap<String, Object>> transMap = map.get("transactions");
+                        for (String key : transMap.keySet()) {
+                            Transaction newTransaction = new Transaction(
+                                    dataSnapshot.child("transactions").child(key).child("year").getValue(Integer.class),
+                                    dataSnapshot.child("transactions").child(key).child("month").getValue(Integer.class),
+                                    dataSnapshot.child("transactions").child(key).child("day").getValue(Integer.class),
+                                    dataSnapshot.child("transactions").child(key).child("imageResource").getValue(Integer.class),
+                                    dataSnapshot.child("transactions").child(key).child("account").getValue(String.class),
+                                    dataSnapshot.child("transactions").child(key).child("account2").getValue(String.class),
+                                    dataSnapshot.child("transactions").child(key).child("category").getValue(String.class),
+                                    dataSnapshot.child("transactions").child(key).child("description").getValue(String.class),
+                                    dataSnapshot.child("transactions").child(key).child("amount").getValue(Double.class)
+                            );
+                            newTransaction.setKey(key);
+                            transactionManager.addTransactionLocally(newTransaction, false);
+                        }
+
+                    }
+
+                    //budgets
+                    for (DataSnapshot snapshot : dataSnapshot.child("budgets").getChildren()) {
+                        Log.i("BUDGET:", snapshot.toString());
+                        BudgetManager.getInstance().addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
+                        //BudgetManager.getInstance().addBudgetFromFirebase(dataSnapshot.getValue(Budget.class));
                     }
 
                     //settings

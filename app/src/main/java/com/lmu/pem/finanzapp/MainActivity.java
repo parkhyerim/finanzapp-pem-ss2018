@@ -14,9 +14,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.controller.PagerAdapter;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 import butterknife.ButterKnife;
 
@@ -24,6 +28,8 @@ public class MainActivity extends AppCompatActivity  {
 
     private ViewPager viewPager;
     private GlobalSettings globalSettings;
+    private TextView dateDisplay;
+    private Calendar cal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,14 @@ public class MainActivity extends AppCompatActivity  {
         setSupportActionBar(toolbar);
         setupToolbar();
         setupTabs();
+
+        dateDisplay = findViewById(R.id.dateDisplayView);
+        cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH)+1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        setDateOnDisplay(year, month, day);
+
     }
 
     private void setupToolbar() {
@@ -45,10 +59,12 @@ public class MainActivity extends AppCompatActivity  {
             startActivity(intent);
         });
 
+        /*
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = findViewById(R.id.menu_search);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
+        */
     }
 
     private void setupTabs() {
@@ -109,5 +125,14 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void setDateOnDisplay(int year, int month, int day) {
+        String monthStr = getMonth(month);
+        dateDisplay.setText(monthStr + " "  + day + ", " + year);
+    }
+
+    public String getMonth(int month) {
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 }
