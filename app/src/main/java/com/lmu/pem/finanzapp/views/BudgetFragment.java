@@ -12,19 +12,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
-import com.lmu.pem.finanzapp.model.budgets.Budget;
+import com.lmu.pem.finanzapp.model.budgets.BudgetEvent;
+import com.lmu.pem.finanzapp.model.budgets.BudgetEventListener;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BudgetFragment extends Fragment {
+public class BudgetFragment extends Fragment implements BudgetEventListener {
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
@@ -32,10 +29,13 @@ public class BudgetFragment extends Fragment {
 
     FloatingActionButton fab;
 
+    private View aboutView;
+
     public static final int REQUEST_ADD_BUDGET = 0;
     public static final int REQUEST_EDIT_BUDGET = 1;
 
     public BudgetFragment() {
+        BudgetManager.getInstance().addListener(this);
         // Required empty public constructor
     }
 
@@ -44,14 +44,11 @@ public class BudgetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.budget_fragment, container, false);
+        aboutView = inflater.inflate(R.layout.budget_fragment, container, false);
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
 
-        if(BudgetManager.getInstance().getBudgets().size()<1){
-            TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
-            emptyListText.setVisibility(View.VISIBLE);
-        }
+        handleListEmptyText();
 
         fab = aboutView.findViewById(R.id.addBudget);
         fab.setOnClickListener((v) -> {
@@ -70,6 +67,16 @@ public class BudgetFragment extends Fragment {
         return aboutView;
     }
 
+    private void handleListEmptyText() {
+        TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
+        if(BudgetManager.getInstance().getBudgets().size()<1){
+            if(emptyListText!=null) emptyListText.setVisibility(View.VISIBLE);
+        }else{
+
+            if(emptyListText!=null) emptyListText.setVisibility(View.GONE);
+        }
+    }
+
     public void onBudgetClicked(String id) {
         Intent i = new Intent(getContext(), AddBudgetActivity.class);
         i.putExtra("budgetToEdit", BudgetManager.getInstance().getById(id));
@@ -83,5 +90,10 @@ public class BudgetFragment extends Fragment {
         if (requestCode == REQUEST_ADD_BUDGET) adapter.notifyDataSetChanged();
         if (requestCode == REQUEST_EDIT_BUDGET) adapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void handle(BudgetEvent event) {
+        handleListEmptyText();
     }
 }

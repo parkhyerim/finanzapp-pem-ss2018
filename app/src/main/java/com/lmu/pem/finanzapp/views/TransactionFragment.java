@@ -65,6 +65,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private String key;
     private String id;
     private int year,month,day;
+    private View rootView;
 
     public final static int REQUEST_CODE_ADD_TRANSACTION = 111;
     public final static int REQUEST_CODE_EDIT_TRANSACTION = 112;
@@ -91,13 +92,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
+        rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
         ButterKnife.bind(this,rootView); //TODO kann das weg?
 
-        if(transactionManager.getTransactions().size()<1){
-            TextView emptyListText = rootView.findViewById(R.id.emptyListText);
-            emptyListText.setVisibility(View.VISIBLE);
-        }
+        handleListEmptyText();
 
         // all findViewByID
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
@@ -136,6 +134,14 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return rootView;
     }
 
+    private void handleListEmptyText() {
+        TextView emptyListText = rootView.findViewById(R.id.emptyListText);
+        if(transactionManager.getTransactions().size()<1){
+            if(emptyListText!=null) emptyListText.setVisibility(View.VISIBLE);
+        }else{
+            if(emptyListText!=null) emptyListText.setVisibility(View.GONE);
+        }
+    }
 
 
     @Override
@@ -321,5 +327,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public void handle(TransactionHistoryEvent event) {
         adapter.notifyDataSetChanged();
+        handleListEmptyText();
     }
 }

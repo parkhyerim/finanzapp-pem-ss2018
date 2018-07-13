@@ -28,6 +28,7 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
     DashboardManager dashboardManager;
     private TransactionManager transactionManager;
+    private View aboutView;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -38,14 +39,14 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
 
         dashboardManager = DashboardManager.getInstance(this.getContext());
+        dashboardManager.addListener(this);
+
+        aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
+
         transactionManager = TransactionManager.getInstance();
-        if(dashboardManager.getDataSet(transactionManager).size()<1){
-            TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
-            emptyListText.setVisibility(View.VISIBLE);
-        }
+        handleListEmptyText();
 
 
         recyclerView = aboutView.findViewById(R.id.recyclerView);
@@ -66,9 +67,17 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
         return aboutView;
     }
 
+    private void handleListEmptyText() {
+        TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
+        if(dashboardManager.getDataSet(transactionManager).size()<1){
+            if(emptyListText!=null) emptyListText.setVisibility(View.VISIBLE);
+        }else{
+            if(emptyListText!=null) emptyListText.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void handle(DashboardEvent event) {
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
+        handleListEmptyText();
     }
 }
