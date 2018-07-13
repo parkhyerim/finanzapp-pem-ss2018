@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -163,40 +165,68 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
         doneButton.setOnClickListener(v -> {
-                if(dateDisplay.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose a date.", Toast.LENGTH_LONG).show();
+            boolean valid=true;
+            if (amountEditText.getText().toString().equals("")){
+                valid=false;
+                amountEditText.setError("Please enter a valid amount.");
+                amountEditText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-                } else if (amountEditText.getText().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please enter the amount.", Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-                } else if(accountSpinner.getSelectedItem().toString().equals("")){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose an account.", Toast.LENGTH_LONG).show();
-                } else if(account2Spinner.getSelectedItem().toString().equals("") && selection==SELECTED_SHIFT){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose a second account.", Toast.LENGTH_LONG).show();
-                } else if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("") && selection!=SELECTED_SHIFT){
-                    Toast.makeText(TransactionAddActivity.this, "Please choose an category.", Toast.LENGTH_LONG).show();
-
-                }  else {
-                    amount = Double.parseDouble(amountEditText.getText().toString());
-                    if(selection==SELECTED_EXPENSE){
-                        amount = -1 * amount;
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        amountEditText.setError(null);
+                        amountEditText.removeTextChangedListener(this);
                     }
-
-                    description = descriptionEditText.getText().toString();
-
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("year", year);
-                    resultIntent.putExtra("month", month);
-                    resultIntent.putExtra("day", day);
-                    resultIntent.putExtra("category", category);
-                    resultIntent.putExtra("account", account);
-                    resultIntent.putExtra("account2", account2);
-                    resultIntent.putExtra("amount", amount);
-                    resultIntent.putExtra("description", description);
-                    resultIntent.putExtra("key", key);
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
+                });
+            }
+            if(expenseCategorySpinner.getSelectedItem().toString().equals("") && incomeCategorySpinner.getSelectedItem().toString().equals("") && selection!=SELECTED_SHIFT){
+                valid=false;
+                TextView errorText;
+                if(selection==SELECTED_EXPENSE){
+                    errorText = (TextView) expenseCategorySpinner.getSelectedView();
+                }else{
+                    errorText = (TextView) incomeCategorySpinner.getSelectedView();
                 }
+                errorText.setError("Please select a valid category.");
+                errorText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        errorText.setError(null);
+                        errorText.removeTextChangedListener(this);
+                    }
+                });
+            }
+            if(valid){
+                amount = Double.parseDouble(amountEditText.getText().toString());
+                if(selection==SELECTED_EXPENSE){
+                    amount = -1 * amount;
+                }
+
+                description = descriptionEditText.getText().toString();
+
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("year", year);
+                resultIntent.putExtra("month", month);
+                resultIntent.putExtra("day", day);
+                resultIntent.putExtra("category", category);
+                resultIntent.putExtra("account", account);
+                resultIntent.putExtra("account2", account2);
+                resultIntent.putExtra("amount", amount);
+                resultIntent.putExtra("description", description);
+                resultIntent.putExtra("key", key);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
         });
     }
 

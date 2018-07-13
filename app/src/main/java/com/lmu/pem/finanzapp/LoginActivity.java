@@ -132,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {
                     emailEditText.setError(null);
+                    emailEditText.removeTextChangedListener(this);
                 }
             });
         }
@@ -148,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable s) {
                     pwEditText.setError(null);
+                    pwEditText.removeTextChangedListener(this);
                 }
             });
         }

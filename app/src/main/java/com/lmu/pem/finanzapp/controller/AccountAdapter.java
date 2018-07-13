@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -71,6 +72,7 @@ public class AccountAdapter extends BaseAdapter {
 
             circleView.setId(View.generateViewId());
             relativeLayout = new RelativeLayout(context);
+            relativeLayout.setGravity(Gravity.CENTER);
             relativeLayout.addView(circleView);
             imageView = new ImageView(context);
             imageView.setImageResource(R.drawable.bonus);
