@@ -109,19 +109,21 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             double balance = data.getDoubleExtra("balance", 0);
             boolean defaultAcc = data.getBooleanExtra("default", false);
             boolean newAccount = data.getBooleanExtra("newAccount", true);
+            int color = data.getIntExtra("color", Account.DEFAULT_COLOR);
 
             Account acc;
             String accountID;
             if(newAccount){
-                acc = new Account(name, defaultAcc, balance);
+                acc = new Account(name, color, defaultAcc, balance);
                 accountID=acc.getId();
-                accountManager.addAccount(acc); //TODO - color
+                accountManager.addAccount(acc);
                 notify=true;
             }else{
                 accountID = data.getStringExtra("accountID");
                 acc = accountManager.getAccountById(accountID);
                 acc.setName(name);
                 acc.setBalance(balance);
+                acc.setColor(color);
                 acc.setDefault(defaultAcc);
                 if(defaultAcc && !(accountManager.getDefaultAcc().getId().equals(accountID))) accountManager.setDefaultAcc(acc);
             }

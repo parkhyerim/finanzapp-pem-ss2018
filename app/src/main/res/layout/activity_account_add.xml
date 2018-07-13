@@ -26,6 +26,7 @@
 
         <TextView
             android:text="Name: "
+            android:layout_gravity="center_vertical"
             />
         <EditText
             android:id="@+id/nameEdit"
@@ -37,6 +38,7 @@
         <TextView
             android:id="@+id/balanceText"
             android:text="Balance: "
+            android:layout_gravity="center_vertical"
             />
         <EditText
             android:id="@+id/balanceEdit"
@@ -46,10 +48,51 @@
             android:hint="Balance of the account"
             />
         <TextView
-            android:text="Default account:"/>
+            android:text="Color:"
+            android:layout_gravity="center_vertical"/>
+        <RadioGroup
+            android:id="@+id/colorRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/colorRadio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/accountDefault"
+                android:checked="true"
+                />
+            <RadioButton
+                android:id="@+id/colorRadio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/account1" />
+            <RadioButton
+                android:id="@+id/colorRadio3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/account2" />
+            <RadioButton
+                android:id="@+id/colorRadio4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/account3" />
+            <RadioButton
+                android:id="@+id/colorRadio5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/account4" />
+            <RadioButton
+                android:id="@+id/colorRadio6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorwebsiteTab" />
+        </RadioGroup>
+        <TextView
+            android:text="Default account:"
+            android:layout_gravity="center_vertical"/>
         <CheckBox
             android:id="@+id/defaultCheck"/>
-        <!-- TODO - Color picker / color check buttons / circleViews -->
     </GridLayout>
     <Button
         android:id="@+id/addAccButton"
