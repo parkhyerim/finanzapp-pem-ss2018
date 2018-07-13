@@ -41,7 +41,7 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
 
         dashboardManager = DashboardManager.getInstance(this.getContext());
-        dashboardManager.addListener(this);
+        dashboardManager.addListener(this); //TODO this might lead to errors because onCreateView will be called multiple times, so the listener will be added more than once. However we can't assign a valid context to the dashboardManager in the constructor.
 
         aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
 
@@ -60,8 +60,6 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
         adapter = new CardAdapter(dashboardManager.getDataSet(transactionManager), getContext());
         recyclerView.setAdapter(adapter);
         dashboardManager.setAdapterListener((CardAdapter) adapter);
-
-
 
         // Inflate the layout for this fragment
         return aboutView;
