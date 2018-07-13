@@ -7,7 +7,7 @@ public class WelcomeCard extends DbCard {
     private String btn2Text;
 
     public WelcomeCard (DashboardManager.CardType type, String title, String primaryText, String btn1Text, String btn2Text) {
-        super(type, title, primaryText, btn1Text);
+        super(type, title, primaryText);
         this.btn2Text = btn2Text;
 
     }

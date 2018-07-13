@@ -38,8 +38,8 @@
     <string name="welcomecard_btn2">NO</string>
 
     <!--Highest Expenses Card-->
-    <string name="highestexpenses_title">Highest Expenses</string>
-    <string name="highestexpenses_mainText">In the last few months, you spent most money on</string>
+    <string name="highestexpenses_title">Most Expensive Category</string>
+    <string name="highestexpenses_mainText">Overall, you spent most money on</string>
     <string name="highestexpenses_amount">87.54 €</string>
     <string name="highestexpenses_btn1">More about this</string>
 
@@ -49,7 +49,14 @@
     <string name="mem_amount">87.54 €</string>
     <string name="mem_amountDesc">spent on average.</string>
     <string name="mem_secondaryText">Keep it up!</string>
-    <string name="mem_btn1">More about this</string>
+
+    <!--Budget Warning Card-->
+    <string name="bw_title">Careful with </string>
+    <string name="bw_mainText">In the current timeframe of </string>
+    <string name="bw_amount">87.54 €</string>
+    <string name="bw_amountDesc">of </string>
+    <string name="bw_secondaryText">Maybe tone it down a little...</string>
+
     <string name="title_activity_add_budget">AddBudgetActivity</string>
     <string name="search">Search</string>
     <string name="LoginText">Hi there and welcome to Oro!\nYou need an account to store your data. If you don\'t have one yet, just create one right here!</string>

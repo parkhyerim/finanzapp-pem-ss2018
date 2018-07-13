@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.dashboard.DashboardEvent;
+import com.lmu.pem.finanzapp.model.dashboard.DashboardEventListener;
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 import com.lmu.pem.finanzapp.model.dashboard.cards.*;
 
@@ -30,8 +32,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     public static abstract class CardViewHolder extends  RecyclerView.ViewHolder {
         public TextView titleText;
-        public Button btn1;
-        public Button btn2;
 
         public CardViewHolder (View view) {
             super(view);
@@ -57,8 +57,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             amountText = itemView.findViewById(R.id.amount);
             amountDescText = itemView.findViewById(R.id.amountDescription);
             secondaryText = itemView.findViewById(R.id.secondaryMessage);
-            btn1 = itemView.findViewById(R.id.btn1);
-            btn2 = itemView.findViewById(R.id.btn2);
 
 
 
@@ -72,8 +70,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             super(view);
             this.titleText = view.findViewById(R.id.title);
             this.primaryText = view.findViewById(R.id.primaryMessage);
-            this.btn1 = view.findViewById(R.id.btn1);
-            this.btn2 = view.findViewById(R.id.btn2);
 
 
         }
@@ -83,6 +79,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         this.dataSet = dataSet;
         this.context = context;
     }
+
+
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent,
@@ -108,7 +106,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
 
         holder.titleText.setText(dataSet.get(position).getTitle());
-        holder.btn1.setText(dataSet.get(position).getBtn1Text());
 
 
         if (getItemViewType(position) == DashboardManager.CardType.WELCOME.hashCode()) {
@@ -116,7 +113,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             WelcomeCard c = (WelcomeCard) dataSet.get(position);
 
             h.primaryText.setText(c.getPrimaryText());
-            h.btn2.setText(c.getBtn2Text());
         }
         else {
             BasicAmountViewHolder h = (BasicAmountViewHolder) holder;
@@ -147,10 +143,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             else
                 h.secondaryText.setText(c.getSecondaryMessage());
 
-            if (c.getBtn2Text().equals(""))
-                removeView(h.btn2);
-            else
-                h.btn2.setText(c.getBtn2Text());
         }
 
     }

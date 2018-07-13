@@ -186,8 +186,9 @@ public class BudgetManager implements TransactionHistoryEventListener{
         b.setId(writeNewBudgetToFirebase(b));
     }
 
-    public void addBudgetFromFirebase(String key, Budget budget) {
+    public void addBudgetFromFirebase(String id, Budget budget) {
         budgets.add(budget);
+        budget.setId(id);
     }
 
 

@@ -13,15 +13,13 @@ public class BasicAmountCard extends DbCard{
     private String amountDescription;
     private String secondaryMessage;
 
-    private String btn2Text;
 
-    public BasicAmountCard(DashboardManager.CardType type, String title, String primaryText, float amount, AmountType amountType, String amountDescription, String secondaryMessage, String btn1Text, String btn2Text) {
-        super(type, title, primaryText, btn1Text);
+    public BasicAmountCard(DashboardManager.CardType type, String title, String primaryText, float amount, AmountType amountType, String amountDescription, String secondaryMessage) {
+        super(type, title, primaryText);
         this.amount = amount;
         this.amountType = amountType;
         this.amountDescription = amountDescription;
         this.secondaryMessage = secondaryMessage;
-        this.btn2Text = btn2Text;
     }
 
     public float getAmount() {
@@ -56,12 +54,4 @@ public class BasicAmountCard extends DbCard{
         this.secondaryMessage = secondaryMessage;
     }
 
-
-    public String getBtn2Text() {
-        return btn2Text;
-    }
-
-    public void setBtn2Text(String btn2Text) {
-        this.btn2Text = btn2Text;
-    }
 }

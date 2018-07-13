@@ -87,33 +87,6 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <LinearLayout
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            >
-            <Button
-                android:id="@+id/btn1"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@android:color/transparent"
-                android:text="Button 1"
-                android:textColor="@color/colorPrimary"
-  />
-
-            <Button
-                android:id="@+id/btn2"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@android:color/transparent"
-                android:text="button 2"
-                android:textColor="@color/colorPrimary"
-/>
-
-        </LinearLayout>
 
     </LinearLayout>
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.lmu.pem.finanzapp.R;
+import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.Analyzer;
@@ -16,8 +18,12 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import java.text.DateFormatSymbols;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
-public class DashboardManager implements TransactionHistoryEventListener {
+public class DashboardManager extends DashboardEventSource implements TransactionHistoryEventListener {
 
     private static DashboardManager instance;
 
@@ -30,7 +36,7 @@ public class DashboardManager implements TransactionHistoryEventListener {
         WELCOME,
         MEM,
         HIGHESTEXPENSE,
-        DEBUG,
+        BUDGETWARNING,
     }
 
     private Context context;
@@ -68,18 +74,26 @@ public class DashboardManager implements TransactionHistoryEventListener {
         Log.i("DashboardManager", "There are " + history.getTransactions().size() + " Transactions!");
 
         //TODO Be smart about any of this
-        activeCards.add(createWelcomeCard());
 
-        AbstractMap.SimpleEntry<Integer, Float> memData = Analyzer.calculateMostExpensiveMonthFor(history);
-        if (memData != null) activeCards.add(createMemCard(memData.getKey(), memData.getValue()));
-        activeCards.add(createHighestExpensesCard(123.45f, "Car"));
-        activeCards.add(createDebugCard(history));
+        TransactionManager manager = TransactionManager.getInstance();
+
+        HashMap<String, Float> h = Analyzer.calculateMostExpensiveCategory(manager);
+        String cat = h.keySet().iterator().next();
+
+        if (!cat.isEmpty())
+            activeCards.add(createHighestExpensesCard(cat, h.get(cat)));
+
+        for (Budget budget : Analyzer.getBudgetsOver(0f, true)) {
+            activeCards.add(createBudgetWarningCard(budget));
+        }
+
+        fireTransactionHistoryEvent(new DashboardEvent(this, DashboardEvent.EventType.UPDATED));
     }
 
 
     //region Card Factories
 
-    private BasicAmountCard createHighestExpensesCard(float amount, String category) {
+    private BasicAmountCard createHighestExpensesCard(String category, float amount) {
         String title = context.getString(R.string.highestexpenses_title);
         String primaryMessage = context.getString(R.string.highestexpenses_mainText) + " " + category + ":";
         String btn1Text = context.getString(R.string.highestexpenses_btn1);
@@ -91,8 +105,6 @@ public class DashboardManager implements TransactionHistoryEventListener {
                 amount,
                 BasicAmountCard.AmountType.NEGATIVE,
                 "",
-                "",
-                btn1Text,
                 "");
     }
 
@@ -104,41 +116,24 @@ public class DashboardManager implements TransactionHistoryEventListener {
                 amount,
                 BasicAmountCard.AmountType.NEGATIVE,
                 context.getString(R.string.mem_amountDesc),
-                context.getString(R.string.mem_secondaryText),
-                context.getString(R.string.mem_btn1),
-                ""
+                context.getString(R.string.mem_secondaryText)
         );
     }
 
-    private WelcomeCard createWelcomeCard() {
-        return new WelcomeCard(
-                CardType.WELCOME,
-                context.getString(R.string.welcomecard_title),
-                context.getString(R.string.welcomecard_text),
-                context.getString(R.string.welcomecard_btn1),
-                context.getString(R.string.welcomecard_btn2));
-    }
+    private BasicAmountCard createBudgetWarningCard(Budget budget) {
+        String title = context.getString(R.string.bw_title) + " " + budget.getCategory();
 
-    private DbCard createDebugCard(TransactionManager history) {
-        float totalAmount = 0f;
+        long milis = budget.getUntil().getTime() - budget.getFrom().getTime();
+        long days = milis / 1000 / 60 / 60 / 24;
 
-        for (Transaction transaction : history.getTransactions()) {
-            totalAmount += transaction.getAmount();
-           // totalAmount -= transaction.getExpense();
-        }
-        Log.i("DashboardManager", "TotalAmount: " + totalAmount);
+        String main = context.getString(R.string.bw_mainText) + " " + days + " days, you spent";
+        String amountDesc = context.getString(R.string.bw_amountDesc)
+                + String.format(Locale.getDefault(), " %.2f %s",budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
+        String secondaryText =  context.getString(R.string.bw_secondaryText);
 
-        BasicAmountCard.AmountType type = (totalAmount > 0f) ? BasicAmountCard.AmountType.POSITIVE : BasicAmountCard.AmountType.NEGATIVE;
-        return new BasicAmountCard(
-                CardType.DEBUG,
-                "DEBUG",
-                "Total Amount:",
-                totalAmount,
-                type,
-                "",
-                "is this right?",
-                "YES",
-                "");
+        return new BasicAmountCard(CardType.BUDGETWARNING, title, main, budget.getCurrentAmount(),
+                BasicAmountCard.AmountType.NEUTRAL, amountDesc, secondaryText);
+
     }
 
     //endregion

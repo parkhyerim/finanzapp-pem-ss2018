@@ -1,6 +1,7 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,5 +115,15 @@ public class Budget implements Serializable {
         this.renewalType = renewalType;
     }
 
+    public float getDatePart() {
+        float datePart = 1f;
+        if (getUntil().getTime() != getFrom().getTime())
+            datePart = ((float)(Calendar.getInstance().getTime().getTime() - getFrom().getTime()) / (getUntil().getTime() - getFrom().getTime()));
+        return datePart;
+    }
+
+    public float getAmountPart() {
+       return getCurrentAmount() / getBudget();
+    }
 
 }

@@ -211,7 +211,6 @@ public class LoginActivity extends AppCompatActivity {
                     for (DataSnapshot snapshot : dataSnapshot.child("budgets").getChildren()) {
                         Log.i("BUDGET:", snapshot.toString());
                         BudgetManager.getInstance().addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
-                        //BudgetManager.getInstance().addBudgetFromFirebase(dataSnapshot.getValue(Budget.class));
                     }
 
                     //settings

@@ -118,30 +118,23 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         holder.endAmount.setText(String.format(Locale.getDefault(), "%.2f %s",b.getBudget(), GlobalSettings.getInstance().getCurrencyString()));
 
 
-        float datePart = 1f;
-        if (b.getUntil().getTime() != b.getFrom().getTime())
-            datePart = ((float)(Calendar.getInstance().getTime().getTime() - b.getFrom().getTime()) / (b.getUntil().getTime() - b.getFrom().getTime()));
-        System.out.println(b.getFrom().getTime() + " - " + b.getUntil().getTime());
-        System.out.println(Calendar.getInstance().getTime().getTime());
-        float amountPart = b.getCurrentAmount() / b.getBudget();
 
-        System.out.println(datePart);
-        System.out.println(amountPart);
 
-        if(datePart > 1f)
+
+        if(b.getDatePart() > 1f)
             setProgressBarColor(holder.dateBar, Color.parseColor("#888888"));
         else
             setProgressBarColor(holder.dateBar, Color.parseColor("#00BBD3"));
 
 
-        if (amountPart > 1f) setProgressBarColor(holder.amountBar, Color.parseColor("#EB5757"));
-        else if (amountPart > datePart) setProgressBarColor(holder.amountBar, Color.parseColor("#F2994A"));
+        if (b.getAmountPart() > 1f) setProgressBarColor(holder.amountBar, Color.parseColor("#EB5757"));
+        else if (b.getAmountPart() > b.getDatePart()) setProgressBarColor(holder.amountBar, Color.parseColor("#F2994A"));
         else setProgressBarColor(holder.amountBar, Color.parseColor("#6FCF97"));
 
 
 
-        holder.dateBar.setProgress((int)(datePart*100));
-        holder.amountBar.setProgress((int)(amountPart*100));
+        holder.dateBar.setProgress((int)(b.getDatePart()*100));
+        holder.amountBar.setProgress((int)(b.getAmountPart()*100));
     }
 
     private void setProgressBarColor(ProgressBar bar, int color) {
@@ -152,9 +145,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     }
 
 
-    private void removeView(View view) {
-        ((ViewManager) view.getParent()).removeView(view);
-    }
 
 
     @Override

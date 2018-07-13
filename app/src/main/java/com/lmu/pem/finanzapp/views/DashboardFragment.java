@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
+import com.lmu.pem.finanzapp.model.dashboard.DashboardEvent;
+import com.lmu.pem.finanzapp.model.dashboard.DashboardEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 
@@ -17,7 +19,7 @@ import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DashboardFragment extends Fragment {
+public class DashboardFragment extends Fragment implements DashboardEventListener{
 
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
@@ -36,6 +38,7 @@ public class DashboardFragment extends Fragment {
         View aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
 
         dashboardManager = DashboardManager.getInstance(this.getContext());
+        dashboardManager.addListener(this);
 
 
 
@@ -56,7 +59,9 @@ public class DashboardFragment extends Fragment {
         return aboutView;
     }
 
-
-
-
+    @Override
+    public void handle(DashboardEvent event) {
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
+    }
 }
