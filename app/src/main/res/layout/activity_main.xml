@@ -26,14 +26,16 @@
                 android:queryHint="@string/search_hint"
                 android:background="@color/cardview_light_background"/-->
 
+            <!--android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"-->
+            
             <TextView
                 android:id="@+id/dateDisplayView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:gravity="center_horizontal"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
+                android:padding="10dp"
                 android:textAlignment="center"
                 android:textColor="@color/cardview_light_background"
                 android:textSize="16sp"
