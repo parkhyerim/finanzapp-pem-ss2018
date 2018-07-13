@@ -42,14 +42,6 @@ public class MainActivity extends AppCompatActivity  {
         setSupportActionBar(toolbar);
         setupToolbar();
         setupTabs();
-
-        dateDisplay = findViewById(R.id.dateDisplayView);
-        cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH)+1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        setDateOnDisplay(year, month, day);
-
     }
 
     private void setupToolbar() {
@@ -125,11 +117,6 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void setDateOnDisplay(int year, int month, int day) {
-        String monthStr = getMonth(month);
-        dateDisplay.setText(monthStr + " "  + day + ", " + year);
     }
 
     public String getMonth(int month) {

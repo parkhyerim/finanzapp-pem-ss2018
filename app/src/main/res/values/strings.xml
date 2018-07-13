@@ -1,6 +1,6 @@
 <resources>
     <!-- Grundlegendes -->
-    <string name="app_name">Financing App</string>
+    <string name="app_name">Oro</string>
     <string-array name="currency_array">
         <item>€</item>
         <item>$</item>
@@ -52,7 +52,7 @@
     <string name="mem_btn1">More about this</string>
     <string name="title_activity_add_budget">AddBudgetActivity</string>
     <string name="search">Search</string>
-    <string name="LoginText">Hi there! You need an account to store your data. If you don\'t have one yet, just create one right here!</string>
+    <string name="LoginText">Hi there and welcome to Oro!\nYou need an account to store your data. If you don\'t have one yet, just create one right here!</string>
     <string name="LoginEMail">E-Mail</string>
     <string name="LoginPW">Password</string>
     <string name="LoginRegister">Register</string>

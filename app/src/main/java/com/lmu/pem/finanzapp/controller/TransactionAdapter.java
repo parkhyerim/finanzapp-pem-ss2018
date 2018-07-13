@@ -213,11 +213,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
 
         double amount = currentTransactionItem.getAmount();
-
-        if(amount < 0) {
+        if(currentTransactionItem.getAccount2()!=null){ //shift
+            holder.amountTextView.setTextColor(Color.parseColor("#5d7379"));
+        }else if(amount < 0) { //expense
             holder.amountTextView.setTextColor(Color.parseColor("#ff0000"));
-        } else {
-            holder.amountTextView.setTextColor(Color.parseColor("#2BAB68"));
+        } else { //income
+            holder.amountTextView.setTextColor(Color.parseColor("#30bf74"));
         }
         holder.amountTextView.setText(String.format(Locale.getDefault(), "%,.2f %s", amount, GlobalSettings.getInstance().getCurrencyString()));
 
