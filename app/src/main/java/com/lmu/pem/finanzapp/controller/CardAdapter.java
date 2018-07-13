@@ -124,12 +124,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
             switch (c.getAmountType()) {
                 case POSITIVE:
-                    h.amountText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_green_light));
-                    h.amountDescText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_green_light));
+                    h.amountText.setTextColor(context.getColor(R.color.positiveAmount));
+                    h.amountDescText.setTextColor(context.getColor(R.color.positiveAmount));
+                    break;
+                case WARNING:
+                    h.amountText.setTextColor(context.getColor(R.color.warningAmount));
+                    h.amountDescText.setTextColor(context.getColor(R.color.warningAmount));
                     break;
                 case NEGATIVE:
-                    h.amountText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_red_light));
-                    h.amountDescText.setTextColor(Resources.getSystem().getColor(android.R.color.holo_red_light));
+                    h.amountText.setTextColor(context.getColor(R.color.negativeAmount));
+                    h.amountDescText.setTextColor(context.getColor(R.color.negativeAmount));
                     break;
             }
 

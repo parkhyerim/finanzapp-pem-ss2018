@@ -184,7 +184,7 @@ public class AddBudgetActivity extends AppCompatActivity {
                 DatePickerDialog dialog = new DatePickerDialog(
                         AddBudgetActivity.this,
                         android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        (view, y, m, d) -> setCustomDateValue(new Date(y, m, d)),
+                        (view, y, m, d) -> setCustomDateValue(new Date(y - 1900, m, d)),
                         customDate.getYear() + 1900,
                         customDate.getMonth() + 1,
                         customDate.getDate());

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BudgetManager implements TransactionHistoryEventListener{
+public class BudgetManager extends BudgetEventSource implements TransactionHistoryEventListener{
 
     private static BudgetManager instance;
 
@@ -43,6 +43,8 @@ public class BudgetManager implements TransactionHistoryEventListener{
             while (!isBudgetCurrent(budget))
                 forceRenewSingleBudget(budget);
         }
+
+        fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
     private boolean isBudgetCurrent(Budget budget) {
@@ -123,29 +125,20 @@ public class BudgetManager implements TransactionHistoryEventListener{
     }
 
     public ArrayList<Budget> getBudgets() {
-        renewBudgets();
         return budgets;
     }
 
-    public Budget addBudgetLocally(String category, float budget, Date endingDate) {
-        float amount = 0f;
-
-        for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
-            if (transaction.getCategory().equalsIgnoreCase(category)) {
-                amount += transaction.getAmount();
-            }
-        }
-
-        Date startingDate = Calendar.getInstance().getTime();
-        startingDate.setHours(0);
-        startingDate.setMinutes(0);
-        startingDate.setSeconds(0);
+    private Budget addBudgetLocally(String category, float budget, Date endingDate) {
+        Calendar c = Calendar.getInstance();
+        Date startingDate = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
 
         endingDate.setHours(23);
         endingDate.setMinutes(59);
         endingDate.setSeconds(59);
 
-        Budget newBudget = new Budget(category, startingDate, endingDate, budget, -amount);
+        float amount = getTransactionSum(category, startingDate, endingDate);
+
+        Budget newBudget = new Budget(category, startingDate, endingDate, budget, amount);
 
         budgets.add(newBudget);
         return newBudget;
@@ -154,20 +147,14 @@ public class BudgetManager implements TransactionHistoryEventListener{
     public void addBudget (String category, float budget, Date endingDate) {
         Budget b = addBudgetLocally(category, budget, endingDate);
         b.setId(writeNewBudgetToFirebase(b));
+        fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
-    public Budget addBudgetLocally(String category, float budget, Budget.RenewalTypes renewalType) {
-        float amount = 0f;
+    private Budget addBudgetLocally(String category, float budget, Budget.RenewalTypes renewalType) {
 
-        for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
-            if (transaction.getCategory().equalsIgnoreCase(category)) {
-                amount += transaction.getAmount();
-            }
-        }
-        Date startingDate = Calendar.getInstance().getTime();
-        startingDate.setHours(0);
-        startingDate.setMinutes(0);
-        startingDate.setSeconds(0);
+        Calendar c = Calendar.getInstance();
+        Date startingDate = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
+
 
         Date endingDate = new Date();
         endingDate.setHours(23);
@@ -175,8 +162,8 @@ public class BudgetManager implements TransactionHistoryEventListener{
         endingDate.setSeconds(59);
         endingDate = addTimeByRenewalType(startingDate, renewalType);
 
-
-        Budget newBudget = new Budget(category, startingDate, endingDate, budget, -amount, renewalType);
+        float amount = getTransactionSum(category, startingDate, endingDate);
+        Budget newBudget = new Budget(category, startingDate, endingDate, budget, amount, renewalType);
         budgets.add(newBudget);
         return newBudget;
     }
@@ -184,11 +171,13 @@ public class BudgetManager implements TransactionHistoryEventListener{
     public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
         Budget b = addBudgetLocally(category, budget, renewalType);
         b.setId(writeNewBudgetToFirebase(b));
+        fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
     public void addBudgetFromFirebase(String id, Budget budget) {
         budgets.add(budget);
         budget.setId(id);
+        fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
 
@@ -208,6 +197,9 @@ public class BudgetManager implements TransactionHistoryEventListener{
         b.setCategory(category);
         b.setRenewalType(renewalType);
         b.setUntil(addTimeByRenewalType(b.getFrom(), renewalType));
+
+
+        b.setCurrentAmount(getTransactionSum(category, b.getFrom(), b.getUntil()));
         editInFirebase(b.getId(), b);
         renewBudgets();
 
@@ -222,10 +214,32 @@ public class BudgetManager implements TransactionHistoryEventListener{
         b.setCategory(category);
         b.setRenewalType(Budget.RenewalTypes.CUSTOM);
         b.setUntil(customDate);
+
+
+        b.setCurrentAmount(getTransactionSum(category, b.getFrom(), b.getUntil()));
+        editInFirebase(b.getId(), b);
+        renewBudgets();
+
         editInFirebase(b.getId(), b);
         renewBudgets();
 
         return true;
+    }
+
+    private float getTransactionSum(String category, Date startingDate, Date endingDate) {
+        float amount = 0f;
+
+        for (Transaction transaction : TransactionManager.getInstance().getTransactions()) {
+            Date transactionDate = new Date(transaction.getYear() - 1900, transaction.getMonth()-1, transaction.getDay());
+
+            if (transaction.getCategory().equalsIgnoreCase(category)
+                    && (startingDate.before(transactionDate) || startingDate.equals(transactionDate))
+                    && (endingDate.after(transactionDate) || endingDate.equals(transactionDate))) {
+                amount += transaction.getAmount();
+            }
+        }
+
+        return (amount == 0f) ? amount : -amount;
     }
 
     private void editInFirebase(String id, Budget newBudget) {

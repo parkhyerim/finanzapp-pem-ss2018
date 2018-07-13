@@ -38,12 +38,39 @@ public  class Analyzer {
         return h;
     }
 
-    public static ArrayList<Budget> getBudgetsOver(float threshold, boolean onlyIfOverTime) {
+    public static ArrayList<Budget> getBudgetsOver(float threshold, boolean onlyIfOverTime, boolean includeOvershot) {
         ArrayList<Budget> buffer = new ArrayList<>();
         for (Budget budget : BudgetManager.getInstance().getBudgets()) {
-            if (!onlyIfOverTime && budget.getAmountPart() > threshold) buffer.add(budget);
-            else if (onlyIfOverTime && budget.getAmountPart() > threshold && budget.getAmountPart() > budget.getDatePart()) buffer.add(budget);
+            if (budget.getAmountPart() > threshold) {
+                if (budget.getAmountPart() >= 1f && includeOvershot) {
+                    if (onlyIfOverTime) {
+                        if (budget.getAmountPart() > budget.getDatePart()) buffer.add(budget);
+                    }
+                    else {
+                        buffer.add(budget);
+                    }
+                }
+                else if (budget.getAmountPart() < 1f) {
+                    if (onlyIfOverTime) {
+                        if (budget.getAmountPart() > budget.getDatePart()) buffer.add(budget);
+                    }
+                    else {
+                        buffer.add(budget);
+                    }
+                }
+            }
         }
         return buffer;
+    }
+
+    public static long getBudgetDays(Budget budget) {
+        long milis = budget.getUntil().getTime() - budget.getFrom().getTime();
+        return milis / 1000 / 60 / 60 / 24;
+    }
+
+    public static float getBudgetExtrapolationInDays(Budget budget) {
+        long days = getBudgetDays(budget);
+
+        return ((budget.getAmountPart() / budget.getDatePart())* days);
     }
 }

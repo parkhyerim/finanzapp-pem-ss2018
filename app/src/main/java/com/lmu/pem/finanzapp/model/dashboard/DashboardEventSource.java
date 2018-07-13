@@ -15,7 +15,7 @@ public abstract class DashboardEventSource {
         if (listeners.contains(listener)) listeners.remove(listener);
     }
 
-    void fireTransactionHistoryEvent(DashboardEvent event) {
+    void fireDashboardEvent(DashboardEvent event) {
         for (DashboardEventListener listener : listeners) {
             listener.handle(event);
         }

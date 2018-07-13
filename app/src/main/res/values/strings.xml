@@ -51,11 +51,22 @@
     <string name="mem_secondaryText">Keep it up!</string>
 
     <!--Budget Warning Card-->
-    <string name="bw_title">Careful with </string>
+    <string name="bw_title">Your</string>
+    <string name="bw_title2">Budget:</string>
     <string name="bw_mainText">In the current timeframe of </string>
     <string name="bw_amount">87.54 €</string>
     <string name="bw_amountDesc">of </string>
-    <string name="bw_secondaryText">Maybe tone it down a little...</string>
+    <string name="bw_secondaryText1">You would need</string>
+    <string name="bw_secondaryText2">extra days to accommodate for that!</string>
+
+    <!--Budget Warning Card-->
+    <string name="bf_title">Your</string>
+    <string name="bf_title2">Budget:</string>
+    <string name="bf_mainText1">You overshot your</string>
+    <string name="bf_mainText2">Budget!</string>
+    <string name="bf_amountDesc">of </string>
+    <string name="bf_secondaryText1">You would have needed</string>
+    <string name="bf_secondaryText2">extra days to accommodate for that. You can do it the next Time!</string>
 
     <string name="title_activity_add_budget">AddBudgetActivity</string>
     <string name="search">Search</string>

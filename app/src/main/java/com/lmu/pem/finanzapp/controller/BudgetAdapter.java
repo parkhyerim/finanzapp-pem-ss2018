@@ -124,12 +124,12 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         if(b.getDatePart() > 1f)
             setProgressBarColor(holder.dateBar, Color.parseColor("#888888"));
         else
-            setProgressBarColor(holder.dateBar, Color.parseColor("#00BBD3"));
+            setProgressBarColor(holder.dateBar, context.getColor(R.color.dateBarColor));
 
 
-        if (b.getAmountPart() > 1f) setProgressBarColor(holder.amountBar, Color.parseColor("#EB5757"));
-        else if (b.getAmountPart() > b.getDatePart()) setProgressBarColor(holder.amountBar, Color.parseColor("#F2994A"));
-        else setProgressBarColor(holder.amountBar, Color.parseColor("#6FCF97"));
+        if (b.getAmountPart() > 1f) setProgressBarColor(holder.amountBar,  context.getColor(R.color.negativeAmount));
+        else if (b.getAmountPart() > b.getDatePart()) setProgressBarColor(holder.amountBar, context.getColor(R.color.warningAmount));
+        else setProgressBarColor(holder.amountBar, context.getColor(R.color.positiveAmount));
 
 
 

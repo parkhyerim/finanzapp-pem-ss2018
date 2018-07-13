@@ -41,7 +41,6 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
         View aboutView = inflater.inflate(R.layout.dashboard_fragment, container, false);
 
         dashboardManager = DashboardManager.getInstance(this.getContext());
-        dashboardManager.addListener(this);
         transactionManager = TransactionManager.getInstance();
         if(dashboardManager.getDataSet(transactionManager).size()<1){
             TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
@@ -59,6 +58,8 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
         adapter = new CardAdapter(dashboardManager.getDataSet(transactionManager), getContext());
         recyclerView.setAdapter(adapter);
+        dashboardManager.setAdapterListener((CardAdapter) adapter);
+
 
 
         // Inflate the layout for this fragment

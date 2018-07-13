@@ -6,7 +6,7 @@ public class BasicAmountCard extends DbCard{
 
 
 
-    public enum AmountType {POSITIVE, NEGATIVE, NEUTRAL}
+    public enum AmountType {POSITIVE, NEGATIVE, WARNING, NEUTRAL}
 
     private float amount;
     private AmountType amountType;

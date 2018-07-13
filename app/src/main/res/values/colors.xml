@@ -13,4 +13,11 @@
     <color name="account2">#a72d3c</color>
     <color name="account3">#a7982d</color>
     <color name="account4">#5b2da7</color>
+
+    <color name="dateBarColor">#00BBD3</color>
+
+    <color name="positiveAmount">#6FCF97</color>
+    <color name="warningAmount">#F2994A</color>
+    <color name="negativeAmount">#EB5757</color>
+
 </resources>
