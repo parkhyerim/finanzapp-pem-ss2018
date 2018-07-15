@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -40,16 +41,24 @@ public class LoginActivity extends AppCompatActivity {
     private String inputMail, inputPW;
     private DatabaseReference userRef;
     private String uid;
+    private LinearLayout loginUI, logginInUI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        loginUI = findViewById(R.id.loginUI);
+        logginInUI = findViewById(R.id.loggingInUI);
+
+        loginUI.setVisibility(View.VISIBLE);
+        logginInUI.setVisibility(View.GONE);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null) {
+                loginUI.setVisibility(View.GONE);
+                logginInUI.setVisibility(View.VISIBLE);
                 Log.i("123123123", "onCreate: Logged in");
                 uid = user.getUid();
                 loadFirebaseData();
@@ -87,16 +96,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
+        loginUI.setVisibility(View.GONE);
+        logginInUI.setVisibility(View.VISIBLE);
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) { //mAuthListener handles this already
                     } else {
+                        loginUI.setVisibility(View.VISIBLE);
+                        logginInUI.setVisibility(View.GONE);
                         Snackbar.make(loginScreen, "Authentication failed.", Snackbar.LENGTH_LONG);
                     }
                 });
     }
 
     private void createAccount(String email, String password){
+        loginUI.setVisibility(View.GONE);
+        logginInUI.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -107,6 +122,8 @@ public class LoginActivity extends AppCompatActivity {
                         accountManager.initializeWithCashAccount();
                         goToMainActivity();
                     } else {
+                        loginUI.setVisibility(View.VISIBLE);
+                        logginInUI.setVisibility(View.GONE);
                         Snackbar.make(loginScreen, "Authentication failed.", Snackbar.LENGTH_LONG);
                     }
 

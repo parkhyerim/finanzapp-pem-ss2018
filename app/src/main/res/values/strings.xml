@@ -82,6 +82,7 @@
     <string name="transactions_empty">It seems like you don\'t have any transactions logged yet. Adding one is easy: Just click the plus button at the bottom of this page!\n\nYou can also head over to the accounts tab and drag the money icons from one account to another in order to transfer money between them.\nTry it out, it\'s fun!</string>
     <string name="budgets_empty">You don\'t have any budgets yet. Just tap on the plus icon at the bottom of this page to create one!</string>
     <string name="dashboard_empty">Whoops! There are no Dashboard cards to show you.</string>
+    <string name="loggingInText">Logging you in...</string>
 
 
 </resources>

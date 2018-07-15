@@ -140,7 +140,13 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             String description = data.getStringExtra("description");
             double amount = data.getDoubleExtra("amount",0);
 
-            Transaction transaction = new Transaction(year, month, day, getImageByCategory(category), account, account2, category, description, amount);
+            Transaction transaction;
+            if(account2==null){
+                transaction = new Transaction(year, month, day, getImageByCategory(category), account, category, description, amount);
+            }else{
+                transaction = new Transaction(year, month, day, getImageByCategory(category), account, account2, category, description, amount);
+            }
+
             transactionManager.addTransaction(transaction);
         }
     }

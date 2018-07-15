@@ -59,22 +59,38 @@ public class TransactionManager extends TransactionHistoryEventSource{
         if(fireEvent) fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
     }
 
-    public void updateTransaction(String key, int year, int month, int day, String account, String category, int imageResource, String description, double amount){
+    public void updateTransaction(String key, int year, int month, int day, String account, String account2, String category, int imageResource, String description, double amount){
         Transaction transaction = getTransactionByKey(key);
-        Transaction transactionOld = new Transaction(
-                transaction.getYear(),
-                transaction.getMonth(),
-                transaction.getDay(),
-                transaction.getImageResource(),
-                transaction.getAccount(),
-                transaction.getCategory(),
-                transaction.getDescription(),
-                transaction.getAmount()
-                );
+        Transaction transactionOld;
+        if(transaction.getAccount2()==null){
+            transactionOld = new Transaction(
+                    transaction.getYear(),
+                    transaction.getMonth(),
+                    transaction.getDay(),
+                    transaction.getImageResource(),
+                    transaction.getAccount(),
+                    transaction.getCategory(),
+                    transaction.getDescription(),
+                    transaction.getAmount()
+            );
+        }else{
+            transactionOld = new Transaction(
+                    transaction.getYear(),
+                    transaction.getMonth(),
+                    transaction.getDay(),
+                    transaction.getImageResource(),
+                    transaction.getAccount(),
+                    transaction.getAccount2(),
+                    transaction.getCategory(),
+                    transaction.getDescription(),
+                    transaction.getAmount()
+            );
+        }
         if(transaction.getYear() != year) transaction.setYear(year);
         if(transaction.getMonth() != month) transaction.setMonth(month);
         if(transaction.getDay() != day) transaction.setDay(day);
         if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
+        if(!(transaction.getAccount2()!=null && transaction.getAccount2().equals(account2)) && !(transaction.getAccount2()==null && account2==null)) transaction.setAccount2(account2);
         if(!(transaction.getCategory().equals(category))){
             transaction.setCategory(category);
             transaction.setImageResource(imageResource);

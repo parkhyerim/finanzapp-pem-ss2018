@@ -69,7 +69,7 @@ public class AccountAdapter extends BaseAdapter {
         if(convertView == null){ //not a recycled view
             circleView = new CircleView(this.context);
             circleView.setLayoutParams(new ViewGroup.LayoutParams(CIRCLE_SIZE,CIRCLE_SIZE));
-
+            circleView.setForegroundGravity(Gravity.CENTER); //TODO to test
             circleView.setId(View.generateViewId());
             relativeLayout = new RelativeLayout(context);
             relativeLayout.setGravity(Gravity.CENTER);
@@ -77,7 +77,7 @@ public class AccountAdapter extends BaseAdapter {
             imageView = new ImageView(context);
             imageView.setImageResource(R.drawable.bonus);
             relativeLayout.addView(imageView);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(150, 150);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(130, 130);
             layoutParams.addRule(RelativeLayout.ALIGN_END, circleView.getId());
             layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, circleView.getId());
             imageView.setLayoutParams(layoutParams);
@@ -96,19 +96,16 @@ public class AccountAdapter extends BaseAdapter {
             fragment.editAccount(accounts.get(position).getId());
         });
 
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TransactionAddActivity.class);
+            intent.putExtra("account", accounts.get(position).getId());
+            fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
+        });
+
 
         imageView.setOnLongClickListener(v -> {
             ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
-            /*
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(){
-                @Override
-                public void onDrawShadow(Canvas canvas) {
-                    Drawable img = context.getResources().getDrawable(R.drawable.bonus);
-                    //img.setBounds(100,100,100,100);
-                    img.draw(canvas);
-                }
-            };*/
             v.startDrag(data, shadowBuilder, v, 0);
             return true;
         });
