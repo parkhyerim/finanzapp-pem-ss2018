@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -93,13 +94,19 @@ public class CategoryManager {
     public ArrayList<String> createDefaultExpCategories(){
         ArrayList<String> defaultExpCats = new ArrayList<>();
         defaultExpCats.addAll(Arrays.asList("", "Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
-                "Car","Travel", "Other","Add"));
+                "Car","Travel"));
+        Collections.sort(defaultExpCats);
+        defaultExpCats.add("Other");
+        defaultExpCats.add("Add");
         return defaultExpCats;
     }
 
     public ArrayList<String> createDefaultIncCategories(){
         ArrayList<String> defaultIncCats = new ArrayList<>();
-        defaultIncCats.addAll(Arrays.asList("","Salary","Bonus","Petty cash", "Stock","Other","Add"));
+        defaultIncCats.addAll(Arrays.asList("","Salary","Bonus","Petty cash", "Stock"));
+        Collections.sort(defaultIncCats);
+        defaultIncCats.add("Other");
+        defaultIncCats.add("Add");
         return defaultIncCats;
     }
 
