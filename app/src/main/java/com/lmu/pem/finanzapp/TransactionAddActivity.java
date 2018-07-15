@@ -113,12 +113,14 @@ public class TransactionAddActivity extends AppCompatActivity {
             }
 
             // Accounts
-            String[] accounts =  accountManager.getNameArray();
+            String[] accounts =  accountManager.getNameArray(); //need to go by names here since this is the same order the spinner will load the accounts in (with default account in the first spot)
 
-            account = getIntent().getStringExtra("account");
-            for(int i =0; i < accounts.length ; i++){
-                if (accountManager.getAccountIdByName(accounts[i]).equals(account)){
-                    accountSpinner.setSelection(i);
+            if(getIntent().hasExtra("account")) {
+                account = getIntent().getStringExtra("account");
+                for (int i = 0; i < accounts.length; i++) {
+                    if (accountManager.getAccountIdByName(accounts[i]).equals(account)) {
+                        accountSpinner.setSelection(i);
+                    }
                 }
             }
 
@@ -145,7 +147,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 category = incomeCategorySpinner.getItemAtPosition(income).toString();
             }
 
-            //Key
+            //Key - ultimately this is the extra that indicates that the transaction already exists and we just want to edit it
             if(getIntent().hasExtra("key")) key = getIntent().getStringExtra("key");
         }
     }
@@ -205,6 +207,14 @@ public class TransactionAddActivity extends AppCompatActivity {
                         errorText.removeTextChangedListener(this);
                     }
                 });
+            }
+            if(selection==SELECTED_SHIFT && (accountSpinner.getSelectedItemPosition()==account2Spinner.getSelectedItemPosition())){
+                valid=false;
+                TextView errorText1 = (TextView) accountSpinner.getSelectedView();
+                TextView errorText2 = (TextView) account2Spinner.getSelectedView();
+                String errTxt = "Same account selected twice!";
+                errorText1.setError(errTxt);
+                errorText2.setError(errTxt);
             }
             if(valid){
                 amount = Double.parseDouble(amountEditText.getText().toString());
@@ -299,7 +309,6 @@ public class TransactionAddActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
 
                 if(incomeCategorySpinner.getSelectedItemPosition() == incomes.size()-1){
                     LayoutInflater li = LayoutInflater.from(context);
@@ -367,6 +376,14 @@ public class TransactionAddActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 account = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
+
+                if(selection==SELECTED_SHIFT){
+                    //reset the error message (see doneButton onClickListener)
+                    TextView errorText1 = (TextView) accountSpinner.getSelectedView();
+                    errorText1.setError(null);
+                    TextView errorText2 = (TextView) account2Spinner.getSelectedView();
+                    errorText2.setError(null);
+                }
             }
 
             @Override
@@ -378,6 +395,14 @@ public class TransactionAddActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 account2 = accountManager.getAccountIdByName(parent.getItemAtPosition(position).toString());
+
+                if(selection==SELECTED_SHIFT){
+                    //reset the error message (see doneButton onClickListener)
+                    TextView errorText1 = (TextView) accountSpinner.getSelectedView();
+                    errorText1.setError(null);
+                    TextView errorText2 = (TextView) account2Spinner.getSelectedView();
+                    errorText2.setError(null);
+                }
             }
 
             @Override
@@ -410,15 +435,6 @@ public class TransactionAddActivity extends AppCompatActivity {
         doneButton = findViewById(R.id.done_button);
     }
 
-
-    public void categoryShow(){
-        if(selection==SELECTED_INCOME){
-            income_selected();
-        } else {
-            expense_selected();
-        }
-    }
-
     public void expense_selected() {
         selection = SELECTED_EXPENSE;
         expenseButton.setAlpha(1.0f);
@@ -431,6 +447,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         accountLine2.setVisibility(View.GONE);
         expenseLayout.setVisibility(View.VISIBLE);
         accountTextView.setText("Account");
+        account2=null;
         //transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
     }
 
@@ -446,6 +463,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         accountLine2.setVisibility(View.GONE);
         incomeLayout.setVisibility(View.VISIBLE);
         accountTextView.setText("Account");
+        account2=null;
         //transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
     }
 

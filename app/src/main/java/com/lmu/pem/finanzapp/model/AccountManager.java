@@ -181,28 +181,19 @@ public class AccountManager implements TransactionHistoryEventListener {
                 Account accountOld = getAccountById(transactionOld.getAccount());
                 Account accountOld2 = getAccountById(transactionOld.getAccount2());
 
+                //remove the old transaction
+                if(accountOld2==null){
+                    accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
+                }else{
+                    accountOld.setBalance(accountOld.getBalance() + transactionOld.getAmount());
+                    accountOld2.setBalance(accountOld2.getBalance() - transactionOld.getAmount());
+                    dbRef.child(accountOld2.getId()).child("balance").setValue(accountOld2.getBalance());
+                }
+
+                //add the new one
                 if(account2==null) {
-                    //remove the old transaction
-                    if(accountOld2==null){
-                        accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
-                    }else{
-                        accountOld.setBalance(accountOld.getBalance() + transactionOld.getAmount());
-                        accountOld2.setBalance(accountOld2.getBalance() - transactionOld.getAmount());
-                        dbRef.child(accountOld2.getId()).child("balance").setValue(accountOld2.getBalance());
-                    }
-                    //add the new one
                     account.setBalance(account.getBalance() + transaction.getAmount());
                 }else{
-                    //remove the old transaction
-                    if(accountOld2==null){
-                        accountOld.setBalance(accountOld.getBalance() - transactionOld.getAmount());
-                    }else{
-                        accountOld.setBalance(accountOld.getBalance() + transactionOld.getAmount());
-                        accountOld2.setBalance(accountOld2.getBalance() - transactionOld.getAmount());
-                        dbRef.child(accountOld2.getId()).child("balance").setValue(accountOld2.getBalance());
-                    }
-
-                    //add the new one
                     account.setBalance(account.getBalance() - transaction.getAmount());
                     account2.setBalance(account2.getBalance() + transaction.getAmount());
                 }

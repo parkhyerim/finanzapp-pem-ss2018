@@ -168,12 +168,13 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             month = data.getIntExtra("month", 0);
             day = data.getIntExtra("day",0);
             account = data.getStringExtra("account");
+            account2 = data.getStringExtra("account2");
             category = data.getStringExtra("category");
             description = data.getStringExtra("description");
             amount = data.getDoubleExtra("amount",0);
             key = data.getStringExtra("key");
 
-            transactionManager.updateTransaction(key, year, month, day, account, category, getImageByCategory(category), description, amount);
+            transactionManager.updateTransaction(key, year, month, day, account, account2, category, getImageByCategory(category), description, amount);
         }
     }
 

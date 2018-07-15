@@ -96,19 +96,16 @@ public class AccountAdapter extends BaseAdapter {
             fragment.editAccount(accounts.get(position).getId());
         });
 
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TransactionAddActivity.class);
+            intent.putExtra("account", accounts.get(position).getId());
+            fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
+        });
+
 
         imageView.setOnLongClickListener(v -> {
             ClipData data = ClipData.newPlainText("$$$", accounts.get(position).getId());
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
-            /*
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(){
-                @Override
-                public void onDrawShadow(Canvas canvas) {
-                    Drawable img = context.getResources().getDrawable(R.drawable.bonus);
-                    //img.setBounds(100,100,100,100);
-                    img.draw(canvas);
-                }
-            };*/
             v.startDrag(data, shadowBuilder, v, 0);
             return true;
         });
