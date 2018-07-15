@@ -438,8 +438,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     public void expense_selected() {
         selection = SELECTED_EXPENSE;
         expenseButton.setAlpha(1.0f);
-        incomeButton.setAlpha(0.5f);
-        shiftButton.setAlpha(0.5f);
+        incomeButton.setAlpha(0.3f);
+        shiftButton.setAlpha(0.3f);
         expenseLayout.setEnabled(true);
         incomeLayout.setEnabled(false);
         accountLine2.setEnabled(false);
@@ -454,8 +454,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     public void income_selected() {
         selection = SELECTED_INCOME;
         incomeButton.setAlpha(1.0f);
-        expenseButton.setAlpha(0.5f);
-        shiftButton.setAlpha(0.5f);
+        expenseButton.setAlpha(0.3f);
+        shiftButton.setAlpha(0.3f);
         incomeLayout.setEnabled(true);
         expenseLayout.setEnabled(false);
         accountLine2.setEnabled(false);
@@ -470,8 +470,8 @@ public class TransactionAddActivity extends AppCompatActivity {
     public void shift_selected(){
         selection = SELECTED_SHIFT;
         shiftButton.setAlpha(1.0f);
-        expenseButton.setAlpha(0.5f);
-        incomeButton.setAlpha(0.5f);
+        expenseButton.setAlpha(0.3f);
+        incomeButton.setAlpha(0.3f);
         expenseLayout.setEnabled(false);
         incomeLayout.setEnabled(false);
         accountLine2.setEnabled(true);

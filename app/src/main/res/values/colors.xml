@@ -19,5 +19,6 @@
     <color name="positiveAmount">#6FCF97</color>
     <color name="warningAmount">#F2994A</color>
     <color name="negativeAmount">#EB5757</color>
+    <color name="shift_blue">#528fd0</color>
 
 </resources>
