@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,11 +20,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import java.text.DateFormatSymbols;
 
 
-import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
@@ -261,6 +259,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         String newItem = userInput.getText().toString();
                                         int pos = expenses.size()-1;
                                         expenses.add(pos, newItem);
+                                        categoryManager.addExpenseCategory(newItem);
 
                                         expenseCategoryAdapter.notifyDataSetChanged();
                                         category = parent.getItemAtPosition(pos).toString();
@@ -318,6 +317,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         String newItem = userInput.getText().toString();
                                         int pos = incomes.size()-1;
                                         incomes.add(pos, newItem);
+                                        categoryManager.addIncomeCategory(newItem);
 
                                         incomeCategoryAdapter.notifyDataSetChanged();
                                         category = parent.getItemAtPosition(pos).toString();
