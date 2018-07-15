@@ -8,6 +8,7 @@
     <color name="applegreen">#6bb779</color>
     <color name="black">#000000</color>
     <color name="gray">#9e9e9e</color>
+    <color name="gray_semitransparent">#609e9e9e</color>
     <color name="accountDefault">#2d3ca7</color>
     <color name="account1">#2da798</color>
     <color name="account2">#a72d3c</color>
