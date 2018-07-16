@@ -46,7 +46,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
     private TransactionManager transactionManager;
     private AccountAdapter adapter;
     private DatabaseReference dbRef;
-    private boolean notify;
 
     public AccountFragment() {
         this.accountManager = AccountManager.getInstance();
@@ -59,23 +58,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                              Bundle savedInstanceState) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
-                if(notify) {
-                    for (String key : map.keySet()) {
-                        Snackbar.make(getView(), "Added account " + map.get(key).get("name") + ".", Snackbar.LENGTH_SHORT).show();
-                    }
-                    notify = false;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("123123123","Cancelled: "+databaseError.toString());
-            }
-        });
 
         View v = inflater.inflate(R.layout.account_fragment, container, false);
         GridView gridView = (GridView) v.findViewById(R.id.gridview);
@@ -117,7 +99,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                 acc = new Account(name, color, defaultAcc, balance);
                 accountID=acc.getId();
                 accountManager.addAccount(acc);
-                notify=true;
             }else{
                 accountID = data.getStringExtra("accountID");
                 acc = accountManager.getAccountById(accountID);

@@ -22,13 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp">
 
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -43,7 +41,8 @@
 
             <EditText
                 android:id="@+id/budgetEditText"
-                android:layout_width="270dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:textAlignment="viewEnd"
@@ -52,76 +51,82 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/categoryTextView"
                 android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:text="Category"
                 android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/categorySpinner"
-                android:layout_width="270dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/buttons"
-                android:layout_marginTop="20dp"
                 android:spinnerMode="dialog"
-                android:textAlignment="viewEnd"></Spinner>
+                android:textAlignment="viewEnd" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/renewalTypeTextView"
                 android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:text="Duration"
                 android:textSize="18sp" />
 
             <Spinner
                 android:id="@+id/renewalTypeSpinner"
-                android:layout_width="270dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/buttons"
-                android:layout_marginTop="20dp"
                 android:spinnerMode="dialog"
-                android:textAlignment="viewEnd"></Spinner>
+                android:textAlignment="viewEnd" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/customDateLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
-            android:paddingBottom="48dp">
+            android:layout_marginBottom="48dp">
 
             <TextView
                 android:id="@+id/dateTextView"
                 android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
                 android:text="Until"
                 android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/customDateEditText"
-                android:layout_width="270dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="false"
                 android:inputType="none"
-                android:layout_marginTop="20dp"
                 android:textAlignment="viewEnd"/>
 
         </LinearLayout>
@@ -134,6 +139,7 @@
             android:layout_height="wrap_content"
             android:background="@color/applegreen"
             android:gravity="center"
+            android:layout_gravity="center"
             android:text="DONE"
             android:textColor="@android:color/background_light"
             android:layout_marginBottom="8dp"/>
@@ -143,6 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00000000"
+            android:layout_gravity="center"
             android:text="DELETE"
             android:textColor="@android:color/holo_red_light"/>
 

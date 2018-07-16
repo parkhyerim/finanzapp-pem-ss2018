@@ -33,16 +33,12 @@ public class AccountAdapter extends BaseAdapter {
     private ArrayList<Account> accounts;
     private AccountFragment fragment;
 
-    private final int CIRCLE_SIZE = 400;
+    private final int CIRCLE_SIZE = 380;
 
     public AccountAdapter(Context context, ArrayList<Account> accounts, AccountFragment fragment) {
         this.context = context;
         this.accounts = accounts;
         this.fragment = fragment;
-    }
-
-    public void setAccounts(ArrayList<Account> accounts) {
-        this.accounts = accounts;
     }
 
     @Override
@@ -69,7 +65,6 @@ public class AccountAdapter extends BaseAdapter {
         if(convertView == null){ //not a recycled view
             circleView = new CircleView(this.context);
             circleView.setLayoutParams(new ViewGroup.LayoutParams(CIRCLE_SIZE,CIRCLE_SIZE));
-            circleView.setForegroundGravity(Gravity.CENTER); //TODO to test
             circleView.setId(View.generateViewId());
             relativeLayout = new RelativeLayout(context);
             relativeLayout.setGravity(Gravity.CENTER);
@@ -77,7 +72,7 @@ public class AccountAdapter extends BaseAdapter {
             imageView = new ImageView(context);
             imageView.setImageResource(R.drawable.bonus);
             relativeLayout.addView(imageView);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(130, 130);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(110, 110);
             layoutParams.addRule(RelativeLayout.ALIGN_END, circleView.getId());
             layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, circleView.getId());
             imageView.setLayoutParams(layoutParams);
@@ -87,7 +82,9 @@ public class AccountAdapter extends BaseAdapter {
             imageView = (ImageView) ((RelativeLayout) convertView).getChildAt(1);
         }
         String text = accounts.get(position).getName();
-        circleView.setText(text, accounts.get(position).isDefault());
+        String trimmedText=text;
+        if(text.length()>9) trimmedText=text.substring(0, 6)+"...";
+        circleView.setText(trimmedText, accounts.get(position).isDefault());
         String subtext = String.format(Locale.getDefault(), "%,.2f %s",accounts.get(position).getBalance(), GlobalSettings.getInstance().getCurrencyString());
         circleView.setSubText(subtext);
         circleView.setCircleColor(accounts.get(position).getColor());

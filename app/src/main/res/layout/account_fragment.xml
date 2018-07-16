@@ -16,6 +16,8 @@
         android:gravity="center"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:clipToPadding="false">
     </GridView>
 
