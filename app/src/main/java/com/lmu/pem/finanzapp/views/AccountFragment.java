@@ -46,6 +46,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
     private TransactionManager transactionManager;
     private AccountAdapter adapter;
     private DatabaseReference dbRef;
+    private GridView gridView;
 
     public AccountFragment() {
         this.accountManager = AccountManager.getInstance();
@@ -60,7 +61,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
 
         View v = inflater.inflate(R.layout.account_fragment, container, false);
-        GridView gridView = (GridView) v.findViewById(R.id.gridview);
+        gridView = (GridView) v.findViewById(R.id.gridview);
         adapter = new AccountAdapter(getContext(), accountManager.getAccounts(), this);
         gridView.setAdapter(adapter);
 
@@ -110,7 +111,8 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             }
             dbRef.child(accountID).setValue(acc.toMap());
 
-            adapter.notifyDataSetChanged();
+            //normally we'd call adapter.notifyDataSetChanged() here, but that doesn't do the trick if you just change the default account, so we're re-setting the adapter.
+            gridView.setAdapter(adapter);
         }else if(requestCode==TransactionFragment.REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK){
             int year = data.getIntExtra("year",0);
             int month = data.getIntExtra("month", 0);
@@ -150,7 +152,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
         } else {
             imageResource = img;
         }
-        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         return imageResource;
     }
 }
