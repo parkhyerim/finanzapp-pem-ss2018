@@ -39,12 +39,12 @@
 
 
     <!--Highest Income Card-->
-    <string name="highestincome_title">Your biggest Income</string>
+    <string name="highestincome_title">Your Biggest Income</string>
     <string name="highestincome_mainText">You are earning most money from </string>
 
     <!--Highest Expenses Card-->
     <string name="highestexpenses_title">Most Expensive Category</string>
-    <string name="highestexpenses_mainText">Over all, you spent the most money on</string>
+    <string name="highestexpenses_mainText">Overall, you spent the most money on</string>
 
     <!--Most economical month Expenses Card-->
     <string name="mem_title">Most economical Month</string>
