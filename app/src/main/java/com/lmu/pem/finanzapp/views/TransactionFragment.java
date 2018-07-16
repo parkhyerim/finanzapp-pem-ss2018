@@ -128,7 +128,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 Intent intent = new Intent(getActivity().getApplicationContext(), TransactionAddActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_ADD_TRANSACTION);
             }else{
-                Snackbar.make(rootView, "You have to create an account before you can add a transaction!", Snackbar.LENGTH_LONG);
+                Snackbar.make(rootView, "You have to create an account before you can add a transaction!", Snackbar.LENGTH_LONG).show();
             }
         });
         return rootView;

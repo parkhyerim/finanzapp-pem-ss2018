@@ -47,25 +47,31 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginUI = findViewById(R.id.loginUI);
-        logginInUI = findViewById(R.id.loggingInUI);
 
-        loginUI.setVisibility(View.VISIBLE);
-        logginInUI.setVisibility(View.GONE);
+        setupUI();
+        showLoginUI();
 
+        userRef = FirebaseDatabase.getInstance().getReference().child("users");
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null) {
-                loginUI.setVisibility(View.GONE);
-                logginInUI.setVisibility(View.VISIBLE);
+                hideLoginUI();
                 Log.i("123123123", "onCreate: Logged in");
                 uid = user.getUid();
                 loadFirebaseData();
             }
         };
-        setupUI();
-        userRef = FirebaseDatabase.getInstance().getReference().child("users");
+    }
+
+    private void showLoginUI() {
+        loginUI.setVisibility(View.VISIBLE);
+        logginInUI.setVisibility(View.GONE);
+    }
+
+    private void hideLoginUI() {
+        loginUI.setVisibility(View.GONE);
+        logginInUI.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -86,6 +92,8 @@ public class LoginActivity extends AppCompatActivity {
         pwEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
+        loginUI = findViewById(R.id.loginUI);
+        logginInUI = findViewById(R.id.loggingInUI);
 
         loginButton.setOnClickListener((v)->{
             if(checkInputs()) signIn(inputMail, inputPW);
@@ -96,77 +104,79 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn(String email, String password) {
-        loginUI.setVisibility(View.GONE);
-        logginInUI.setVisibility(View.VISIBLE);
+        hideLoginUI();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) { //mAuthListener handles this already
                     } else {
-                        loginUI.setVisibility(View.VISIBLE);
-                        logginInUI.setVisibility(View.GONE);
-                        Snackbar.make(loginScreen, "Authentication failed.", Snackbar.LENGTH_LONG);
+                        showLoginUI();
+                        Snackbar.make(loginScreen, "Authentication failed. Check your login data and make sure you are connected to the Internet.", Snackbar.LENGTH_LONG).show();
                     }
                 });
     }
 
     private void createAccount(String email, String password){
-        loginUI.setVisibility(View.GONE);
-        logginInUI.setVisibility(View.VISIBLE);
+        hideLoginUI();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Snackbar.make(loginScreen, "Account created for "+user.getEmail()+"!", Snackbar.LENGTH_LONG);
-                        //Create Cash Account
+                        Snackbar.make(loginScreen, "Account created for "+user.getEmail()+"!", Snackbar.LENGTH_LONG).show();
+                        //Create default Cash Account
                         AccountManager accountManager = AccountManager.getInstance();
                         accountManager.initializeWithCashAccount();
                         goToMainActivity();
                     } else {
-                        loginUI.setVisibility(View.VISIBLE);
-                        logginInUI.setVisibility(View.GONE);
-                        Snackbar.make(loginScreen, "Authentication failed.", Snackbar.LENGTH_LONG);
+                        showLoginUI();
+                        Snackbar.make(loginScreen, "Registration failed. Check your login data and make sure you are connected to the Internet.", Snackbar.LENGTH_LONG).show();
                     }
 
                 });
     }
 
     private boolean checkInputs(){
-        boolean valid=true;
+        boolean valid = true;
         inputMail = emailEditText.getText().toString();
         inputPW = pwEditText.getText().toString();
-        if(inputMail.length()<1){
+        TextWatcher emailWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                emailEditText.setError(null);
+                emailEditText.removeTextChangedListener(this);
+            }
+        };
+        TextWatcher pwWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                pwEditText.setError(null);
+                pwEditText.removeTextChangedListener(this);
+            }
+        };
+        if(inputMail.length()<1 || !inputMail.contains("@")){
             valid=false;
             emailEditText.setError("You have to enter a valid e-mail address!");
-            emailEditText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    emailEditText.setError(null);
-                    emailEditText.removeTextChangedListener(this);
-                }
-            });
+            emailEditText.addTextChangedListener(emailWatcher);
         }
         if(inputPW.length()<1){
             valid=false;
             pwEditText.setError("You have to enter your password!");
-            pwEditText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    pwEditText.setError(null);
-                    pwEditText.removeTextChangedListener(this);
-                }
-            });
+            pwEditText.addTextChangedListener(pwWatcher);
+        }else if(inputPW.length()<6){
+            valid=false;
+            pwEditText.setError("Your password has to be at least 6 characters long!"); //stupid Firebase.
+            pwEditText.addTextChangedListener(pwWatcher);
         }
         return valid;
     }
