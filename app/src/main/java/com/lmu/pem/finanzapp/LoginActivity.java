@@ -21,17 +21,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.data.Account;
-import com.lmu.pem.finanzapp.data.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {

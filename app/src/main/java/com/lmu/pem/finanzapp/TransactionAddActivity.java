@@ -24,7 +24,7 @@ import android.widget.TextView;
 import java.text.DateFormatSymbols;
 
 
-import com.lmu.pem.finanzapp.data.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;

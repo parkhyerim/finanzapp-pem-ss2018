@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.data.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
