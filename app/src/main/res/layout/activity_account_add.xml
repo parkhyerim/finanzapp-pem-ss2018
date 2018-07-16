@@ -16,92 +16,99 @@
         app:title="Add a new Account"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
-
-    <GridLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:columnCount="2"
-        >
-
-        <TextView
-            android:text="Name: "
-            android:layout_gravity="center_vertical"
-            />
-        <EditText
-            android:id="@+id/nameEdit"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:hint="Name of the account"
-            />
-        <TextView
-            android:id="@+id/balanceText"
-            android:text="Balance: "
-            android:layout_gravity="center_vertical"
-            />
-        <EditText
-            android:id="@+id/balanceEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:hint="Balance of the account"
-            />
-        <TextView
-            android:text="Color:"
-            android:layout_gravity="center_vertical"/>
-        <RadioGroup
-            android:id="@+id/colorRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/colorRadio1"
-                android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <GridLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/accountDefault"
-                android:checked="true"
+                android:padding="10dp"
+                android:columnCount="2"
+                >
+
+                <TextView
+                    android:text="Name: "
+                    android:layout_gravity="center_vertical"
+                    />
+                <EditText
+                    android:id="@+id/nameEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="Name of the account"
+                    />
+                <TextView
+                    android:id="@+id/balanceText"
+                    android:text="Balance: "
+                    android:layout_gravity="center_vertical"
+                    />
+                <EditText
+                    android:id="@+id/balanceEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="Balance of the account"
+                    />
+                <TextView
+                    android:text="Color:"
+                    android:layout_gravity="center_vertical"/>
+                <RadioGroup
+                    android:id="@+id/colorRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/colorRadio1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/accountDefault"
+                        android:checked="true"
+                        />
+                    <RadioButton
+                        android:id="@+id/colorRadio2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/account1" />
+                    <RadioButton
+                        android:id="@+id/colorRadio3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/account2" />
+                    <RadioButton
+                        android:id="@+id/colorRadio4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/account3" />
+                    <RadioButton
+                        android:id="@+id/colorRadio5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/account4" />
+                    <RadioButton
+                        android:id="@+id/colorRadio6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/colorwebsiteTab" />
+                </RadioGroup>
+                <TextView
+                    android:text="Default account:"
+                    android:layout_gravity="center_vertical"/>
+                <CheckBox
+                    android:id="@+id/defaultCheck"/>
+            </GridLayout>
+            <Button
+                android:id="@+id/addAccButton"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:layout_gravity="center"
+                android:text="Add Account"
+                android:backgroundTint="@color/colorPrimary"
                 />
-            <RadioButton
-                android:id="@+id/colorRadio2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/account1" />
-            <RadioButton
-                android:id="@+id/colorRadio3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/account2" />
-            <RadioButton
-                android:id="@+id/colorRadio4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/account3" />
-            <RadioButton
-                android:id="@+id/colorRadio5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/account4" />
-            <RadioButton
-                android:id="@+id/colorRadio6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/colorwebsiteTab" />
-        </RadioGroup>
-        <TextView
-            android:text="Default account:"
-            android:layout_gravity="center_vertical"/>
-        <CheckBox
-            android:id="@+id/defaultCheck"/>
-    </GridLayout>
-    <Button
-        android:id="@+id/addAccButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:elevation="4dp"
-        android:layout_gravity="center"
-        android:text="Add Account"
-        android:backgroundTint="@color/colorPrimary"
-        />
-
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

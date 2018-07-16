@@ -25,62 +25,66 @@
             android:src="@drawable/check" />
 
     </android.support.v7.widget.Toolbar>
-    <GridLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:padding="7dp"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Currency: "
-            android:textSize="16sp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginEnd="5dp"
-            />
-        <Spinner
-            android:id="@+id/currencySpinner"
-            android:layout_width="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:paddingRight="10dp"
-            />
-        <TextView
-            android:layout_columnSpan="2"
-            android:textSize="12sp"
-            android:layout_marginBottom="20dp"
-            android:text="Please note that changing the currency here does not perform currency conversion but leaves the numeric values as they were."
-            />
-        <TextView
-            android:text="Home Tab: "
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="30dp"
-            android:layout_marginEnd="5dp"
-            />
-        <Spinner
-            android:id="@+id/homeTabSpinner"
-            android:layout_width="wrap_content"
-            android:layout_gravity="fill_horizontal"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:paddingRight="10dp"
-            />
-        <TextView
-            android:layout_columnSpan="2"
+        android:layout_height="match_parent">
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/loggedInAsText"
-            />
-        <Button
-            android:layout_columnSpan="2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/logoutButton"
-            android:text="@string/logoutText"
-            />
-    </GridLayout>
+            android:columnCount="2"
+            android:padding="7dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Currency: "
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                />
+            <Spinner
+                android:id="@+id/currencySpinner"
+                android:layout_width="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:paddingRight="10dp"
+                />
+            <TextView
+                android:layout_columnSpan="2"
+                android:textSize="12sp"
+                android:layout_marginBottom="20dp"
+                android:text="Please note that changing the currency here does not perform currency conversion but leaves the numeric values as they were."
+                />
+            <TextView
+                android:text="Home Tab: "
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginEnd="5dp"
+                />
+            <Spinner
+                android:id="@+id/homeTabSpinner"
+                android:layout_width="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:paddingRight="10dp"
+                />
+            <TextView
+                android:layout_columnSpan="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/loggedInAsText"
+                />
+            <Button
+                android:layout_columnSpan="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/logoutButton"
+                android:text="@string/logoutText"
+                />
+        </GridLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

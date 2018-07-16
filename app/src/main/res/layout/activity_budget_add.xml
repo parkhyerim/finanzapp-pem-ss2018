@@ -17,142 +17,144 @@
         app:title="Add a new Budget"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
-
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:padding="16dp">
-
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <TextView
-                android:id="@+id/currencySymbol"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:text="€"
-                android:textColor="@color/colorPrimary"
-                android:textSize="30sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/budgetEditText"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:textAlignment="viewEnd"
-                android:textColor="@color/colorPrimary"
-                android:textSize="30sp" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/currencySymbol"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:text="€"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/budgetEditText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/categoryTextView"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="Category"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/categorySpinner"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/buttons"
+                    android:spinnerMode="dialog"
+                    android:textAlignment="viewEnd" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/renewalTypeTextView"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="Duration"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/renewalTypeSpinner"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/buttons"
+                    android:spinnerMode="dialog"
+                    android:textAlignment="viewEnd" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/customDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:layout_marginBottom="48dp">
+
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="Until"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/customDateEditText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:textAlignment="viewEnd"/>
+
+            </LinearLayout>
+
+
+
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/applegreen"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="DONE"
+                android:textColor="@android:color/background_light"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:layout_gravity="center"
+                android:text="DELETE"
+                android:textColor="@android:color/holo_red_light"/>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/categoryTextView"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="Category"
-                android:textSize="18sp" />
-
-            <Spinner
-                android:id="@+id/categorySpinner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/buttons"
-                android:spinnerMode="dialog"
-                android:textAlignment="viewEnd" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/renewalTypeTextView"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="Duration"
-                android:textSize="18sp" />
-
-            <Spinner
-                android:id="@+id/renewalTypeSpinner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/buttons"
-                android:spinnerMode="dialog"
-                android:textAlignment="viewEnd" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/customDateLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:layout_marginBottom="48dp">
-
-            <TextView
-                android:id="@+id/dateTextView"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="Until"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/customDateEditText"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="false"
-                android:inputType="none"
-                android:textAlignment="viewEnd"/>
-
-        </LinearLayout>
-
-
-
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/applegreen"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:text="DONE"
-            android:textColor="@android:color/background_light"
-            android:layout_marginBottom="8dp"/>
-
-        <Button
-            android:id="@+id/deleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#00000000"
-            android:layout_gravity="center"
-            android:text="DELETE"
-            android:textColor="@android:color/holo_red_light"/>
-
-    </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </LinearLayout>
