@@ -27,9 +27,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
     private DatabaseReference db;
     private DatabaseReference transactionRef;
 
-    private String userId;
-    private Context context;
-
 
     private TransactionManager() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -39,34 +36,6 @@ public class TransactionManager extends TransactionHistoryEventSource{
         this.transactions = new ArrayList<>();
     }
 
-    /*
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        database = FirebaseDatabase.getInstance().getReference();
-        userId = database.child("transactions").push().getKey();
-
-        if(userId != null){
-            database.child("transactions").child(userId).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Transaction transaction = dataSnapshot.getValue(Transaction.class);
-                    Log.d(TAG, "Category: " + transaction.getCategory());
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Failed to read value
-                    Log.w(TAG, "Failed to read value.", databaseError.toException());
-                }
-            });
-        }
-
-    }
-*/
 
     public static TransactionManager getInstance() {
         if(instance == null) instance = new TransactionManager();
