@@ -1,40 +1,24 @@
 package com.lmu.pem.finanzapp.data.categories;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 
 public class CategoryManager {
 
     private static CategoryManager instance;
 
-    private final Category[] DEFAULTCATEGORIES = DefaultCategory.values();
-    private ArrayList<CustomCategory> customCategories;
-    private ArrayList<String> defaultCategories;
-
-
     private ArrayList<String> expCategories;
     private ArrayList<String> incCategories;
-
-    private CustomCategory categoryList;
-
 
     private DatabaseReference db;
     private DatabaseReference catDbRef, expCategoryRef, incCategoryRef;
@@ -44,9 +28,8 @@ public class CategoryManager {
     public CategoryManager() {
         expCategories = new ArrayList<>();
         incCategories = new ArrayList<>();
-
-
-
+        expCategories.add(""); // dummy element
+        incCategories.add("");
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
@@ -55,45 +38,11 @@ public class CategoryManager {
         expCategoryRef = db.child("expenseCategories");
         incCategoryRef = db.child("incomeCategories");
 
+        //expCategories.addAll(createDefaultExpCategories());
+        //incCategories.addAll(createDefaultIncCategories());
 
-
-        expCategories.addAll(createDefaultExpCategories());
-        incCategories.addAll(createDefaultIncCategories());
-        //categoryList = new CustomCategory(expCategories, incCategories);
-
-
-
-        /*
-
-        expCategoryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final ArrayList<String> cats = new ArrayList<>();
-
-                for(DataSnapshot data: dataSnapshot.getChildren()){
-                    final String item = data.getValue(String.class);
-                    cats.add(item);
-
-
-                    for(int i = 0 ; i < cats.size(); i++){
-                        expCategories.set(i, cats.get(i));
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-*/
 
     }
-
-
 
 
     public static CategoryManager getInstance() {
@@ -109,48 +58,21 @@ public class CategoryManager {
         return this.incCategories;
     }
 
-    /*
-    public String[] getCategoryArray(){
-        String[] result = new String[categories.size()];
-        ArrayList<String> list = new ArrayList<>(categories.size());
-        for(String c: categories){
-            list.add(c);
-        }
-        return list.toArray(result);
-    }
-    */
-
-
-    /*
-    public Category[] getAllCategories() {
-        Category[] buffer = new Category[DEFAULTCATEGORIES.length + customCategories.size()];
-
-        for (int i = 0; i < DEFAULTCATEGORIES.length; i++) {
-            buffer [i] = DEFAULTCATEGORIES[i];
-        }
-        for (int i = 0; i < customCategories.size(); i++) {
-            buffer[i] = customCategories.get(i);
-        }
-
-        return buffer;
-    }
-    */
 
     public void addExpenseCategory(String category){
         this.expCategories.add(category);
         this.expCategories.remove("Other");
+        this.expCategories.remove("Other");  // kann zweimal in der Liste stehen
         this.expCategories.remove("Add");
-        Collections.sort(expCategories);
+        this.expCategories.remove("Add");  // kann zweimal in der Liste stehen
+        this.expCategories.remove("");
+        this.expCategories.remove(""); // kann zweimal in der Liste stehen
+
+        this.expCategories.add("");
+        Collections.sort(expCategories, String.CASE_INSENSITIVE_ORDER);
         this.expCategories.add("Other");
         this.expCategories.add("Add");
-        expKey = writeDefaultExpenseCategory(this.expCategories);
-
-
-
-        /*
-        String key = db.child("expense").push().getKey();
-        db.push().setValue(newCat);
-        */
+        expKey = writeExpenseCategoriestoFB(this.expCategories);
     }
 
 
@@ -159,15 +81,16 @@ public class CategoryManager {
         incCategories.add(category);
         incCategories.remove("Other");
         incCategories.remove("Add");
-        Collections.sort(incCategories);
+        incCategories.remove("Other");  // kann zweimal in der Liste stehen
+        incCategories.remove("Add");  // kann zweimal in der Liste stehen
+        incCategories.remove("");
+        incCategories.remove(""); // kann zweimal in der Liste stehen
+
+        incCategories.add("");
+        Collections.sort(incCategories, String.CASE_INSENSITIVE_ORDER);
         incCategories.add("Other");
         incCategories.add("Add");
-        incKey = writeDefaultIncomeCategory(incCategories);
-    }
-
-
-    public void addCategoriesFromFirebase(String id, ArrayList<String> categories){
-
+        incKey = writeIncomeCategoriestoFB(incCategories);
     }
 
 
@@ -178,60 +101,36 @@ public class CategoryManager {
     public ArrayList<String> createDefaultExpCategories(){
         ArrayList<String> defaultExpCats = new ArrayList<>();
         defaultExpCats.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
-                "Car","Travel"));
-        Collections.sort(defaultExpCats);
-        defaultExpCats.add("Other");
-        defaultExpCats.add("Add");
-        writeDefaultExpenseCategory(defaultExpCats);
-        /*
-        for(int i =0; i<defaultExpCats.size(); i++){
-            writeNewCategoryToFB(defaultExpCats.get(i));
+                "Car","Travel", "Other", "Add"));
+        for (String cat : defaultExpCats) {
+            this.addExpenseCategory(cat);
         }
-        */
+        writeExpenseCategoriestoFB(defaultExpCats);
         return defaultExpCats;
     }
 
     public ArrayList<String> createDefaultIncCategories(){
         ArrayList<String> defaultIncCats = new ArrayList<>();
-        defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock"));
-        Collections.sort(defaultIncCats);
-        defaultIncCats.add(0,"");
-        defaultIncCats.add("Other");
-        defaultIncCats.add("Add");
-        writeDefaultIncomeCategory(defaultIncCats);
+        defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock", "Other", "Add"));
+        for (String cat : defaultIncCats) {
+            this.addIncomeCategory(cat);
+        }
+        writeIncomeCategoriestoFB(defaultIncCats);
         return defaultIncCats;
     }
 
-    public String writeCategoryToFB(ArrayList<String> categories){
-        String key = catDbRef.push().getKey();
-        catDbRef.setValue(categories);
-        return key;
 
-
-
-    }
-
-    public String writeDefaultExpenseCategory(ArrayList<String> cate){
+    public String writeExpenseCategoriestoFB(ArrayList<String> cate){
         String key = expCategoryRef.push().getKey();
         expCategoryRef.setValue(cate);
         return key;
     }
 
-    public String writeDefaultIncomeCategory(ArrayList<String> cat){
+    public String writeIncomeCategoriestoFB(ArrayList<String> cat){
         String key = incCategoryRef.push().getKey();
         incCategoryRef.setValue(cat);
         return key;
-    }
 
-
-
-    public String writeNewCategoryToFB(String cat){
-        String key = expCategoryRef.push().getKey();
-
-       // Map<String, Object> categoryValue = expCategories.to
-
-        //categoryRef.push().setValue(cat);
-        return key;
     }
 
     public void updateCategory(String key, String newCat){

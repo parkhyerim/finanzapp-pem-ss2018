@@ -267,11 +267,15 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // edit text
 
                                         String newItem = userInput.getText().toString();
-                                        int pos = expenses.size()-1;
-                                        expenses.add(pos, newItem);
-                                        categoryManager.addExpenseCategory(newItem);
+                                        //int pos = expenses.size()-1;
+                                        //expenses.add(pos, newItem);
 
+                                        categoryManager.addExpenseCategory(newItem);
+                                        expenses.clear();
+                                        expenses.addAll(categoryManager.getExpCategories());
+                                        int pos = expenses.indexOf(newItem);
                                         expenseCategoryAdapter.notifyDataSetChanged();
+                                        parent.setSelection(pos);
                                         category = parent.getItemAtPosition(pos).toString();
                                     })
                             .setNegativeButton("Cancel",
@@ -324,13 +328,13 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // get user input and set it to result
                                         // edit text
                                         String newItem = userInput.getText().toString();
-                                        int pos = incomes.size()-1;
-                                        incomes.add(pos, newItem);
                                         categoryManager.addIncomeCategory(newItem);
-
+                                        incomes.clear();
+                                        incomes.addAll(categoryManager.getIncCategories());
+                                        int pos = incomes.indexOf(newItem);
                                         incomeCategoryAdapter.notifyDataSetChanged();
+                                        parent.setSelection(pos);
                                         category = parent.getItemAtPosition(pos).toString();
-
                                     })
                             .setNegativeButton("Cancel",
                                     (dialog, id13) -> dialog.cancel());

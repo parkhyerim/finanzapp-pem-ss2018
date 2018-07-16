@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.data.Account;
+import com.lmu.pem.finanzapp.data.categories.CategoryManager;
 import com.lmu.pem.finanzapp.model.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
@@ -29,6 +30,7 @@ import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -176,6 +178,7 @@ public class LoginActivity extends AppCompatActivity {
         AccountManager accountManager = AccountManager.getInstance();
         TransactionManager transactionManager = TransactionManager.getInstance();
         GlobalSettings globalSettings = GlobalSettings.getInstance();
+        CategoryManager categoryManager = CategoryManager.getInstance();
         curUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -219,6 +222,24 @@ public class LoginActivity extends AppCompatActivity {
                             transactionManager.addTransactionLocally(newTransaction, false);
                         }
 
+                    }
+
+                    //expense categories
+                    if (map.get("expenseCategories") != null) {
+                        for (DataSnapshot snapshot : dataSnapshot.child("expenseCategories").getChildren()) {
+                            categoryManager.addExpenseCategory(snapshot.getValue(String.class));
+                        }
+                    } else {
+                        categoryManager.createDefaultExpCategories();
+                    }
+
+                    //income categories
+                    if (map.get("incomeCategories") != null) {
+                        for (DataSnapshot snapshot : dataSnapshot.child("incomeCategories").getChildren()) {
+                            categoryManager.addIncomeCategory(snapshot.getValue(String.class));
+                        }
+                    } else {
+                        categoryManager.createDefaultIncCategories();
                     }
 
                     //budgets
