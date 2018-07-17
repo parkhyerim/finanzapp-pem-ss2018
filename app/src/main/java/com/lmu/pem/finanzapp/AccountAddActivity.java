@@ -1,5 +1,7 @@
 package com.lmu.pem.finanzapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,11 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.model.accounts.Account;
@@ -22,7 +28,7 @@ import java.util.Locale;
 
 public class AccountAddActivity extends AppCompatActivity {
 
-    private boolean newAccount;
+    private boolean newAccount, wasDefault;
     private AccountManager accountManager;
     private String accountID;
     private int color;
@@ -32,7 +38,9 @@ public class AccountAddActivity extends AppCompatActivity {
     private CheckBox defaultCheckView;
     private Button addAccButton;
     private RadioGroup colorRadioGroup;
-    private RadioButton colorRadio1, colorRadio2, colorRadio3, colorRadio4, colorRadio5, colorRadio6;
+    private RadioButton colorRadio2, colorRadio3, colorRadio4, colorRadio5, colorRadio6;
+    private TextView newDefaultAccText;
+    private Spinner newDefaultAccSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +72,27 @@ public class AccountAddActivity extends AppCompatActivity {
             balanceView.setText(String.format(Locale.getDefault(), "%,.2f",acc.getBalance()));
             balanceText.setVisibility(View.GONE);
             balanceView.setVisibility(View.GONE);
-            defaultCheckView.setChecked(acc.isDefault());
+            wasDefault = acc.isDefault();
+            if(wasDefault){
+                defaultCheckView.setChecked(true);
+                if(accountManager.getAccounts().size()<2) defaultCheckView.setEnabled(false); //if there is only one account, it HAS to be the default one
+
+                newDefaultAccText = findViewById(R.id.newDefaultText);
+                newDefaultAccSpinner = findViewById(R.id.newDefaultAccSpinner);
+                ArrayAdapter<String> newDefaultAccAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, accountManager.getNameArray());
+                newDefaultAccAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                newDefaultAccSpinner.setAdapter(newDefaultAccAdapter);
+
+                defaultCheckView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if(!isChecked){ //if we are de-selecting the default account, we have to choose a new one (there has to be a default account)
+                        newDefaultAccText.setVisibility(View.VISIBLE);
+                        newDefaultAccSpinner.setVisibility(View.VISIBLE);
+                    }else{
+                        newDefaultAccText.setVisibility(View.GONE);
+                        newDefaultAccSpinner.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
 
         addAccButton.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +110,18 @@ public class AccountAddActivity extends AppCompatActivity {
                         balance = Double.parseDouble(balanceView.getText().toString());
                     }catch (Exception e){} //Shouldn't really be necessary because of set inputType, but hey, better safe than sorry.
 
-                    boolean defaultSelected = defaultCheckView.isChecked(); //TODO what if a default account was un-defaulted?
+                    boolean defaultSelected = defaultCheckView.isChecked();
+
+                    if(!newAccount && wasDefault && !defaultSelected){
+                        String newDefault = accountManager.getAccountIdByName(accountManager.getNameArray()[newDefaultAccSpinner.getSelectedItemPosition()]);
+                        if(newDefault==null || accountID.equals(newDefault)){
+                            defaultSelected=true;
+                        }else{
+                            Account newDefaultAcc = accountManager.getAccountById(newDefault);
+                            newDefaultAcc.setDefault(true);
+                            accountManager.setDefaultAcc(newDefaultAcc);
+                        }
+                    }
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newAccount", newAccount);
@@ -122,7 +161,6 @@ public class AccountAddActivity extends AppCompatActivity {
         addAccButton = findViewById(R.id.addAccButton);
         balanceText = findViewById(R.id.balanceText);
         colorRadioGroup = findViewById(R.id.colorRadioGroup);
-        colorRadio1 = findViewById(R.id.colorRadio1);
         colorRadio2 = findViewById(R.id.colorRadio2);
         colorRadio3 = findViewById(R.id.colorRadio3);
         colorRadio4 = findViewById(R.id.colorRadio4);
