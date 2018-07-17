@@ -1,42 +1,40 @@
 <resources>
     <!-- Grundlegendes -->
     <string name="app_name">Oro</string>
-    <string-array name="currency_array">
-        <item>€</item>
-        <item>$</item>
-        <item>£</item>
-    </string-array>
     <string-array name="tabs_array">
         <item>Dashboard</item>
         <item>Transactions</item>
         <item>Accounts</item>
         <item>Budgets</item>
     </string-array>
+    <string-array name="currency_array">
+        <item>€</item>
+        <item>$</item>
+        <item>£</item>
+    </string-array>
     <string name="action_settings">Settings</string>
-    <string name="search_hint">Perform a Quick Action</string>
-    <!-- anscheinend nicht benötigt?
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-     -->
+    <string name="search">Search</string>
+
+    <!-- Login Screen -->
+    <string name="LoginText">Hi there and welcome to Oro!\nYou need an account to store your data. If you don\'t have one yet, just create one right here!</string>
+    <string name="LoginEMail">E-Mail</string>
+    <string name="LoginPW">Password</string>
+    <string name="LoginRegister">Register</string>
+    <string name="LoginLogin">Login</string>
+    <string name="logoutText">Logout</string>
+    <string name="loggingInText">Logging you in...</string>
+
+    <!-- empty list placeholders -->
+    <string name="transactions_empty">It seems like you don\'t have any transactions logged yet. Adding one is easy: Just click the plus button at the bottom of this page!\n\nYou can also head over to the accounts tab and drag the money icons from one account to another in order to transfer money between them.\nTry it out, it\'s fun!</string>
+    <string name="budgets_empty">You don\'t have any budgets yet. Just tap on the plus icon at the bottom of this page to create one!</string>
+    <string name="dashboard_empty">Whoops! There are no Dashboard cards to show you.</string>
 
     <!-- Dashboard -->
-    <string name="dashboard_text">Welcome Back!</string>
-    <!-- Transaktionen -->
-
-    <!-- Konten -->
-    <string name="account_cash">Cash</string>
-
-    <!-- Bugdets -->
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
     <!--Welcome Card-->
     <string name="welcomecard_title">Welcome back!</string>
     <string name="welcomecard_text">Do you want me do give you a roundup of your recent activities?</string>
     <string name="welcomecard_btn1">YES</string>
     <string name="welcomecard_btn2">NO</string>
-
 
     <!--Highest Income Card-->
     <string name="highestincome_title">Your Biggest Income</string>
@@ -49,7 +47,6 @@
     <!--Most economical month Expenses Card-->
     <string name="mem_title">Most economical Month</string>
     <string name="mem_mainText">This year, your most economical Month was </string>
-    <string name="mem_amount">87.54 €</string>
     <string name="mem_amountDesc">spent on average.</string>
     <string name="mem_secondaryText">Keep it up!</string>
 
@@ -57,7 +54,6 @@
     <string name="bw_title">Your</string>
     <string name="bw_title2">Budget:</string>
     <string name="bw_mainText">In the current timeframe of </string>
-    <string name="bw_amount">87.54 €</string>
     <string name="bw_amountDesc">of </string>
     <string name="bw_secondaryText1">You would need</string>
     <string name="bw_secondaryText2">extra days to accommodate for that!</string>
@@ -70,19 +66,5 @@
     <string name="bf_amountDesc">of </string>
     <string name="bf_secondaryText1">You would have needed</string>
     <string name="bf_secondaryText2">extra days to accommodate for that. You can do it the next Time!</string>
-
-    <string name="title_activity_add_budget">AddBudgetActivity</string>
-    <string name="search">Search</string>
-    <string name="LoginText">Hi there and welcome to Oro!\nYou need an account to store your data. If you don\'t have one yet, just create one right here!</string>
-    <string name="LoginEMail">E-Mail</string>
-    <string name="LoginPW">Password</string>
-    <string name="LoginRegister">Register</string>
-    <string name="LoginLogin">Login</string>
-    <string name="logoutText">Logout</string>
-    <string name="transactions_empty">It seems like you don\'t have any transactions logged yet. Adding one is easy: Just click the plus button at the bottom of this page!\n\nYou can also head over to the accounts tab and drag the money icons from one account to another in order to transfer money between them.\nTry it out, it\'s fun!</string>
-    <string name="budgets_empty">You don\'t have any budgets yet. Just tap on the plus icon at the bottom of this page to create one!</string>
-    <string name="dashboard_empty">Whoops! There are no Dashboard cards to show you.</string>
-    <string name="loggingInText">Logging you in...</string>
-
 
 </resources>

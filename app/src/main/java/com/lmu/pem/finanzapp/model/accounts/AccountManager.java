@@ -1,25 +1,15 @@
-package com.lmu.pem.finanzapp.model;
-
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
+package com.lmu.pem.finanzapp.model.accounts;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.lmu.pem.finanzapp.controller.AccountAdapter;
-import com.lmu.pem.finanzapp.data.Account;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AccountManager implements TransactionHistoryEventListener {
 
@@ -31,7 +21,6 @@ public class AccountManager implements TransactionHistoryEventListener {
 
     private AccountManager() {
         this.accounts = new ArrayList<Account>();
-        //this.accounts.add(new Account("Cash", 0xff00695c, true, 64.45)); //TODO - temporary
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
 

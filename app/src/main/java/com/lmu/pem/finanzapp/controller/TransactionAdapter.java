@@ -21,14 +21,13 @@ import android.widget.TextView;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
-import com.lmu.pem.finanzapp.data.Account;
-import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.accounts.Account;
+import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.views.TransactionFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
 

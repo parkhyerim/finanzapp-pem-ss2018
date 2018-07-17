@@ -24,12 +24,11 @@ import android.view.ViewGroup;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
-import com.lmu.pem.finanzapp.MainActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
-import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
@@ -219,7 +218,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         return new RecyclerSectionItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                if(position==-1) return false; //TODO avoids a strange bug after deleting a Transaction, should investigate at some point...
+                if(position==-1) return false;
                 return position == 0
                         || (transactionList.get(position).getYear() != transactionList.get(position-1).getYear())
                         || (transactionList.get(position).getMonth() != transactionList.get(position-1).getMonth())
@@ -228,12 +227,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                // TODO: Richtige Lösung für Index out of bounds schreiben...
                 String date;
                 String[] months = new DateFormatSymbols().getMonths();
                 if(position >= 0) {
                     date = months[transactionList.get(position).getMonth()-1] + " " + transactionList.get(position).getDay() + ", " + transactionList.get(position).getYear();
-
                 } else {
                     date = "January 01, 2018"; //TODO sinnvolle Fehlerbehandlung statt random Datum
                 }

@@ -3,37 +3,26 @@ package com.lmu.pem.finanzapp.views;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.AccountAddActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.AccountAdapter;
-import com.lmu.pem.finanzapp.data.Account;
-import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.accounts.Account;
+import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
-
-import java.util.HashMap;
 
 
 /**

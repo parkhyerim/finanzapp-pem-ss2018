@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,8 +14,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.lmu.pem.finanzapp.data.Account;
-import com.lmu.pem.finanzapp.model.AccountManager;
+import com.lmu.pem.finanzapp.model.accounts.Account;
+import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 
 import java.util.Locale;
@@ -83,7 +82,7 @@ public class AccountAddActivity extends AppCompatActivity {
                         balance = Double.parseDouble(balanceView.getText().toString());
                     }catch (Exception e){} //Shouldn't really be necessary because of set inputType, but hey, better safe than sorry.
 
-                    boolean defaultSelected = defaultCheckView.isChecked(); //TODO what if a default account was un-defaulted? what if a new default was set?
+                    boolean defaultSelected = defaultCheckView.isChecked(); //TODO what if a default account was un-defaulted?
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("newAccount", newAccount);

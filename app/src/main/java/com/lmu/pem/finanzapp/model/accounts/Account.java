@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.data;
+package com.lmu.pem.finanzapp.model.accounts;
 
 import java.util.Calendar;
 import java.util.HashMap;
