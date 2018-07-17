@@ -43,8 +43,8 @@ public class CircleView extends View
         textPaint = new TextPaint();
         subtextPaint = new TextPaint();
         emphasis = false;
-        textSize = 50;
-        subtextSize = 40;
+        textSize = 48;
+        subtextSize = 38;
         text="";
         subtext="";
     }

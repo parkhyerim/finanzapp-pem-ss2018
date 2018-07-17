@@ -46,7 +46,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
     private TransactionManager transactionManager;
     private AccountAdapter adapter;
     private DatabaseReference dbRef;
-    private boolean notify;
+    private GridView gridView;
 
     public AccountFragment() {
         this.accountManager = AccountManager.getInstance();
@@ -59,26 +59,9 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                              Bundle savedInstanceState) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                HashMap<String, HashMap<String, Object>> map = (HashMap<String, HashMap<String, Object>>) dataSnapshot.getValue();
-                if(notify) {
-                    for (String key : map.keySet()) {
-                        Snackbar.make(getView(), "Added account " + map.get(key).get("name") + ".", Snackbar.LENGTH_SHORT).show();
-                    }
-                    notify = false;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("123123123","Cancelled: "+databaseError.toString());
-            }
-        });
 
         View v = inflater.inflate(R.layout.account_fragment, container, false);
-        GridView gridView = (GridView) v.findViewById(R.id.gridview);
+        gridView = (GridView) v.findViewById(R.id.gridview);
         adapter = new AccountAdapter(getContext(), accountManager.getAccounts(), this);
         gridView.setAdapter(adapter);
 
@@ -117,7 +100,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                 acc = new Account(name, color, defaultAcc, balance);
                 accountID=acc.getId();
                 accountManager.addAccount(acc);
-                notify=true;
             }else{
                 accountID = data.getStringExtra("accountID");
                 acc = accountManager.getAccountById(accountID);
@@ -129,7 +111,8 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             }
             dbRef.child(accountID).setValue(acc.toMap());
 
-            adapter.notifyDataSetChanged();
+            //normally we'd call adapter.notifyDataSetChanged() here, but that doesn't do the trick if you just change the default account, so we're re-setting the adapter.
+            gridView.setAdapter(adapter);
         }else if(requestCode==TransactionFragment.REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK){
             int year = data.getIntExtra("year",0);
             int month = data.getIntExtra("month", 0);
@@ -169,7 +152,6 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
         } else {
             imageResource = img;
         }
-        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
         return imageResource;
     }
 }

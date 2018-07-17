@@ -39,7 +39,6 @@ public class AddBudgetActivity extends AppCompatActivity {
     Spinner categorySpinner;
     Spinner renewalTypeSpinner;
 
-    LinearLayout customDateLayout;
     EditText customDateEditText;
 
     Button submitButton;
@@ -87,7 +86,6 @@ public class AddBudgetActivity extends AppCompatActivity {
         categorySpinner = findViewById(R.id.categorySpinner);
         renewalTypeSpinner = findViewById(R.id.renewalTypeSpinner);
 
-        customDateLayout = findViewById(R.id.customDateLayout);
         customDateEditText = findViewById(R.id.customDateEditText);
         currencySymbol.setText(GlobalSettings.getInstance().getCurrencyString());
 
@@ -199,7 +197,7 @@ public class AddBudgetActivity extends AppCompatActivity {
     }
 
     private void setCustomDateValue(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.YY", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
         customDate = date;
         customDateEditText.setText(format.format(customDate));
     }
