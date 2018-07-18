@@ -41,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference userRef;
     private String uid;
     private LinearLayout loginUI, logginInUI;
+    private TextWatcher emailWatcher;
+    private TextWatcher pwWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         setupUI();
+        setupTextWatchers();
         showLoginUI();
 
         userRef = FirebaseDatabase.getInstance().getReference().child("users");
@@ -56,9 +59,39 @@ public class LoginActivity extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if(user != null) {
                 hideLoginUI();
-                Log.i("123123123", "onCreate: Logged in");
+                Log.i("123123123", "LoginActivity.onCreate: Logged in!");
                 uid = user.getUid();
                 loadFirebaseData();
+            }
+        };
+    }
+
+    private void setupTextWatchers() {
+
+        emailWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                emailEditText.setError(null);
+                emailEditText.removeTextChangedListener(this);
+            }
+        };
+        pwWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                pwEditText.setError(null);
+                pwEditText.removeTextChangedListener(this);
             }
         };
     }
@@ -137,44 +170,22 @@ public class LoginActivity extends AppCompatActivity {
         boolean valid = true;
         inputMail = emailEditText.getText().toString();
         inputPW = pwEditText.getText().toString();
-        TextWatcher emailWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                emailEditText.setError(null);
-                emailEditText.removeTextChangedListener(this);
-            }
-        };
-        TextWatcher pwWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                pwEditText.setError(null);
-                pwEditText.removeTextChangedListener(this);
-            }
-        };
         if(inputMail.length()<1 || !inputMail.contains("@")){
             valid=false;
             emailEditText.setError("You have to enter a valid e-mail address!");
+            //prevents that the same listener is added multiple times if more than one button click occurs before any input that would remove the listener. Unfortunately, the implementation in TextView doesn't prevent one listener to be added multiple times, so we have to prevent this ourselves.
+            emailEditText.removeTextChangedListener(emailWatcher);
             emailEditText.addTextChangedListener(emailWatcher);
         }
         if(inputPW.length()<1){
             valid=false;
             pwEditText.setError("You have to enter your password!");
+            pwEditText.removeTextChangedListener(pwWatcher);
             pwEditText.addTextChangedListener(pwWatcher);
         }else if(inputPW.length()<6){
             valid=false;
             pwEditText.setError("Your password has to be at least 6 characters long!"); //stupid Firebase.
+            pwEditText.removeTextChangedListener(pwWatcher);
             pwEditText.addTextChangedListener(pwWatcher);
         }
         return valid;
@@ -183,9 +194,14 @@ public class LoginActivity extends AppCompatActivity {
     private void loadFirebaseData(){
         DatabaseReference curUserRef = userRef.child(uid);
         AccountManager accountManager = AccountManager.getInstance();
+        accountManager.reset();
         TransactionManager transactionManager = TransactionManager.getInstance();
+        transactionManager.reset();
         GlobalSettings globalSettings = GlobalSettings.getInstance();
+        globalSettings.reset();
         CategoryManager categoryManager = CategoryManager.getInstance();
+        categoryManager.reset();
+        BudgetManager budgetManager = BudgetManager.getInstance();
         curUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -251,7 +267,7 @@ public class LoginActivity extends AppCompatActivity {
                     //budgets
                     for (DataSnapshot snapshot : dataSnapshot.child("budgets").getChildren()) {
                         Log.i("BUDGET:", snapshot.toString());
-                        BudgetManager.getInstance().addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
+                        budgetManager.addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
                     }
 
                     //settings

@@ -21,9 +21,13 @@ public class CategoryManager {
     private ArrayList<String> incCategories;
 
     private DatabaseReference db;
-    private DatabaseReference catDbRef, expCategoryRef, incCategoryRef;
+    private DatabaseReference expCategoryRef, incCategoryRef;
 
-    public CategoryManager() {
+    private CategoryManager() {
+        reset();
+    }
+
+    public void reset() {
         expCategories = new ArrayList<>();
         incCategories = new ArrayList<>();
         expCategories.add(""); // dummy element
@@ -31,15 +35,12 @@ public class CategoryManager {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        catDbRef = db.child("categories");
 
         expCategoryRef = db.child("expenseCategories");
         incCategoryRef = db.child("incomeCategories");
 
         //expCategories.addAll(createDefaultExpCategories());
         //incCategories.addAll(createDefaultIncCategories());
-
-
     }
 
 

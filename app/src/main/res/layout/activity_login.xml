@@ -73,21 +73,29 @@
                 android:hint="@string/LoginPW"
                 android:layout_marginBottom="5dp" />
 
-            <Button
-                android:id="@+id/registerButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/applegreen"
-                android:text="@string/LoginRegister"
-                android:layout_marginBottom="5dp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
 
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:text="@string/LoginLogin"
-                android:layout_marginBottom="5dp" />
+                <Button
+                    android:id="@+id/loginButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/LoginLogin"
+                    android:layout_marginEnd="5dp"/>
+
+                <Button
+                    android:id="@+id/registerButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@color/applegreen"
+                    android:text="@string/LoginRegister" />
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout

@@ -62,9 +62,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     @Override
     public void handle(BudgetEvent event) {
-
         refreshActiveCards(TransactionManager.getInstance());
-
     }
 
     public static DashboardManager getInstance(Context context) {

@@ -25,7 +25,6 @@ import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.RecyclerItemTouchHelperListener;
 import com.lmu.pem.finanzapp.RecyclerSectionItemDecoration;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.model.accounts.AccountManager;
@@ -102,9 +101,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
-
-        /*ItemTouchHelper.SimpleCallback itemTouchHelperCallBack = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);*/
 
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionManager.getTransactions()));

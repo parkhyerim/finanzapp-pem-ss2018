@@ -20,9 +20,7 @@ public class AccountManager implements TransactionHistoryEventListener {
     private DatabaseReference dbRef;
 
     private AccountManager() {
-        this.accounts = new ArrayList<Account>();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
+        reset();
 
         TransactionManager.getInstance().addListener(this);
     }
@@ -34,6 +32,12 @@ public class AccountManager implements TransactionHistoryEventListener {
     public static AccountManager getInstance () {
         if (instance == null) instance = new AccountManager();
         return instance;
+    }
+
+    public void reset(){
+        this.accounts = new ArrayList<Account>();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
     }
 
     /**

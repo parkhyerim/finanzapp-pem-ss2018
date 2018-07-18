@@ -37,6 +37,10 @@ public class GlobalSettings {
     }
 
     public GlobalSettings() {
+        reset();
+    }
+
+    public void reset() {
         this.currency = CURRENCY_EURO;
         this.homeTab = TAB_DASHBOARD;
 

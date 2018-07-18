@@ -1,17 +1,9 @@
 package com.lmu.pem.finanzapp.model.transactions;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.lmu.pem.finanzapp.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,16 +16,17 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     private ArrayList<Transaction> transactions;
 
-    private DatabaseReference db;
     private DatabaseReference transactionRef;
 
 
     private TransactionManager() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        transactionRef = db.child("transactions");
+        reset();
+    }
 
+    public void reset() {
         this.transactions = new ArrayList<>();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        transactionRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("transactions");
     }
 
 
@@ -151,19 +144,8 @@ public class TransactionManager extends TransactionHistoryEventSource{
 
     public void deleteTransactionFromFB(Transaction transaction) {
         String key = transaction.getKey();
-
-      //  Toast.makeText(this,"key;"+ key, Toast.LENGTH_LONG).show();
-       // transactionRef.child(key).setValue(null);
-
-
         if (key != null) {
             transactionRef.child(key).removeValue();
         }
-
-        /*
-        String key = transactionRef.push().getKey();
-        this.userId = transaction.getTransactionId();
-        transactionRef.child(transaction.get).removeValue();
-        */
     }
 }
