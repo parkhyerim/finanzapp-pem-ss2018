@@ -107,7 +107,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                 //If we have an amount, the Transaction already exists - so customize the Toolbar title
                 Toolbar toolbar = findViewById(R.id.toolbar);
-                toolbar.setTitle("Edit Transaction");
+                toolbar.setTitle(R.string.transaction_add_title_edit);
             }
 
             // Accounts
@@ -479,7 +479,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         expenseLayout.setVisibility(View.GONE);
         incomeLayout.setVisibility(View.GONE);
         accountLine2.setVisibility(View.VISIBLE);
-        accountTextView.setText("Account (From)");
+        accountTextView.setText(R.string.transaction_add_accountFrom);
         category = Transaction.CATEGORY_SHIFT;
     }
 

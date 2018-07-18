@@ -134,21 +134,22 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            int year = data.getIntExtra("year",0);
+            int month = data.getIntExtra("month", 0);
+            int day = data.getIntExtra("day",0);
+            String account = data.getStringExtra("account");
+            String account2 = data.getStringExtra("account2");
+            String category = data.getStringExtra("category");
+            String description = data.getStringExtra("description");
+            double amount = data.getDoubleExtra("amount",0);
 
-        int year = data.getIntExtra("year",0);
-        int month = data.getIntExtra("month", 0);
-        int day = data.getIntExtra("day",0);
-        String account = data.getStringExtra("account");
-        String account2 = data.getStringExtra("account2");
-        String category = data.getStringExtra("category");
-        String description = data.getStringExtra("description");
-        double amount = data.getDoubleExtra("amount",0);
-
-        if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
-            insertItem(year, month, day, account, account2, category, description, amount);
-        }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
-            String key = data.getStringExtra("key");
-            transactionManager.updateTransaction(key, year, month, day, account, account2, category, description, amount);
+            if(requestCode == REQUEST_CODE_ADD_TRANSACTION) {
+                insertItem(year, month, day, account, account2, category, description, amount);
+            }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION){
+                String key = data.getStringExtra("key");
+                transactionManager.updateTransaction(key, year, month, day, account, account2, category, description, amount);
+            }
         }
     }
 

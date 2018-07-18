@@ -65,7 +65,7 @@ public class AddBudgetActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("budgetToEdit")) {
             budgetToEdit = (Budget)getIntent().getSerializableExtra("budgetToEdit");
-            toolbar.setTitle("Edit Budget");
+            toolbar.setTitle(R.string.budget_edit_title_edit);
         }
 
         setSupportActionBar(toolbar);
@@ -176,19 +176,16 @@ public class AddBudgetActivity extends AppCompatActivity {
         if (budgetToEdit != null) {
             setCustomDateValue(budgetToEdit.getUntil());
         }
-        customDateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog dialog = new DatePickerDialog(
-                        AddBudgetActivity.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        (view, y, m, d) -> setCustomDateValue(new Date(y - 1900, m, d)),
-                        customDate.getYear() + 1900,
-                        customDate.getMonth() + 1,
-                        customDate.getDate());
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-                dialog.show();
-            }
+        customDateEditText.setOnClickListener(v -> {
+            DatePickerDialog dialog = new DatePickerDialog(
+                    AddBudgetActivity.this,
+                    android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                    (view, y, m, d) -> setCustomDateValue(new Date(y - 1900, m, d)),
+                    customDate.getYear() + 1900,
+                    customDate.getMonth() + 1,
+                    customDate.getDate());
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.show();
         });
     }
 
@@ -240,16 +237,12 @@ public class AddBudgetActivity extends AppCompatActivity {
                 builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
             builder.setTitle("Delete budget")
                     .setMessage("Are you sure you want to delete this budget?")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            BudgetManager.getInstance().removeById(budgetToEdit.getId());
-                            finish();
-                        }
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        BudgetManager.getInstance().removeById(budgetToEdit.getId());
+                        finish();
                     })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
+                    .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                        // do nothing
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();

@@ -14,7 +14,7 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:title="Add a new Budget"
+        app:title="@string/budget_edit_title_add"
         app:titleTextColor="@color/appBarTitle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
@@ -36,7 +36,7 @@
                     android:id="@+id/currencySymbol"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
-                    android:text="€"
+                    android:text="@string/amount_default_symbol"
                     android:textColor="@color/colorPrimary"
                     android:textSize="30sp"
                     android:textStyle="bold" />
@@ -64,8 +64,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Category"
-                    android:textSize="18sp" />
+                    android:text="@string/budget_edit_cat"
+                    android:textSize="@dimen/editUI_textSize" />
 
                 <Spinner
                     android:id="@+id/categorySpinner"
@@ -90,8 +90,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Duration"
-                    android:textSize="18sp" />
+                    android:text="@string/budget_edit_duration"
+                    android:textSize="@dimen/editUI_textSize" />
 
                 <Spinner
                     android:id="@+id/renewalTypeSpinner"
@@ -118,8 +118,8 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
-                    android:text="Until"
-                    android:textSize="18sp" />
+                    android:text="@string/budget_edit_until"
+                    android:textSize="@dimen/editUI_textSize" />
 
                 <EditText
                     android:id="@+id/customDateEditText"
@@ -129,7 +129,8 @@
                     android:clickable="true"
                     android:focusable="false"
                     android:inputType="none"
-                    android:textAlignment="viewEnd"/>
+                    android:textAlignment="viewEnd"
+                    android:paddingEnd="5sp"/>
 
             </LinearLayout>
 
@@ -139,11 +140,16 @@
                 android:id="@+id/submitButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/applegreen"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:text="DONE"
-                android:textColor="@android:color/background_light"
+                android:text="@string/budget_edit_done"
+                android:paddingTop="@dimen/editUI_doneButton_padding_v"
+                android:paddingBottom="@dimen/editUI_doneButton_padding_v"
+                android:paddingStart="@dimen/editUI_doneButton_padding_h"
+                android:paddingEnd="@dimen/editUI_doneButton_padding_h"
+                android:textSize="@dimen/editUI_textSize"
+                android:textColor="@color/appBarTitle"
                 android:layout_marginBottom="8dp"/>
 
             <Button
@@ -152,7 +158,12 @@
                 android:layout_height="wrap_content"
                 android:background="#00000000"
                 android:layout_gravity="center"
-                android:text="DELETE"
+                android:text="@string/budget_edit_delete"
+                android:paddingTop="@dimen/editUI_doneButton_padding_v"
+                android:paddingBottom="@dimen/editUI_doneButton_padding_v"
+                android:paddingStart="@dimen/editUI_doneButton_padding_h"
+                android:paddingEnd="@dimen/editUI_doneButton_padding_h"
+                android:textSize="@dimen/editUI_textSize"
                 android:textColor="@android:color/holo_red_light"/>
 
         </LinearLayout>

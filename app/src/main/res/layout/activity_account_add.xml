@@ -13,7 +13,7 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:title="Add a new Account"
+        app:title="@string/account_edit_title_add"
         app:titleTextColor="@color/appBarTitle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
     </android.support.v7.widget.Toolbar>
@@ -28,12 +28,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:layout_marginBottom="10dp"
                 android:columnCount="2"
                 >
 
                 <TextView
-                    android:text="Name: "
+                    android:text="@string/account_edit_name"
                     android:layout_gravity="center_vertical"
+                    android:textSize="@dimen/editUI_textSize"
+                    android:layout_marginBottom="10dp"
                     />
                 <EditText
                     android:id="@+id/nameEdit"
@@ -41,12 +44,15 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:hint="Name of the account"
+                    android:hint="@string/account_edit_name_hint"
+                    android:layout_marginBottom="10dp"
                     />
                 <TextView
                     android:id="@+id/balanceText"
-                    android:text="Balance: "
+                    android:text="@string/account_edit_balance"
+                    android:textSize="@dimen/editUI_textSize"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
                     />
                 <EditText
                     android:id="@+id/balanceEdit"
@@ -54,17 +60,22 @@
                     android:layout_gravity="fill_horizontal"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
-                    android:hint="Balance of the account"
+                    android:hint="@string/account_edit_balance_hint"
+                    android:layout_marginBottom="10dp"
                     />
                 <TextView
-                    android:text="Color:"
-                    android:layout_gravity="center_vertical"/>
+                    android:text="@string/account_edit_color"
+                    android:textSize="@dimen/editUI_textSize"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
+                    />
                 <RadioGroup
                     android:id="@+id/colorRadioGroup"
                     android:layout_width="wrap_content"
                     android:layout_gravity="fill_horizontal"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
                     <RadioButton
                         android:id="@+id/colorRadio1"
                         android:layout_width="wrap_content"
@@ -99,13 +110,17 @@
                         android:buttonTint="@color/colorwebsiteTab" />
                 </RadioGroup>
                 <TextView
-                    android:text="Default account:"
-                    android:layout_gravity="center_vertical"/>
+                    android:text="@string/account_edit_default"
+                    android:textSize="@dimen/editUI_textSize"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="10dp"
+                    />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_gravity="fill_horizontal"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginBottom="10dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -117,7 +132,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Please select a new default:"
+                            android:text="@string/account_edit_default_new"
                             android:id="@+id/newDefaultText"
                             android:visibility="gone"/>
                     </LinearLayout>
@@ -132,10 +147,16 @@
             <Button
                 android:id="@+id/addAccButton"
                 android:layout_width="300dp"
+                android:textSize="@dimen/editUI_textSize"
+                android:paddingTop="@dimen/editUI_doneButton_padding_v"
+                android:paddingBottom="@dimen/editUI_doneButton_padding_v"
+                android:paddingStart="@dimen/editUI_doneButton_padding_h"
+                android:paddingEnd="@dimen/editUI_doneButton_padding_h"
                 android:layout_height="wrap_content"
                 android:elevation="4dp"
                 android:layout_gravity="center"
-                android:text="Add Account"
+                android:text="@string/account_edit_confirm_add"
+                android:textColor="@color/appBarTitle"
                 android:backgroundTint="@color/colorPrimary"
                 />
         </LinearLayout>

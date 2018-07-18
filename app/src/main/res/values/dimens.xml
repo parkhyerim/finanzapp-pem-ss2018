@@ -24,5 +24,8 @@
 
     <!--Transaction section header-->
     <dimen name="transaction_recycler_section_header">18dp</dimen>
+    <dimen name="editUI_textSize">18sp</dimen>
+    <dimen name="editUI_doneButton_padding_v">20dp</dimen>
+    <dimen name="editUI_doneButton_padding_h">40dp</dimen>
 
 </resources>

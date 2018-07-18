@@ -56,8 +56,8 @@ public class AccountAddActivity extends AppCompatActivity {
         newAccount = getIntent().getExtras().getBoolean("newAccount");
         if(!newAccount){
             Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle("Edit Account");
-            addAccButton.setText("Apply Changes");
+            toolbar.setTitle(R.string.account_edit_title_edit);
+            addAccButton.setText(R.string.account_edit_confirm_edit);
 
             accountID = getIntent().getExtras().getString("accountID");
             Account acc = accountManager.getAccountById(accountID);
