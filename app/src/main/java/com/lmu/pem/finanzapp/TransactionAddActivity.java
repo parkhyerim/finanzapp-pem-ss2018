@@ -267,10 +267,8 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // edit text
 
                                         String newItem = userInput.getText().toString();
-                                        //int pos = expenses.size()-1;
-                                        //expenses.add(pos, newItem);
-
-                                        categoryManager.addExpenseCategory(newItem);
+                                        if(newItem.length()<1 || categoryManager.getExpCategories().contains(newItem)) return;
+                                        categoryManager.addExpenseCategory(newItem, true);
                                         expenses.clear();
                                         expenses.addAll(categoryManager.getExpCategories());
                                         int pos = expenses.indexOf(newItem);
@@ -328,7 +326,8 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // get user input and set it to result
                                         // edit text
                                         String newItem = userInput.getText().toString();
-                                        categoryManager.addIncomeCategory(newItem);
+                                        if(newItem.length()<1 || categoryManager.getIncCategories().contains(newItem)) return;
+                                        categoryManager.addIncomeCategory(newItem, true);
                                         incomes.clear();
                                         incomes.addAll(categoryManager.getIncCategories());
                                         int pos = incomes.indexOf(newItem);

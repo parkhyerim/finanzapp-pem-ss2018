@@ -233,7 +233,7 @@ public class LoginActivity extends AppCompatActivity {
                     //expense categories
                     if (map.get("expenseCategories") != null) {
                         for (DataSnapshot snapshot : dataSnapshot.child("expenseCategories").getChildren()) {
-                            categoryManager.addExpenseCategory(snapshot.getValue(String.class));
+                            categoryManager.addExpenseCategory(snapshot.getValue(String.class), false);
                         }
                     } else {
                         categoryManager.createDefaultExpCategories();
@@ -242,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                     //income categories
                     if (map.get("incomeCategories") != null) {
                         for (DataSnapshot snapshot : dataSnapshot.child("incomeCategories").getChildren()) {
-                            categoryManager.addIncomeCategory(snapshot.getValue(String.class));
+                            categoryManager.addIncomeCategory(snapshot.getValue(String.class), false);
                         }
                     } else {
                         categoryManager.createDefaultIncCategories();

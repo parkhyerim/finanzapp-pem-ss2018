@@ -116,11 +116,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private void clickDelete(TransactionAdapter adapter) {
             TransactionManager transactionManager = TransactionManager.getInstance();
             String description = transactionManager.getTransactions().get(getAdapterPosition()).getDescription();
+            if(description.length()<1) description = transactionManager.getTransactions().get(getAdapterPosition()).getCategory();
             final int deletedIndex = getAdapterPosition();
             final Transaction deletedTransaction = transactionManager.getTransactions().get(deletedIndex);
             adapter.removeItem(deletedIndex);
 
-            Snackbar snackbar = Snackbar.make(adapter.rootView, description + " removed from list!", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(adapter.rootView, "Removed transaction \"" + description + "\" from list!", Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", v -> adapter.restoreItem(deletedTransaction, deletedIndex));
 
             snackbar.setActionTextColor(Color.YELLOW);

@@ -44,7 +44,7 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, RecyclerItemTouchHelperListener, TransactionHistoryEventListener {
+public class TransactionFragment extends Fragment implements SearchView.OnQueryTextListener, TransactionHistoryEventListener {
 
     private TransactionManager transactionManager;
 
@@ -282,6 +282,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     }
 
     //TODO sollte weg können
+    /*
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
@@ -298,7 +299,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
         }
 
-    }
+    }*/
 
     @Override
     public void handle(TransactionHistoryEvent event) {

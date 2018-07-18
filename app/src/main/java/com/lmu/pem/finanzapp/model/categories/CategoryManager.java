@@ -22,8 +22,6 @@ public class CategoryManager {
 
     private DatabaseReference db;
     private DatabaseReference catDbRef, expCategoryRef, incCategoryRef;
-    private String expKey;
-    private String incKey;
 
     public CategoryManager() {
         expCategories = new ArrayList<>();
@@ -59,7 +57,7 @@ public class CategoryManager {
     }
 
 
-    public void addExpenseCategory(String category){
+    public void addExpenseCategory(String category, boolean writeToFB){
         this.expCategories.add(category);
         this.expCategories.remove("Other");
         this.expCategories.remove("Other");  // kann zweimal in der Liste stehen
@@ -72,12 +70,10 @@ public class CategoryManager {
         Collections.sort(expCategories, String.CASE_INSENSITIVE_ORDER);
         this.expCategories.add("Other");
         this.expCategories.add("Add");
-        expKey = writeExpenseCategoriestoFB(this.expCategories);
+        if(writeToFB) writeExpenseCategoriestoFB(this.expCategories);
     }
 
-
-
-    public void addIncomeCategory(String category){
+    public void addIncomeCategory(String category, boolean writeToFB){
         incCategories.add(category);
         incCategories.remove("Other");
         incCategories.remove("Add");
@@ -90,7 +86,7 @@ public class CategoryManager {
         Collections.sort(incCategories, String.CASE_INSENSITIVE_ORDER);
         incCategories.add("Other");
         incCategories.add("Add");
-        incKey = writeIncomeCategoriestoFB(incCategories);
+        if(writeToFB) writeIncomeCategoriestoFB(incCategories);
     }
 
 
@@ -103,7 +99,7 @@ public class CategoryManager {
         defaultExpCats.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
                 "Car","Travel", "Other", "Add"));
         for (String cat : defaultExpCats) {
-            this.addExpenseCategory(cat);
+            this.addExpenseCategory(cat, false);
         }
         writeExpenseCategoriestoFB(defaultExpCats);
         return defaultExpCats;
@@ -113,7 +109,7 @@ public class CategoryManager {
         ArrayList<String> defaultIncCats = new ArrayList<>();
         defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock", "Other", "Add"));
         for (String cat : defaultIncCats) {
-            this.addIncomeCategory(cat);
+            this.addIncomeCategory(cat, false);
         }
         writeIncomeCategoriestoFB(defaultIncCats);
         return defaultIncCats;
