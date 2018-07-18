@@ -1,8 +1,7 @@
-package com.lmu.pem.finanzapp.views;
+package com.lmu.pem.finanzapp;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,12 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.lmu.pem.finanzapp.R;
-import com.lmu.pem.finanzapp.model.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.transactions.CategoryManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
@@ -30,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddBudgetActivity extends AppCompatActivity {
+public class BudgetAddActivity extends AppCompatActivity {
 
 
     //region View Handles
@@ -178,7 +175,7 @@ public class AddBudgetActivity extends AppCompatActivity {
         }
         customDateEditText.setOnClickListener(v -> {
             DatePickerDialog dialog = new DatePickerDialog(
-                    AddBudgetActivity.this,
+                    BudgetAddActivity.this,
                     android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                     (view, y, m, d) -> setCustomDateValue(new Date(y - 1900, m, d)),
                     customDate.getYear() + 1900,

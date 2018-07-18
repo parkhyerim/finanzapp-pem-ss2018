@@ -1,6 +1,6 @@
 package com.lmu.pem.finanzapp.model;
 
-import com.lmu.pem.finanzapp.model.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.transactions.CategoryManager;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;

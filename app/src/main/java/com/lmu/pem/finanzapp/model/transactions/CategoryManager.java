@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.model.categories;
+package com.lmu.pem.finanzapp.model.transactions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class CategoryManager {
     private ArrayList<String> incCategories;
 
     private DatabaseReference db;
-    private DatabaseReference catDbRef, expCategoryRef, incCategoryRef;
+    private DatabaseReference expCategoryRef, incCategoryRef;
 
     public CategoryManager() {
         expCategories = new ArrayList<>();
@@ -31,14 +31,12 @@ public class CategoryManager {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
-        catDbRef = db.child("categories");
 
         expCategoryRef = db.child("expenseCategories");
         incCategoryRef = db.child("incomeCategories");
 
         //expCategories.addAll(createDefaultExpCategories());
         //incCategories.addAll(createDefaultIncCategories());
-
 
     }
 
@@ -129,12 +127,7 @@ public class CategoryManager {
 
     }
 
-    public void updateCategory(String key, String newCat){
-
-    }
-
-
-
+    
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();

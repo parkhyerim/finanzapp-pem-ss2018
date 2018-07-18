@@ -24,7 +24,7 @@
         <activity android:name=".AccountAddActivity" />
         <activity android:name=".SettingsActivity" />
         <activity
-            android:name=".views.AddBudgetActivity"
+            android:name=".BudgetAddActivity"
             android:theme="@style/AppTheme" />
     </application>
 
