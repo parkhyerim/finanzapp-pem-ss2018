@@ -3,13 +3,10 @@ package com.lmu.pem.finanzapp.model.transactions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 
 
@@ -34,10 +31,6 @@ public class CategoryManager {
 
         expCategoryRef = db.child("expenseCategories");
         incCategoryRef = db.child("incomeCategories");
-
-        //expCategories.addAll(createDefaultExpCategories());
-        //incCategories.addAll(createDefaultIncCategories());
-
     }
 
 
@@ -126,14 +119,5 @@ public class CategoryManager {
         return key;
 
     }
-
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("expenseCategories", expCategories);
-        result.put("incomeCategories", incCategories);
-        return result;
-    }
-
 
 }

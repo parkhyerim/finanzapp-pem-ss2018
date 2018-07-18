@@ -221,6 +221,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 }
 
                 description = descriptionEditText.getText().toString();
+                if(description.equals("")) description = category;
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("year", year);
@@ -295,7 +296,6 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
         // Income-Category
-        //String[] incomeArray = getResources().getStringArray(R.array.income_category);
         if(incomes.isEmpty()) {
            // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
             incomes.addAll(categoryManager.getIncCategories());

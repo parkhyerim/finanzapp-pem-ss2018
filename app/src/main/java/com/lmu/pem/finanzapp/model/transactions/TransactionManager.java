@@ -160,10 +160,5 @@ public class TransactionManager extends TransactionHistoryEventSource{
             transactionRef.child(key).removeValue();
         }
 
-        /*
-        String key = transactionRef.push().getKey();
-        this.userId = transaction.getTransactionId();
-        transactionRef.child(transaction.get).removeValue();
-        */
     }
 }

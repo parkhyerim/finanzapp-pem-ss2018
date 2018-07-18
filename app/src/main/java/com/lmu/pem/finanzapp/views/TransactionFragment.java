@@ -195,7 +195,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         //
         final SearchView searchView = (SearchView) item.getActionView();
         searchView.setIconifiedByDefault(false);
-       // searchView.setBackgroundColor(Color.parseColor("#ffffff"));
         searchView.setOnQueryTextListener(this);
         item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -231,13 +230,16 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             final String descText = transaction.getDescription().toLowerCase();
             final String accText = transaction.getAccount().toLowerCase();
             final String cateText = transaction.getCategory().toLowerCase();
-            final String year = transaction.getYear()+"";
-            final String month = transaction.getMonth()+"";
-            final String day = transaction.getDay()+"";
+            final String year = String.valueOf(transaction.getYear());
+            final String month = String.valueOf(transaction.getMonth());
+            final String day = String.valueOf(transaction.getDay());
             final String amountText = String.valueOf(transaction.getAmount()).toLowerCase();
+            final String monthStr = getMonthStr(transaction.getMonth()).toLowerCase();
+
             if(descText.contains(query)
                     || accText.contains(query)
                     || cateText.contains(query)
+                    || monthStr.contains(query)
                     || year.equals(query) //if one digit should suffice, replace equals() with contains()
                     || month.equals(query)
                     || day.equals(query)
@@ -252,5 +254,10 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     public void handle(TransactionHistoryEvent event) {
         adapter.notifyDataSetChanged();
         handleListEmptyText();
+    }
+
+
+    public String getMonthStr(int month) {
+        return new DateFormatSymbols().getMonths()[month-1];
     }
 }
