@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lmu.pem.finanzapp.BudgetAddActivity;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.BudgetAdapter;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEvent;
@@ -52,7 +53,7 @@ public class BudgetFragment extends Fragment implements BudgetEventListener {
 
         fab = aboutView.findViewById(R.id.addBudget);
         fab.setOnClickListener((v) -> {
-            Intent intent = new Intent(getActivity().getApplicationContext(), AddBudgetActivity.class);
+            Intent intent = new Intent(getActivity().getApplicationContext(), BudgetAddActivity.class);
             startActivityForResult(intent, 0);
         });
 
@@ -78,7 +79,7 @@ public class BudgetFragment extends Fragment implements BudgetEventListener {
     }
 
     public void onBudgetClicked(String id) {
-        Intent i = new Intent(getContext(), AddBudgetActivity.class);
+        Intent i = new Intent(getContext(), BudgetAddActivity.class);
         i.putExtra("budgetToEdit", BudgetManager.getInstance().getById(id));
 
         startActivityForResult(i, 1);

@@ -24,7 +24,7 @@ import android.widget.TextView;
 import java.text.DateFormatSymbols;
 
 
-import com.lmu.pem.finanzapp.model.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.transactions.CategoryManager;
 import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.transactions.Transaction;
@@ -221,6 +221,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 }
 
                 description = descriptionEditText.getText().toString();
+                if(description.equals("")) description = category;
 
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("year", year);
@@ -253,7 +254,7 @@ public class TransactionAddActivity extends AppCompatActivity {
                 category = (String) expenseCategorySpinner.getSelectedItem();
                 if(category.equals("Add")){
                     LayoutInflater li = LayoutInflater.from(context);
-                    View promptsView = li.inflate(R.layout.prompts, null);
+                    View promptsView = li.inflate(R.layout.transaction_prompts, null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                     alertDialogBuilder.setView(promptsView);
 
@@ -295,7 +296,6 @@ public class TransactionAddActivity extends AppCompatActivity {
 
 
         // Income-Category
-        //String[] incomeArray = getResources().getStringArray(R.array.income_category);
         if(incomes.isEmpty()) {
            // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
             incomes.addAll(categoryManager.getIncCategories());
@@ -313,7 +313,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                 if(incomeCategorySpinner.getSelectedItemPosition() == incomes.size()-1){
                     LayoutInflater li = LayoutInflater.from(context);
-                    View promptsView = li.inflate(R.layout.prompts, null);
+                    View promptsView = li.inflate(R.layout.transaction_prompts, null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                     alertDialogBuilder.setView(promptsView);
 

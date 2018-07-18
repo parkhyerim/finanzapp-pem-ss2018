@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.model.accounts.Account;
-import com.lmu.pem.finanzapp.model.categories.CategoryManager;
+import com.lmu.pem.finanzapp.model.transactions.CategoryManager;
 import com.lmu.pem.finanzapp.model.accounts.AccountManager;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;

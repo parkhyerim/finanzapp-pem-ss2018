@@ -1,7 +1,6 @@
 package com.lmu.pem.finanzapp.controller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
-import com.lmu.pem.finanzapp.views.AddBudgetActivity;
 import com.lmu.pem.finanzapp.views.BudgetFragment;
 
 import java.text.SimpleDateFormat;

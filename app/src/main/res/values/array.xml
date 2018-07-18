@@ -3,7 +3,6 @@
 
     <!-- Transaction Category -->
     <string-array name="expense_category">
-        <item><null/></item>
         <item>Food</item>
         <item>Household</item>
         <item>Transportation</item>
@@ -22,7 +21,6 @@
     </string-array>
 
     <string-array name="income_category">
-        <item><null/></item>
         <item>Salary</item>
         <item>Bonus</item>
         <item>Petty cash</item>
