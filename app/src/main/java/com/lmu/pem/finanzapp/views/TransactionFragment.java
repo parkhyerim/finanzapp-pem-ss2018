@@ -82,7 +82,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.transaction_fragment, container, false);
-        ButterKnife.bind(this,rootView); //TODO kann das weg?
 
         handleListEmptyText();
         setupUI();
@@ -248,26 +247,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         }
         return  fiteredList;
     }
-
-    //TODO sollte weg können
-    /*
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if(viewHolder instanceof TransactionAdapter.TransactionViewHolder){
-            String name = transactionManager.getTransactions().get(viewHolder.getAdapterPosition()).getDescription();
-            final Transaction deletedTransaction = transactionManager.getTransactions().get(viewHolder.getAdapterPosition());
-            final int deletedIndex = viewHolder.getAdapterPosition();
-            adapter.removeItem(deletedIndex);
-
-            Snackbar snackbar = Snackbar.make(trsView, name + " removed from list!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", v -> adapter.restoreItem(deletedTransaction, deletedIndex));
-
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
-
-        }
-
-    }*/
 
     @Override
     public void handle(TransactionHistoryEvent event) {

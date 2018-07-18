@@ -127,7 +127,6 @@ public class CategoryManager {
 
     }
 
-    
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
