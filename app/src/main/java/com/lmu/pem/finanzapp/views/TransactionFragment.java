@@ -51,18 +51,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private RecyclerView recyclerView;
     private TransactionAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private CoordinatorLayout trsView;
 
     private FloatingActionButton addButton;
 
-    private double amount = 0;
-    private String category = "";
-    private String account = "";
-    private String account2 = "";
-    private String description = "";
-    private String key;
-    private String id;
-    private int year,month,day;
     private View rootView;
 
     public final static int REQUEST_CODE_ADD_TRANSACTION = 111;
@@ -94,12 +85,13 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         ButterKnife.bind(this,rootView); //TODO kann das weg?
 
         handleListEmptyText();
+        setupUI();
+        return rootView;
+    }
 
-        // all findViewByID
+    private void setupUI() {
         recyclerView = rootView.findViewById(R.id.transaction_recyclerView);
         addButton = rootView.findViewById(R.id.transaction_add_button);
-        trsView = rootView.findViewById(R.id.trans_fragment);
-
 
         // RecyclerView
         recyclerView.setHasFixedSize(true);
@@ -114,11 +106,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         /*ItemTouchHelper.SimpleCallback itemTouchHelperCallBack = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelperCallBack).attachToRecyclerView(recyclerView);*/
 
-
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionManager.getTransactions()));
         recyclerView.addItemDecoration(transactionSectionItemDecoration);
-
 
         // Add Button -> Add Page
         addButton.setOnClickListener(v -> {
@@ -129,7 +119,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 Snackbar.make(rootView, "You have to create an account before you can add a transaction!", Snackbar.LENGTH_LONG).show();
             }
         });
-        return rootView;
     }
 
     private void handleListEmptyText() {
@@ -146,48 +135,26 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
+        int year = data.getIntExtra("year",0);
+        int month = data.getIntExtra("month", 0);
+        int day = data.getIntExtra("day",0);
+        String account = data.getStringExtra("account");
+        String account2 = data.getStringExtra("account2");
+        String category = data.getStringExtra("category");
+        String description = data.getStringExtra("description");
+        double amount = data.getDoubleExtra("amount",0);
+
         if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
-
-            year = data.getIntExtra("year",0);
-            month = data.getIntExtra("month", 0);
-            day = data.getIntExtra("day",0);
-            account = data.getStringExtra("account");
-            account2 = data.getStringExtra("account2");
-            category = data.getStringExtra("category");
-            description = data.getStringExtra("description");
-            amount = data.getDoubleExtra("amount",0);
-
-            //A new transaction can be added to the transaction list
             insertItem(year, month, day, account, account2, category, description, amount);
         }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
-            year = data.getIntExtra("year",0);
-            month = data.getIntExtra("month", 0);
-            day = data.getIntExtra("day",0);
-            account = data.getStringExtra("account");
-            account2 = data.getStringExtra("account2");
-            category = data.getStringExtra("category");
-            description = data.getStringExtra("description");
-            amount = data.getDoubleExtra("amount",0);
-            key = data.getStringExtra("key");
-
+            String key = data.getStringExtra("key");
             transactionManager.updateTransaction(key, year, month, day, account, account2, category, description, amount);
         }
     }
 
 
     public void insertItem(int year, int month, int day, String account, String account2, String category, String description, double amount){
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.account = account;
-        this.account2 = account2;
-        this.category = category;
-        this.amount = amount;
-        this.description = description;
-
-        Transaction transaction;
-        transaction = new Transaction(this.year, this.month, this.day, this.account, this.account2, this.category, this.description, this.amount);
+        Transaction transaction = new Transaction(year, month, day, account, account2, category, description, amount);
         transactionManager.addTransaction(transaction);
     }
 
