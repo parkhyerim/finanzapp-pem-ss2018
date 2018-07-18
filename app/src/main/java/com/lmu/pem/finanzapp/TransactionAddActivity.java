@@ -43,11 +43,11 @@ public class TransactionAddActivity extends AppCompatActivity {
     private int year, month, day;
     private Calendar cal;
 
-    private LinearLayout expenseLayout, incomeLayout, transactionAddLayout, accountLine2;
+    private LinearLayout expenseLayout, incomeLayout, accountLine2;
     private EditText amountEditText, descriptionEditText;
     private Button expenseButton, incomeButton, shiftButton, doneButton;
     private Spinner accountSpinner, account2Spinner, expenseCategorySpinner, incomeCategorySpinner;
-    private TextView dateDisplay, currencySymbol, accountTextView, account2TextView;
+    private TextView dateDisplay, currencySymbol, accountTextView;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
     private AccountManager accountManager;
@@ -417,14 +417,12 @@ public class TransactionAddActivity extends AppCompatActivity {
         dateDisplay = findViewById(R.id.dateDisplay_textView);
         currencySymbol = findViewById(R.id.expenseAdd_textView);
         accountTextView = findViewById(R.id.account_textView);
-        account2TextView = findViewById(R.id.account2_textView);
 
         amountEditText = findViewById(R.id.expenseAdd_editText);
         descriptionEditText = findViewById(R.id.description_editView);
 
         incomeLayout = findViewById(R.id.catLine_income);
         expenseLayout = findViewById(R.id.catLine_expense);
-        transactionAddLayout = findViewById(R.id.transaction_add_layout);
         accountLine2 = findViewById(R.id.accountLine2);
 
         expenseCategorySpinner = findViewById(R.id.category_Spinner);
