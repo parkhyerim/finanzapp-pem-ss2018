@@ -59,42 +59,25 @@ public class TransactionManager extends TransactionHistoryEventSource{
         if(fireEvent) fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
     }
 
-    public void updateTransaction(String key, int year, int month, int day, String account, String account2, String category, int imageResource, String description, double amount){
+    public void updateTransaction(String key, int year, int month, int day, String account, String account2, String category, String description, double amount){
         Transaction transaction = getTransactionByKey(key);
         Transaction transactionOld;
-        if(transaction.getAccount2()==null){
-            transactionOld = new Transaction(
-                    transaction.getYear(),
-                    transaction.getMonth(),
-                    transaction.getDay(),
-                    transaction.getImageResource(),
-                    transaction.getAccount(),
-                    transaction.getCategory(),
-                    transaction.getDescription(),
-                    transaction.getAmount()
-            );
-        }else{
-            transactionOld = new Transaction(
-                    transaction.getYear(),
-                    transaction.getMonth(),
-                    transaction.getDay(),
-                    transaction.getImageResource(),
-                    transaction.getAccount(),
-                    transaction.getAccount2(),
-                    transaction.getCategory(),
-                    transaction.getDescription(),
-                    transaction.getAmount()
-            );
-        }
+        transactionOld = new Transaction(
+                transaction.getYear(),
+                transaction.getMonth(),
+                transaction.getDay(),
+                transaction.getAccount(),
+                transaction.getAccount2(),
+                transaction.getCategory(),
+                transaction.getDescription(),
+                transaction.getAmount()
+        );
         if(transaction.getYear() != year) transaction.setYear(year);
         if(transaction.getMonth() != month) transaction.setMonth(month);
         if(transaction.getDay() != day) transaction.setDay(day);
         if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
         if(!(transaction.getAccount2()!=null && transaction.getAccount2().equals(account2)) && !(transaction.getAccount2()==null && account2==null)) transaction.setAccount2(account2);
-        if(!(transaction.getCategory().equals(category))){
-            transaction.setCategory(category);
-            transaction.setImageResource(imageResource);
-        }
+        if(!(transaction.getCategory().equals(category))) transaction.setCategory(category);
         if(!(transaction.getDescription().equals(description))) transaction.setDescription(description);
         if(!(transaction.getAmount() == amount)) transaction.setAmount(amount);
         updateTransactionInFB(key, transaction);
@@ -133,11 +116,11 @@ public class TransactionManager extends TransactionHistoryEventSource{
      */
     public void createTransactionList(){
         // dummy transaction list
-        addTransaction(new Transaction(2018, 4, 28, R.drawable.salary, "Cash", "Salary", "Werkstudenten-Gehalt", 450));
-        addTransaction(new Transaction(2018, 5, 2, R.drawable.household, "Cash", "Household", "Edeka", -55.20));
-        addTransaction(new Transaction(2018, 5,2, R.drawable.bonus, "Cash", "Bonus", "Bonus!!!", 180));
-        addTransaction(new Transaction(2018, 5,5,R.drawable.movie, "Cash", "Movie", "Black Panther", -21));
-        addTransaction(new Transaction(2018, 5,5,R.drawable.gift, "Cash", "Gift", "Muttertag", -38.25));
+        addTransaction(new Transaction(2018, 4, 28, "Cash", null, "Salary", "Werkstudenten-Gehalt", 450));
+        addTransaction(new Transaction(2018, 5, 2, "Cash", null, "Household", "Edeka", -55.20));
+        addTransaction(new Transaction(2018, 5,2, "Cash", null, "Bonus", "Bonus!!!", 180));
+        addTransaction(new Transaction(2018, 5,5, "Cash", null, "Movie", "Black Panther", -21));
+        addTransaction(new Transaction(2018, 5,5, "Cash", null, "Gift", "Muttertag", -38.25));
     }
 
 

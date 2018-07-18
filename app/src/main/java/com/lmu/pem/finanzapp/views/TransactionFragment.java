@@ -55,7 +55,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
 
     private FloatingActionButton addButton;
 
-    private int position;
     private double amount = 0;
     private String category = "";
     private String account = "";
@@ -150,7 +149,6 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         //Fragment fragment = getChildFragmentManager().findFragmentById(R.id.trans_fragment);
         if(requestCode == REQUEST_CODE_ADD_TRANSACTION && resultCode == Activity.RESULT_OK) {
 
-            position = transactionManager.getTransactions().size();
             year = data.getIntExtra("year",0);
             month = data.getIntExtra("month", 0);
             day = data.getIntExtra("day",0);
@@ -161,7 +159,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             amount = data.getDoubleExtra("amount",0);
 
             //A new transaction can be added to the transaction list
-            insertItem(position, year, month, day, account, account2, category, description, amount);
+            insertItem(year, month, day, account, account2, category, description, amount);
         }else if(requestCode == REQUEST_CODE_EDIT_TRANSACTION && resultCode == Activity.RESULT_OK){
             year = data.getIntExtra("year",0);
             month = data.getIntExtra("month", 0);
@@ -173,12 +171,12 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
             amount = data.getDoubleExtra("amount",0);
             key = data.getStringExtra("key");
 
-            transactionManager.updateTransaction(key, year, month, day, account, account2, category, getImageByCategory(category), description, amount);
+            transactionManager.updateTransaction(key, year, month, day, account, account2, category, description, amount);
         }
     }
 
 
-    public void insertItem(int position, int year, int month, int day, String account, String account2, String category, String description, double amount){
+    public void insertItem(int year, int month, int day, String account, String account2, String category, String description, double amount){
         this.year = year;
         this.month = month;
         this.day = day;
@@ -189,28 +187,8 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         this.description = description;
 
         Transaction transaction;
-        if(account2==null){
-            transaction = new Transaction(this.year, this.month, this.day, getImageByCategory(category), this.account, this.category, this.description, this.amount);
-        }else{
-            transaction = new Transaction(this.year, this.month, this.day, getImageByCategory(category), this.account, this.account2, this.category, this.description, this.amount);
-        }
+        transaction = new Transaction(this.year, this.month, this.day, this.account, this.account2, this.category, this.description, this.amount);
         transactionManager.addTransaction(transaction);
-    }
-    /**
-     * Gets an image ResourceID for a given category. Duplicate of this method exists in AccountFragment, so don't forget to apply changes to both. It's a maintenance nightmare, but the Activity framework doesn't really leave us a choice.
-     * @param category the Transaction category to get the image for. If there is no image for this category, a default image will be chosen.
-     * @return the ResourceID for the image
-     */
-    private int getImageByCategory(String category) {
-        int imageResource;
-        int img = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
-        if(img == 0){
-            imageResource = getActivity().getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
-        } else {
-            imageResource = img;
-        }
-        //this.imageResource = getActivity().getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
-        return imageResource;
     }
 
     // Header-Section by date

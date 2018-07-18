@@ -84,13 +84,11 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             int color = data.getIntExtra("color", Account.DEFAULT_COLOR);
 
             Account acc;
-            String accountID;
             if(newAccount){
                 acc = new Account(name, color, defaultAcc, balance);
-                accountID=acc.getId();
                 accountManager.addAccount(acc);
             }else{
-                accountID = data.getStringExtra("accountID");
+                String accountID = data.getStringExtra("accountID");
                 acc = accountManager.getAccountById(accountID);
                 acc.setName(name);
                 acc.setBalance(balance);
@@ -98,7 +96,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                 acc.setDefault(defaultAcc);
                 if(defaultAcc && !(accountManager.getDefaultAcc().getId().equals(accountID))) accountManager.setDefaultAcc(acc);
             }
-            dbRef.child(accountID).setValue(acc.toMap());
+            accountManager.writeAccountToFirebase(acc);
 
             //normally we'd call adapter.notifyDataSetChanged() here, but that doesn't do the trick if you just change the default account, so we're re-setting the adapter.
             gridView.setAdapter(adapter);
@@ -113,11 +111,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
             double amount = data.getDoubleExtra("amount",0);
 
             Transaction transaction;
-            if(account2==null){
-                transaction = new Transaction(year, month, day, getImageByCategory(category), account, category, description, amount);
-            }else{
-                transaction = new Transaction(year, month, day, getImageByCategory(category), account, account2, category, description, amount);
-            }
+            transaction = new Transaction(year, month, day, account, account2, category, description, amount);
 
             transactionManager.addTransaction(transaction);
         }
@@ -126,21 +120,5 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
     @Override
     public void handle(TransactionHistoryEvent event) {
         adapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Gets an image ResourceID for a given category. Duplicate of this method exists in TransactionFragment, so don't forget to apply changes to both. It's a maintenance nightmare, but the Activity framework doesn't really leave us a choice.
-     * @param category the Transaction category to get the image for. If there is no image for this category, a default image will be chosen.
-     * @return the ResourceID for the image
-     */
-    private int getImageByCategory(String category) {
-        int imageResource;
-        int img = getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", getActivity().getPackageName());
-        if(img == 0){
-            imageResource = getResources().getIdentifier("money", "drawable", getActivity().getPackageName());
-        } else {
-            imageResource = img;
-        }
-        return imageResource;
     }
 }

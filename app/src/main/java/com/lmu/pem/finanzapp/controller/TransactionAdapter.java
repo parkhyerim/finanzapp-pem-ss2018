@@ -205,9 +205,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // Category-Image
         try{
-            holder.categoryImageView.setImageResource(currentTransactionItem.getImageResource());
+            holder.categoryImageView.setImageResource(getImageByCategory(currentTransactionItem.getCategory()));
         }catch(Resources.NotFoundException e){
-            Log.e("123123", "onBindViewHolder: Didn't find Image Resource", e); //TODO should be obsolete when image Resources are no longer in Firebase but created dynamically
+            Log.e("123123", "onBindViewHolder: Didn't find Image Resource", e);
         }
 
 
@@ -255,6 +255,22 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void setSearchResult(ArrayList<Transaction> result){
         transactions = result;
         notifyDataSetChanged();
+    }
+
+    /**
+     * Gets an image ResourceID for a given category.
+     * @param category the Transaction category to get the image for. If there is no image for this category, a default image will be chosen.
+     * @return the ResourceID for the image
+     */
+    private int getImageByCategory(String category) {
+        int imageResource;
+        int img = context.getResources().getIdentifier(category.toLowerCase().replace(" ", ""), "drawable", context.getPackageName());
+        if(img == 0){
+            imageResource = context.getResources().getIdentifier("money", "drawable", context.getPackageName());
+        } else {
+            imageResource = img;
+        }
+        return imageResource;
     }
 
 }

@@ -62,12 +62,16 @@ public class AccountManager implements TransactionHistoryEventListener {
     }
 
     /**
-     * Add an Account to the AccountManager
+     * Add an Account to the AccountManager. This method doesn't write the Account to Firebase, you have to call {@link #writeAccountToFirebase(Account)} for that separately.
      * @param acc The Account object to be added
      */
     public void addAccount(Account acc){
         this.accounts.add(acc);
         if(acc.isDefault()) setDefaultAcc(acc);
+    }
+
+    public void writeAccountToFirebase(Account acc) {
+        dbRef.child(acc.getId()).setValue(acc.toMap());
     }
 
     /**
@@ -135,7 +139,7 @@ public class AccountManager implements TransactionHistoryEventListener {
     public void setDefaultAcc(Account acc) {
         if(defaultAcc!=null){
             this.defaultAcc.setDefault(false);
-            dbRef.child(defaultAcc.getId()).child("isDefault").setValue(false);
+            writeAccountToFirebase(defaultAcc);
         }
         this.defaultAcc = acc;
     }
@@ -195,8 +199,6 @@ public class AccountManager implements TransactionHistoryEventListener {
     public void initializeWithCashAccount() {
         Account cashAcc = new Account("Cash", true, 0);
         addAccount(cashAcc);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
-        dbRef.child(cashAcc.getId()).setValue(cashAcc.toMap());
+        writeAccountToFirebase(cashAcc);
     }
 }

@@ -100,7 +100,7 @@ public class AccountAddActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = nameView.getText().toString();
 
-                if(name.length()<=0) {
+                if(name.length()<1) {
                     showError("You have to insert a name for the account.");
                 }else if(accountManager.isNameTaken(name) && !(accountManager.getAccountIdByName(name).equals(accountID))){
                     showError("There is already an account with this name.");
@@ -120,6 +120,7 @@ public class AccountAddActivity extends AppCompatActivity {
                             Account newDefaultAcc = accountManager.getAccountById(newDefault);
                             newDefaultAcc.setDefault(true);
                             accountManager.setDefaultAcc(newDefaultAcc);
+                            accountManager.writeAccountToFirebase(newDefaultAcc);
                         }
                     }
 

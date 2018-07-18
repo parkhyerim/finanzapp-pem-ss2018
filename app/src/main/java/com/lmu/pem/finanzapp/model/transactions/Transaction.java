@@ -14,48 +14,26 @@ public class Transaction implements Comparable<Transaction> {
     private String category;
     private String account, account2;
     private String description;
-    private int imageResource = 0;
     private double amount;
 
     private int year, month, day;
 
     private String key;
 
-    private Map<String, Transaction> trns = new HashMap<>();
-
-
     public Transaction(){
         // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
     }
 
-    public Transaction(int year, int month, int day, int imageResource, String account, String category, String description, double amount) {
+    public Transaction(int year, int month, int day, String account, String account2, String category, String description, double amount) {
         this.year = year;
         this.month = month;
         this.day = day;
-        this.imageResource = imageResource;
-        this.account = account;
-        this.account2 = null;
-        this.category = category;
-        this.description = description;
-        this.amount = amount;
-        //key will be set later when it's created by Firebase
-    }
-
-    public Transaction(int year, int month, int day, int imageResource, String account, String account2, String category, String description, double amount) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.imageResource = imageResource;
         this.account = account; //from
-        this.account2 = account2; //to
+        this.account2 = account2; //to - may be null
         this.category = category;
         this.description = description;
         this.amount = amount;
         //key will be set later when it's created by Firebase
-    }
-
-    public int getImageResource() {
-        return imageResource;
     }
 
     public String getCategory() {
@@ -102,10 +80,6 @@ public class Transaction implements Comparable<Transaction> {
         this.description = description;
     }
 
-    public void setImageResource(int imageResource) {
-        this.imageResource = imageResource;
-    }
-
     public void setAmount(double amount) {
         this.amount = amount;
     }
@@ -142,7 +116,6 @@ public class Transaction implements Comparable<Transaction> {
         result.put("account", account);
         result.put("account2", account2);
         result.put("amount", amount);
-        result.put("imageResource", imageResource);
 
         return result;
     }

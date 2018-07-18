@@ -194,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (map.get("accounts") != null) {
                         //accounts
                         HashMap<String, HashMap<String, Object>> accMap = map.get("accounts");
+                        Log.i("123123", "onDataChange: Accountliste: "+accMap.keySet().toString());
                         for (String key : accMap.keySet()) {
                             if(accountManager.getAccountById(key)==null){
                                 Account newAcc=new Account(
@@ -203,7 +204,6 @@ public class LoginActivity extends AppCompatActivity {
                                         dataSnapshot.child("accounts").child(key).child("balance").getValue(Double.class),
                                         key
                                 );
-                                Log.i("123123", "loadFirebaseData -> onDataChange called!");
                                 accountManager.addAccount(newAcc);
                             }
                         }
@@ -218,7 +218,6 @@ public class LoginActivity extends AppCompatActivity {
                                     dataSnapshot.child("transactions").child(key).child("year").getValue(Integer.class),
                                     dataSnapshot.child("transactions").child(key).child("month").getValue(Integer.class),
                                     dataSnapshot.child("transactions").child(key).child("day").getValue(Integer.class),
-                                    dataSnapshot.child("transactions").child(key).child("imageResource").getValue(Integer.class),
                                     dataSnapshot.child("transactions").child(key).child("account").getValue(String.class),
                                     dataSnapshot.child("transactions").child(key).child("account2").getValue(String.class),
                                     dataSnapshot.child("transactions").child(key).child("category").getValue(String.class),
