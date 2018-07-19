@@ -126,13 +126,13 @@ public class AccountAdapter extends BaseAdapter {
 
             if(TransactionManager.getInstance().transactionsForAccount(accId)){
                 builder.setTitle("Can't delete account")
-                        .setMessage("You can't delete an account that has transactions linked to it!\nYou have to delete the transactions for this Account before you can delete this account.")
+                        .setMessage("You can't delete an account that has transactions linked to it!\nYou have to delete the linked transactions before you can delete this account.")
                         .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                             // do nothing
                         });
             }else{
                 builder.setTitle("Delete account")
-                        .setMessage("Are you sure you want to delete this account?")
+                        .setMessage("Are you sure you want to delete the account "+accounts.get(position).getName()+"?")
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                             AccountManager.getInstance().deleteAccount(accId);
                             notifyDataSetChanged();

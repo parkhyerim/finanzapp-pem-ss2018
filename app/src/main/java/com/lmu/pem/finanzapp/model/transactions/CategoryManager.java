@@ -8,14 +8,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.lmu.pem.finanzapp.R;
 
 
 public class CategoryManager {
 
     private static CategoryManager instance;
 
-    private ArrayList<String> expCategories, newExpCategories, incCategories, newIncCategories;
+    private ArrayList<String> expCategories, incCategories;
 
     private DatabaseReference db;
     private DatabaseReference expCategoryRef, incCategoryRef;
@@ -27,8 +26,6 @@ public class CategoryManager {
     public void reset() {
         expCategories = new ArrayList<>();
         incCategories = new ArrayList<>();
-        newExpCategories = new ArrayList<>();
-        newIncCategories = new ArrayList<>();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
@@ -85,22 +82,6 @@ public class CategoryManager {
     }
 
     /**
-     * get the user-added expense categories
-     * @return an ArrayList containing the user-added expense categories
-     */
-    public ArrayList<String> getNewExpCategories() {
-        return newExpCategories;
-    }
-
-    /**
-     * get the user-added income categories
-     * @return an ArrayList containing the user-added income categories
-     */
-    public ArrayList<String> getNewIncCategories() {
-        return newIncCategories;
-    }
-
-    /**
      * Add a new Expense Category to the Category Manager.
      * @param category    the new Category
      * @param newCategory whether this is a new Category added by the user (in this case it will be written to Firebase as well) or it already exists (i.e. added after reading it from Firebase)
@@ -116,8 +97,7 @@ public class CategoryManager {
         if(otherExists) expCategories.add("Other");
 
         if(newCategory){
-            writeExpenseCategoriestoFB(expCategories);
-            newExpCategories.add(category);
+            writeExpenseCategoriesToFB();
         }
     }
 
@@ -137,49 +117,65 @@ public class CategoryManager {
         if(otherExists) incCategories.add("Other");
 
         if(newCategory){
-            writeIncomeCategoriestoFB(incCategories);
-            newIncCategories.add(category);
+            writeIncomeCategoriesToFB();
         }
     }
-
 
     /**
      * Create default expense categories and store them in Firebase
      */
     public void createDefaultExpCategories(){
-        ArrayList<String> defaultExpCats = new ArrayList<>();
-        defaultExpCats.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
+        expCategories.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
                 "Car","Travel"));
-        Collections.sort(defaultExpCats, String.CASE_INSENSITIVE_ORDER);
-        defaultExpCats.add("Other");
-        expCategories.addAll(defaultExpCats);
-        writeExpenseCategoriestoFB(defaultExpCats);
+        Collections.sort(expCategories, String.CASE_INSENSITIVE_ORDER);
+        expCategories.add("Other");
+        writeExpenseCategoriesToFB();
     }
 
     /**
      * Create default income categories and store them in Firebase
      */
     public void createDefaultIncCategories(){
-        ArrayList<String> defaultIncCats = new ArrayList<>();
-        defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock"));
-        Collections.sort(defaultIncCats, String.CASE_INSENSITIVE_ORDER);
-        defaultIncCats.add("Other");
-        incCategories.addAll(defaultIncCats);
-        writeIncomeCategoriestoFB(defaultIncCats);
+        incCategories.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock"));
+        Collections.sort(incCategories, String.CASE_INSENSITIVE_ORDER);
+        incCategories.add("Other");
+        writeIncomeCategoriesToFB();
     }
 
-
-    public String writeExpenseCategoriestoFB(ArrayList<String> cate){
-        String key = expCategoryRef.push().getKey();
-        expCategoryRef.setValue(cate);
-        return key;
+    /**
+     * Write all expense categories managed by this CategoryManager to Firebase
+     */
+    public void writeExpenseCategoriesToFB(){
+        expCategoryRef.setValue(expCategories);
     }
 
-    public String writeIncomeCategoriestoFB(ArrayList<String> cat){
-        String key = incCategoryRef.push().getKey();
-        incCategoryRef.setValue(cat);
-        return key;
+    /**
+     * Write all income categories managed by this CategoryManager to Firebase
+     */
+    public void writeIncomeCategoriesToFB(){
+        incCategoryRef.setValue(incCategories);
+    }
 
+    /**
+     * Delete an expense category from this CategoryManager and from Firebase as well.
+     * @param category The category to be removed
+     */
+    public void deleteExpenseCategory(String category){
+        if(expCategories.indexOf(category)>-1){
+            expCategories.remove(category);
+            writeExpenseCategoriesToFB();
+        }
+    }
+
+    /**
+     * Delete an income category from this CategoryManager and from Firebase as well.
+     * @param category The category to be removed
+     */
+    public void deleteIncomeCategory(String category){
+        if(incCategories.indexOf(category)>-1){
+            incCategories.remove(category);
+            writeIncomeCategoriesToFB();
+        }
     }
 
 }

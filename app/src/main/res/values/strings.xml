@@ -66,6 +66,15 @@
     <string name="transaction_add_done">DONE</string>
     <string name="transaction_add_date">Date</string>
 
+    <!-- Settings Screen -->
+    <string name="settings_currency">Currency:</string>
+    <string name="settings_currency_note">Please note that changing the currency here does not perform currency conversion but leaves the numeric values as they were.</string>
+    <string name="settings_homeTab">Home Tab:</string>
+    <string name="settings_deleteCat_header">Delete a category:</string>
+    <string name="settings_deleteCat_exp">Expenses:</string>
+    <string name="settings_deleteCat_inc">Incomes:</string>
+    <string name="settings_loggedInAs">You\'re currently logged in as:</string>
+
     <!-- Dashboard -->
     <!--Welcome Card-->
     <string name="welcomecard_title">Welcome back!</string>
