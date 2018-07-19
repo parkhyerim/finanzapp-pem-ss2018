@@ -15,8 +15,7 @@ public class CategoryManager {
 
     private static CategoryManager instance;
 
-    private ArrayList<String> expCategories;
-    private ArrayList<String> incCategories;
+    private ArrayList<String> expCategories, newExpCategories, incCategories, newIncCategories;
 
     private DatabaseReference db;
     private DatabaseReference expCategoryRef, incCategoryRef;
@@ -28,6 +27,8 @@ public class CategoryManager {
     public void reset() {
         expCategories = new ArrayList<>();
         incCategories = new ArrayList<>();
+        newExpCategories = new ArrayList<>();
+        newIncCategories = new ArrayList<>();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
@@ -43,13 +44,26 @@ public class CategoryManager {
     }
 
 
+    /**
+     * get the Expense Categories in this CategoryManager
+     * @return an ArrayList containing the expense categories
+     */
     public ArrayList<String> getPureExpCategories() {
         return this.expCategories;
     }
+
+    /**
+     * get the Income Categories in this CategoryManager
+     * @return an ArrayList containing the income categories
+     */
     public ArrayList<String> getPureIncCategories() {
         return this.incCategories;
     }
 
+    /**
+     * get the Expense Categories in this CategoryManager, including dummy Categories for Spinners (empty and "Add" items)
+     * @return an ArrayList containing the expense categories
+     */
     public ArrayList<String> getUIExpCategories() {
         ArrayList<String> result = new ArrayList<>();
         result.add("");
@@ -57,6 +71,11 @@ public class CategoryManager {
         result.add("Add");
         return result;
     }
+
+    /**
+     * get the Income Categories in this CategoryManager, including dummy Categories for Spinners (empty and "Add" items)
+     * @return an ArrayList containing the income categories
+     */
     public ArrayList<String> getUIIncCategories() {
         ArrayList<String> result = new ArrayList<>();
         result.add("");
@@ -65,22 +84,62 @@ public class CategoryManager {
         return result;
     }
 
-    public void addExpenseCategory(String category, boolean writeToFB){
-        this.expCategories.add(category);
-        this.expCategories.remove("Other");
-
-        Collections.sort(expCategories, String.CASE_INSENSITIVE_ORDER);
-        this.expCategories.add("Other");
-        if(writeToFB) writeExpenseCategoriestoFB(this.expCategories);
+    /**
+     * get the user-added expense categories
+     * @return an ArrayList containing the user-added expense categories
+     */
+    public ArrayList<String> getNewExpCategories() {
+        return newExpCategories;
     }
 
-    public void addIncomeCategory(String category, boolean writeToFB){
-        incCategories.add(category);
-        incCategories.remove("Other");
+    /**
+     * get the user-added income categories
+     * @return an ArrayList containing the user-added income categories
+     */
+    public ArrayList<String> getNewIncCategories() {
+        return newIncCategories;
+    }
 
+    /**
+     * Add a new Expense Category to the Category Manager.
+     * @param category    the new Category
+     * @param newCategory whether this is a new Category added by the user (in this case it will be written to Firebase as well) or it already exists (i.e. added after reading it from Firebase)
+     */
+    public void addExpenseCategory(String category, boolean newCategory){
+        expCategories.add(category);
+
+        boolean otherExists=false;
+        if(expCategories.indexOf("Other")>-1) otherExists=true;
+
+        if(otherExists) expCategories.remove("Other");
+        Collections.sort(expCategories, String.CASE_INSENSITIVE_ORDER);
+        if(otherExists) expCategories.add("Other");
+
+        if(newCategory){
+            writeExpenseCategoriestoFB(expCategories);
+            newExpCategories.add(category);
+        }
+    }
+
+    /**
+     * Add a new Income Category to the Category Manager.
+     * @param category    the new Category
+     * @param newCategory whether this is a new Category added by the user (in this case it will be written to Firebase as well) or it already exists (i.e. added after reading it from Firebase)
+     */
+    public void addIncomeCategory(String category, boolean newCategory){
+        incCategories.add(category);
+
+        boolean otherExists=false;
+        if(incCategories.indexOf("Other")>-1) otherExists=true;
+
+        if(otherExists) incCategories.remove("Other");
         Collections.sort(incCategories, String.CASE_INSENSITIVE_ORDER);
-        incCategories.add("Other");
-        if(writeToFB) writeIncomeCategoriestoFB(incCategories);
+        if(otherExists) incCategories.add("Other");
+
+        if(newCategory){
+            writeIncomeCategoriestoFB(incCategories);
+            newIncCategories.add(category);
+        }
     }
 
 
