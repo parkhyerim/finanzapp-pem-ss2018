@@ -17,7 +17,8 @@ import android.widget.TextView;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
-import com.lmu.pem.finanzapp.views.BudgetFragment;
+import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
+import com.lmu.pem.finanzapp.views.budgets.BudgetFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     @Override
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
 
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.YY", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/YY", Locale.getDefault());
 
         Budget b = dataSet.get(position);
 
@@ -118,8 +119,10 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
 
 
 
-        if(b.getDatePart() > 1f)
+        if(b.getDatePart() > 1f) {
             setProgressBarColor(holder.dateBar, Color.parseColor("#888888"));
+            holder.currentDate.setText(R.string.budgetExpiredText);
+        }
         else
             setProgressBarColor(holder.dateBar, context.getColor(R.color.dateBarColor));
 
@@ -141,7 +144,17 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         d.setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
 
+    public void onItemDismiss(int position) {
+        BudgetManager.getInstance().removeAt(position);
+        notifyItemRemoved(position);
+    }
 
+    public boolean onItemMove(int fromPosition, int toPosition) {
+
+        BudgetManager.getInstance().swap(fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
 
 
     @Override

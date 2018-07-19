@@ -34,6 +34,9 @@ public class BudgetAddActivity extends AppCompatActivity {
     TextView currencySymbol;
     EditText budgetEditText;
     Spinner categorySpinner;
+
+    EditText startingDateEditText;
+
     Spinner renewalTypeSpinner;
 
     EditText customDateEditText;
@@ -48,6 +51,7 @@ public class BudgetAddActivity extends AppCompatActivity {
 
     Budget.RenewalTypes renewalType;
 
+    Date startingDate;
     Date customDate;
 
     //endregion
@@ -61,16 +65,21 @@ public class BudgetAddActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         if (getIntent().hasExtra("budgetToEdit")) {
-            budgetToEdit = (Budget)getIntent().getSerializableExtra("budgetToEdit");
+            budgetToEdit = (Budget) getIntent().getSerializableExtra("budgetToEdit");
             toolbar.setTitle(R.string.budget_edit_title_edit);
         }
 
         setSupportActionBar(toolbar);
         initViewHandles();
+
+
+        initStartingDateEditText();
+        initCustomDateEditText();
+
         initAmountEditText();
         initCategorySpinner();
         initRenewalTypeSpinner();
-        initCustomDateEditText();
+
         initSubmitButton();
         initDeleteButton();
 
@@ -82,7 +91,7 @@ public class BudgetAddActivity extends AppCompatActivity {
         budgetEditText = findViewById(R.id.budgetEditText);
         categorySpinner = findViewById(R.id.categorySpinner);
         renewalTypeSpinner = findViewById(R.id.renewalTypeSpinner);
-
+        startingDateEditText = findViewById(R.id.startingDateEditText);
         customDateEditText = findViewById(R.id.customDateEditText);
         currencySymbol.setText(GlobalSettings.getInstance().getCurrencyString());
 
@@ -119,7 +128,7 @@ public class BudgetAddActivity extends AppCompatActivity {
         });
     }
 
-    private void initRenewalTypeSpinner () {
+    private void initRenewalTypeSpinner() {
         String[] types = Budget.RenewalTypes.getNames();
         ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
         renewalTypeSpinner.setAdapter(typesAdapter);
@@ -134,38 +143,58 @@ public class BudgetAddActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 renewalType = Budget.RenewalTypes.values()[position];
                 setCustomDateActive(renewalType == Budget.RenewalTypes.CUSTOM);
-                Calendar c = Calendar.getInstance();
-
-                if (budgetToEdit == null)
-                    c.setTime(c.getTime());
-                else
-                    c.setTime(budgetToEdit.getFrom());
-
-                switch (renewalType) {
-                    case DAY:
-                        c.add(Calendar.DATE, 1);
-                        break;
-                    case WEEK:
-                        c.add(Calendar.DATE, 7);
-                        break;
-                    case MONTH:
-                        c.add(Calendar.MONTH, 1);
-                        break;
-                    case YEAR:
-                        c.add(Calendar.YEAR, 1);
-                        break;
-                    case CUSTOM:
-                        if (budgetToEdit != null) c.setTime(budgetToEdit.getUntil());
-                        break;
-                }
-
-                setCustomDateValue(c.getTime());
+                setCustomDateByRenewalType();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
+        });
+    }
+
+    private void setCustomDateByRenewalType() {
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(startingDate);
+
+        switch (renewalType) {
+            case DAY:
+                c.add(Calendar.DATE, 1);
+                break;
+            case WEEK:
+                c.add(Calendar.DATE, 7);
+                break;
+            case MONTH:
+                c.add(Calendar.MONTH, 1);
+                break;
+            case YEAR:
+                c.add(Calendar.YEAR, 1);
+                break;
+            case CUSTOM:
+                if (budgetToEdit != null) c.setTime(budgetToEdit.getUntil());
+                break;
+        }
+
+        setCustomDateValue(c.getTime());
+    }
+
+    public void initStartingDateEditText() {
+        if (budgetToEdit != null) {
+            setStartingDateValue(budgetToEdit.getFrom());
+        } else {
+            setStartingDateValue(Calendar.getInstance().getTime());
+        }
+        startingDateEditText.setOnClickListener(v -> {
+            DatePickerDialog dialog = new DatePickerDialog(
+                    BudgetAddActivity.this,
+                    android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                    (view, y, m, d) -> setStartingDateValue(new Date(y - 1900, m, d)),
+                    startingDate.getYear() + 1900,
+                    startingDate.getMonth(),
+                    startingDate.getDate());
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.show();
         });
     }
 
@@ -179,7 +208,7 @@ public class BudgetAddActivity extends AppCompatActivity {
                     android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                     (view, y, m, d) -> setCustomDateValue(new Date(y - 1900, m, d)),
                     customDate.getYear() + 1900,
-                    customDate.getMonth() + 1,
+                    customDate.getMonth(),
                     customDate.getDate());
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
@@ -190,10 +219,15 @@ public class BudgetAddActivity extends AppCompatActivity {
         customDateEditText.setEnabled(active);
     }
 
+    private void setStartingDateValue(Date date) {
+        startingDate = date;
+        startingDateEditText.setText(GlobalSettings.GLOBAL_DATE_FORMAT.format(date));
+        if (renewalType != null) setCustomDateByRenewalType();
+    }
+
     private void setCustomDateValue(Date date) {
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
         customDate = date;
-        customDateEditText.setText(format.format(customDate));
+        customDateEditText.setText(GlobalSettings.GLOBAL_DATE_FORMAT.format(date));
     }
 
     private void initSubmitButton() {
@@ -211,15 +245,24 @@ public class BudgetAddActivity extends AppCompatActivity {
 
     private boolean verify() {
         boolean valid = true;
+
+        if (startingDate.after(Calendar.getInstance().getTime())) {
+            startingDateEditText.setError("Starting date can't lie in the future!");
+            valid = false;
+        }
+
+        if (startingDate.after(customDate)) {
+            customDateEditText.setError("Ending date has to be after starting date!");
+            valid = false;
+        }
+
         if (budgetEditText.getText().toString().isEmpty()) {
             budgetEditText.setError("You need to set a budget!");
             valid = false;
         }
         if (categorySpinner.getSelectedItem().equals("")) {
-            TextView errorText = (TextView)categorySpinner.getSelectedView();
+            TextView errorText = (TextView) categorySpinner.getSelectedView();
             errorText.setError("anything here, just to add the icon");
-            errorText.setTextColor(Color.RED);//just to highlight that this is an error
-            errorText.setText("Select one!");
             valid = false;
         }
 
@@ -231,7 +274,7 @@ public class BudgetAddActivity extends AppCompatActivity {
     private void deleteBudget() {
         if (budgetToEdit != null) {
             AlertDialog.Builder builder;
-                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
             builder.setTitle("Delete budget")
                     .setMessage("Are you sure you want to delete this budget?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
@@ -253,17 +296,17 @@ public class BudgetAddActivity extends AppCompatActivity {
 
         if (budgetToEdit != null) {
             if (renewalType != Budget.RenewalTypes.CUSTOM)
-                BudgetManager.getInstance().editById(budgetToEdit.getId(), category ,getBudgetAmount(), renewalType);
+                BudgetManager.getInstance().editById(budgetToEdit.getId(), category, getBudgetAmount(), startingDate, renewalType);
             else
-                BudgetManager.getInstance().editById(budgetToEdit.getId(), category ,getBudgetAmount(), customDate);
+                BudgetManager.getInstance().editById(budgetToEdit.getId(), category, getBudgetAmount(), startingDate, customDate);
             finish();
             return;
         }
 
         if (renewalType == Budget.RenewalTypes.CUSTOM)
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount() ,customDate);
+            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), startingDate, customDate);
         else
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), renewalType);
+            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), startingDate, renewalType);
 
         setResult(0);
         finish();

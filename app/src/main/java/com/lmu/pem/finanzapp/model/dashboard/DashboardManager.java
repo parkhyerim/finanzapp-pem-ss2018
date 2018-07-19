@@ -118,6 +118,8 @@ public class DashboardManager extends DashboardEventSource implements Transactio
             activeCards.add(createBudgetFailedCard(budget));
         }
 
+        if (activeCards.size() == 0) activeCards.add(createEmptyPromptCard());
+
         if (adapterHandle != null) adapterHandle.notifyDataSetChanged();
         fireDashboardEvent(new DashboardEvent(this, DashboardEvent.EventType.UPDATED));
     }
@@ -135,7 +137,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 primaryMessage,
                 Math.abs(amount),
                 BasicAmountCard.AmountType.POSITIVE,
-                "",
+                "this year.",
                 "");
     }
 
@@ -150,6 +152,15 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 Math.abs(amount),
                 BasicAmountCard.AmountType.NEGATIVE,
                 "",
+                "");
+    }
+
+    private WelcomeCard createEmptyPromptCard () {
+        return new WelcomeCard(
+                CardType.WELCOME,
+                context.getString(R.string.welcomecard_title),
+                context.getString(R.string.welcomecard_text),
+                context.getString(R.string.welcomecard_btn1),
                 "");
     }
 
@@ -169,14 +180,14 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         String title = context.getString(R.string.bw_title) + " " + budget.getCategory() + " " + context.getString(R.string.bw_title2);
 
         long days = Analyzer.getBudgetDays(budget);
-        float extraDays = Analyzer.getBudgetExtrapolationInDays(budget);
+        float overshootAmount = Analyzer.getOvershootAmount(budget);
 
         String main = context.getString(R.string.bw_mainText) + " " + days + " days, you spent";
         String amountDesc = context.getString(R.string.bw_amountDesc)
                 + String.format(Locale.getDefault(), " %.2f %s",budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
 
-        String extraDaysString = String.format(Locale.getDefault(), " %.1f ", extraDays);
-        String secondaryText =  context.getString(R.string.bw_secondaryText1) + extraDaysString + context.getString(R.string.bw_secondaryText2);
+        String extraDaysString = String.format(Locale.getDefault(), " %.2f %s", overshootAmount, GlobalSettings.getInstance().getCurrencyString());
+        String secondaryText =  context.getString(R.string.bw_secondaryText1) + extraDaysString;
 
         return new BasicAmountCard(CardType.BUDGETWARNING, title, main, budget.getCurrentAmount(),
                 BasicAmountCard.AmountType.WARNING, amountDesc, secondaryText);

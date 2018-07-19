@@ -71,7 +71,6 @@
                 android:layout_height="50dp"
                 style="?android:attr/buttonBarNegativeButtonStyle"
                 android:background="@android:color/transparent"
-                android:text="@string/welcomecard_btn2"
                 android:textColor="@color/colorPrimary"
                 />
 

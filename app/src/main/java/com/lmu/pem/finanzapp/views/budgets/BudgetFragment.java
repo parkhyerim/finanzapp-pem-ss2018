@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp.views;
+package com.lmu.pem.finanzapp.views.budgets;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 public class BudgetFragment extends Fragment implements BudgetEventListener {
 
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    BudgetAdapter adapter;
     RecyclerView.LayoutManager manager;
 
     FloatingActionButton fab;
@@ -63,6 +64,12 @@ public class BudgetFragment extends Fragment implements BudgetEventListener {
 
         adapter = new BudgetAdapter(getContext(), this, BudgetManager.getInstance().getBudgets());
         recyclerView.setAdapter(adapter);
+
+
+        ItemTouchHelper.Callback callback =
+                new BudgetTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
 
         // Inflate the layout for this fragment
         return aboutView;

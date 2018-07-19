@@ -1,5 +1,7 @@
 package com.lmu.pem.finanzapp.model.budgets;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -11,6 +13,7 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +53,7 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
 
     private boolean isBudgetCurrent(Budget budget) {
         Date today = Calendar.getInstance().getTime();
+        Log.i("ISCURRENT", "" + budget.getFrom() + " to " + budget.getUntil());
         return (today.after(budget.getFrom()) && today.before(budget.getUntil()));
 
     }
@@ -97,27 +101,37 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         switch (event.getType()) {
             case ADDED:
                 for (Budget budget : budgets) {
-                    if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
+                    if (doesTransactionFitBudget(event.getTransaction(), budget)) {
                         budget.setCurrentAmount(budget.getCurrentAmount() - (float)event.getTransaction().getAmount());
                     }
                 }
                 break;
             case UPDATED:
                 for (Budget budget : budgets) {
-                    if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
-                        budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransactionOld().getAmount());
+                    if (doesTransactionFitBudget(event.getTransaction(), budget)) {
+                        if (doesTransactionFitBudget(event.getTransactionOld(), budget))
+                            budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransactionOld().getAmount());
                         budget.setCurrentAmount(budget.getCurrentAmount() - (float)event.getTransaction().getAmount());
                     }
                 }
                 break;
             case REMOVED:
                 for (Budget budget : budgets) {
-                    if (budget.category.equalsIgnoreCase(event.getTransaction().getCategory())) {
+                    if (doesTransactionFitBudget(event.getTransaction(), budget)) {
                         budget.setCurrentAmount(budget.getCurrentAmount() + (float)event.getTransaction().getAmount());
                     }
                 }
                 break;
         }
+    }
+
+    private boolean doesTransactionFitBudget(Transaction t, Budget b) {
+        Date transactionDate = new Date(t.getYear() - 1900, t.getMonth() - 1, t.getDay());
+        transactionDate.setHours(12);
+        boolean dateFits = (b.getFrom().before(transactionDate) && b.getUntil().after(transactionDate)) ;
+        boolean categoryFits = (b.category.equalsIgnoreCase(t.getCategory()));
+
+        return (dateFits && categoryFits);
     }
 
     public static BudgetManager getInstance() {
@@ -129,10 +143,7 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return budgets;
     }
 
-    private Budget addBudgetLocally(String category, float budget, Date endingDate) {
-        Calendar c = Calendar.getInstance();
-        Date startingDate = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
-
+    private Budget addBudgetLocally(String category, float budget, Date startingDate, Date endingDate) {
         endingDate.setHours(23);
         endingDate.setMinutes(59);
         endingDate.setSeconds(59);
@@ -145,17 +156,13 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return newBudget;
     }
 
-    public void addBudget (String category, float budget, Date endingDate) {
-        Budget b = addBudgetLocally(category, budget, endingDate);
+    public void addBudget (String category, float budget, Date startingDate,  Date endingDate) {
+        Budget b = addBudgetLocally(category, budget, startingDate, endingDate);
         b.setId(writeNewBudgetToFirebase(b));
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
-    private Budget addBudgetLocally(String category, float budget, Budget.RenewalTypes renewalType) {
-
-        Calendar c = Calendar.getInstance();
-        Date startingDate = new Date(c.getTime().getYear(), c.getTime().getMonth(), c.getTime().getDate());
-
+    private Budget addBudgetLocally(String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
 
         Date endingDate = new Date();
         endingDate.setHours(23);
@@ -169,8 +176,8 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return newBudget;
     }
 
-    public void addBudget (String category, float budget, Budget.RenewalTypes renewalType) {
-        Budget b = addBudgetLocally(category, budget, renewalType);
+    public void addBudget (String category, float budget, Date startingDate,  Budget.RenewalTypes renewalType) {
+        Budget b = addBudgetLocally(category, budget, startingDate, renewalType);
         b.setId(writeNewBudgetToFirebase(b));
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
@@ -178,6 +185,8 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
     public void addBudgetFromFirebase(String id, Budget budget) {
         budgets.add(budget);
         budget.setId(id);
+        budget.setCurrentAmount(getTransactionSum(budget.category, budget.getFrom(), budget.getUntil()));
+        renewBudgets();
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
@@ -190,12 +199,13 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return null;
     }
 
-    public boolean editById(String id, String category, float budget, Budget.RenewalTypes renewalType) {
+    public boolean editById(String id, String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
         Budget b = getById(id);
         if (b == null) return false;
 
         b.setBudget(budget);
         b.setCategory(category);
+        b.setFrom(startingDate);
         b.setRenewalType(renewalType);
         b.setUntil(addTimeByRenewalType(b.getFrom(), renewalType));
 
@@ -207,13 +217,14 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return true;
     }
 
-    public boolean editById(String id, String category, float budget, Date customDate) {
+    public boolean editById(String id, String category, float budget, Date startingDate, Date customDate) {
         Budget b = getById(id);
         if (b == null) return false;
 
         b.setBudget(budget);
         b.setCategory(category);
         b.setRenewalType(Budget.RenewalTypes.CUSTOM);
+        b.setFrom(startingDate);
         b.setUntil(customDate);
 
 
@@ -255,6 +266,25 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         budgetsRef.child(id).removeValue();
         renewBudgets();
         return true;
+    }
+
+    public void removeAt(int position) {
+        if (position < 0 || position >= budgets.size()) return;
+        budgetsRef.child(budgets.get(position).getId()).removeValue();
+        budgets.remove(position);
+    }
+
+    public void swap(int fromPosition, int toPosition) {
+        Log.i("BUDGETSWAP:", "from: " + fromPosition + " to: " + toPosition);
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(budgets, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(budgets, i, i - 1);
+            }
+        }
     }
 
 

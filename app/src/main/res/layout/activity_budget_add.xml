@@ -49,6 +49,7 @@
                     android:inputType="numberDecimal"
                     android:textAlignment="viewEnd"
                     android:textColor="@color/colorPrimary"
+                    android:maxLength="10"
                     android:textSize="30sp" />
             </LinearLayout>
 
@@ -72,9 +73,37 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/buttons"
                     android:spinnerMode="dialog"
                     android:textAlignment="viewEnd" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/startingDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/startingDateTextView"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/budget_edit_from"
+                    android:textSize="@dimen/editUI_textSize" />
+
+                <EditText
+                    android:id="@+id/startingDateEditText"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:textAlignment="viewEnd"
+                    android:paddingEnd="5sp"/>
 
             </LinearLayout>
 

@@ -203,6 +203,7 @@ public class LoginActivity extends AppCompatActivity {
         categoryManager.reset();
         BudgetManager budgetManager = BudgetManager.getInstance();
         curUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 HashMap<String, HashMap<String, HashMap<String, Object>>> map = (HashMap<String, HashMap<String, HashMap<String, Object>>>) dataSnapshot.getValue();
@@ -226,6 +227,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
 
+                    //Budgets must be added before transactions, so that the transactions can register.
+                    for (DataSnapshot snapshot : dataSnapshot.child("budgets").getChildren()) {
+                        Log.i("BUDGET:", snapshot.toString());
+                        budgetManager.addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
+                    }
+
                     if (map.get("transactions") != null) {
                         //transactions
                         HashMap<String, HashMap<String, Object>> transMap = map.get("transactions");
@@ -241,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
                                     dataSnapshot.child("transactions").child(key).child("amount").getValue(Double.class)
                             );
                             newTransaction.setKey(key);
-                            transactionManager.addTransactionLocally(newTransaction, false);
+                            transactionManager.addTransactionLocally(newTransaction, true);
                         }
 
                     }
@@ -264,11 +271,7 @@ public class LoginActivity extends AppCompatActivity {
                         categoryManager.createDefaultIncCategories();
                     }
 
-                    //budgets
-                    for (DataSnapshot snapshot : dataSnapshot.child("budgets").getChildren()) {
-                        Log.i("BUDGET:", snapshot.toString());
-                        budgetManager.addBudgetFromFirebase(snapshot.getKey(), snapshot.getValue(Budget.class));
-                    }
+
 
                     //settings
                     HashMap<String, HashMap<String, Object>> settingsMap = map.get("settings");

@@ -13,6 +13,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lmu.pem.finanzapp.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class GlobalSettings {
 
     private static GlobalSettings instance;
@@ -27,6 +30,9 @@ public class GlobalSettings {
     public final static int CURRENCY_EURO = 0;
     public final static int CURRENCY_DOLLAR = 1;
     public final static int CURRENCY_POUND = 2;
+
+    public final static SimpleDateFormat GLOBAL_DATE_FORMAT = new SimpleDateFormat("MM/dd/yy", Locale.getDefault());
+
 
     private int currency;
     private int homeTab;

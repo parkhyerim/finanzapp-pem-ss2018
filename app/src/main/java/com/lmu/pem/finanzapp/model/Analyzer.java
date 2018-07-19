@@ -55,7 +55,8 @@ public  class Analyzer {
 
 
         HashMap<String, Float> h = new HashMap<>();
-        h.put(cat.get(mostExpensive), categoryCounters[mostExpensive]);
+        if (cat.size() != 0)
+            h.put(cat.get(mostExpensive), categoryCounters[mostExpensive]);
         return h;
     }
 
@@ -93,5 +94,9 @@ public  class Analyzer {
         long days = getBudgetDays(budget);
 
         return ((budget.getAmountPart() / budget.getDatePart())* days);
+    }
+
+    public static float getOvershootAmount(Budget budget) {
+        return (budget.getAmountPart()/budget.getDatePart()) * budget.getCurrentAmount();
     }
 }

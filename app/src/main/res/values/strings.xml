@@ -48,9 +48,12 @@
     <string name="budget_edit_title_edit">Edit Budget</string>
     <string name="budget_edit_done">Done</string>
     <string name="budget_edit_delete">Delete</string>
+    <string name="budget_edit_from">Starting</string>
     <string name="budget_edit_until">Until</string>
     <string name="budget_edit_duration">Duration</string>
     <string name="budget_edit_cat">Category</string>
+    <string name="budgetExpiredText">EXPIRED</string>
+
 
     <!-- Transaction Add / Edit Screen -->
     <string name="transaction_add_title_add">Add a new Transaction</string>
@@ -68,10 +71,10 @@
 
     <!-- Dashboard -->
     <!--Welcome Card-->
-    <string name="welcomecard_title">Welcome back!</string>
-    <string name="welcomecard_text">Do you want me do give you a roundup of your recent activities?</string>
-    <string name="welcomecard_btn1">YES</string>
-    <string name="welcomecard_btn2">NO</string>
+    <string name="welcomecard_title">Hello there!</string>
+    <string name="welcomecard_text">It seems to be pretty empty in here. Do not worry! As you start
+    using Oro more and more, this page will fill up in no time! Try adding a transaction for example!</string>
+    <string name="welcomecard_btn1">DO IT</string>
 
     <!--Highest Income Card-->
     <string name="highestincome_title">Your Biggest Income</string>
@@ -92,8 +95,7 @@
     <string name="bw_title2">Budget:</string>
     <string name="bw_mainText">In the current timeframe of </string>
     <string name="bw_amountDesc">of </string>
-    <string name="bw_secondaryText1">You would need</string>
-    <string name="bw_secondaryText2">extra days to accommodate for that!</string>
+    <string name="bw_secondaryText1">If you keep going at that rate, you will overshoot your budget by</string>
 
     <!--Budget Warning Card-->
     <string name="bf_title">Your</string>
