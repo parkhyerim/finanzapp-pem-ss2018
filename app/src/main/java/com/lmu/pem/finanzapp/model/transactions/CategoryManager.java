@@ -90,8 +90,9 @@ public class CategoryManager {
     public void createDefaultExpCategories(){
         ArrayList<String> defaultExpCats = new ArrayList<>();
         defaultExpCats.addAll(Arrays.asList("Food","Household","Transportation","Health","Movie", "Beauty", "Apparel", "Party", "Gift", "Education", "Music",
-                "Car","Travel", "Other"));
+                "Car","Travel"));
         Collections.sort(defaultExpCats, String.CASE_INSENSITIVE_ORDER);
+        defaultExpCats.add("Other");
         expCategories.addAll(defaultExpCats);
         writeExpenseCategoriestoFB(defaultExpCats);
     }
@@ -101,8 +102,9 @@ public class CategoryManager {
      */
     public void createDefaultIncCategories(){
         ArrayList<String> defaultIncCats = new ArrayList<>();
-        defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock", "Other"));
+        defaultIncCats.addAll(Arrays.asList("Salary","Bonus","Petty cash", "Stock"));
         Collections.sort(defaultIncCats, String.CASE_INSENSITIVE_ORDER);
+        defaultIncCats.add("Other");
         incCategories.addAll(defaultIncCats);
         writeIncomeCategoriestoFB(defaultIncCats);
     }
