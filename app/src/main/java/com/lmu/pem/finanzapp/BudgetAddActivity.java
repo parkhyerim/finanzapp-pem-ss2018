@@ -96,7 +96,7 @@ public class BudgetAddActivity extends AppCompatActivity {
     }
 
     private void initCategorySpinner() {
-        ArrayList<String> categories = new ArrayList<>(CategoryManager.getInstance().getExpCategories());
+        ArrayList<String> categories = new ArrayList<>(CategoryManager.getInstance().getUIExpCategories());
         ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categorySpinner.setAdapter(expenseCategoryAdapter);
 
@@ -109,7 +109,7 @@ public class BudgetAddActivity extends AppCompatActivity {
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                category = CategoryManager.getInstance().getExpCategories().get(position);
+                category = CategoryManager.getInstance().getUIExpCategories().get(position);
             }
 
             @Override

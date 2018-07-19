@@ -241,7 +241,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
     private void setupCategorySpinners() {
         // Expense-Category
-        expenses.addAll(categoryManager.getExpCategories());
+        expenses.addAll(categoryManager.getUIExpCategories());
         ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
         // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -268,10 +268,10 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // edit text
 
                                         String newItem = userInput.getText().toString();
-                                        if(newItem.length()<1 || categoryManager.getExpCategories().contains(newItem)) return;
+                                        if(newItem.length()<1 || categoryManager.getUIExpCategories().contains(newItem)) return;
                                         categoryManager.addExpenseCategory(newItem, true);
                                         expenses.clear();
-                                        expenses.addAll(categoryManager.getExpCategories());
+                                        expenses.addAll(categoryManager.getUIExpCategories());
                                         int pos = expenses.indexOf(newItem);
                                         expenseCategoryAdapter.notifyDataSetChanged();
                                         parent.setSelection(pos);
@@ -298,7 +298,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Income-Category
         if(incomes.isEmpty()) {
            // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
-            incomes.addAll(categoryManager.getIncCategories());
+            incomes.addAll(categoryManager.getUIIncCategories());
         }
         // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomes);
@@ -326,10 +326,10 @@ public class TransactionAddActivity extends AppCompatActivity {
                                         // get user input and set it to result
                                         // edit text
                                         String newItem = userInput.getText().toString();
-                                        if(newItem.length()<1 || categoryManager.getIncCategories().contains(newItem)) return;
+                                        if(newItem.length()<1 || categoryManager.getUIIncCategories().contains(newItem)) return;
                                         categoryManager.addIncomeCategory(newItem, true);
                                         incomes.clear();
-                                        incomes.addAll(categoryManager.getIncCategories());
+                                        incomes.addAll(categoryManager.getUIIncCategories());
                                         int pos = incomes.indexOf(newItem);
                                         incomeCategoryAdapter.notifyDataSetChanged();
                                         parent.setSelection(pos);

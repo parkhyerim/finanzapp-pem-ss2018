@@ -12,7 +12,7 @@ import java.util.HashMap;
 public  class Analyzer {
 
     public static HashMap<String, Float> calculateMostExpensiveCategory (TransactionManager manager) {
-        ArrayList<String> cat = CategoryManager.getInstance().getExpCategories();
+        ArrayList<String> cat = CategoryManager.getInstance().getPureExpCategories();
 
         float [] categoryCounters = new float[cat.size()];
 
@@ -36,7 +36,7 @@ public  class Analyzer {
     }
 
     public static HashMap<String, Float> calculateBestIncomeCategory (TransactionManager manager) {
-        ArrayList<String> cat = CategoryManager.getInstance().getIncCategories();
+        ArrayList<String> cat = CategoryManager.getInstance().getPureIncCategories();
 
         float [] categoryCounters = new float[cat.size()];
 

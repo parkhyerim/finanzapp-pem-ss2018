@@ -66,10 +66,10 @@ public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
         if (sticky) {
             //c.translate(15, child.getBottom()-headerView.getHeight());
 
-            c.translate(15, Math.max(0, child.getTop() - headerView.getHeight()));
+            c.translate(8, Math.max(0, child.getTop() - headerView.getHeight()));
         } else {
            // c.translate(15, child.getBottom()-headerView.getHeight());
-            c.translate(15, child.getTop() - headerView.getHeight());
+            c.translate(8, child.getTop() - headerView.getHeight());
         }
         headerView.draw(c);
         c.restore();

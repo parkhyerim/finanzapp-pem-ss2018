@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
+import com.lmu.pem.finanzapp.model.transactions.CategoryManager;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.accounts.Account;
 import com.lmu.pem.finanzapp.model.accounts.AccountManager;
@@ -145,25 +146,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             intent.putExtra("amount", transaction.getAmount());
             intent.putExtra("key", transaction.getKey());
 
-            int index;
-            String[] expenseCategories, incomeCategories;
-            expenseCategories = context.getResources().getStringArray(R.array.expense_category);
-            incomeCategories = context.getResources().getStringArray(R.array.income_category);
+            ArrayList<String> expenseCategories, incomeCategories;
+            CategoryManager categoryManager = CategoryManager.getInstance();
+            expenseCategories = categoryManager.getUIExpCategories();
+            incomeCategories = categoryManager.getUIIncCategories();
 
             if (transaction.getAmount()<0){
-                for(int i = 0 ; i < expenseCategories.length; i++) {
-                    if(expenseCategories[i].equals(transaction.getCategory())){
-                        index = i;
-                        intent.putExtra("category", index);
-                    }
-                }
+                int index = expenseCategories.indexOf(transaction.getCategory());
+                if(index>-1) intent.putExtra("category", index);
             } else {
-                for(int i = 0 ; i < incomeCategories.length; i++) {
-                    if(incomeCategories[i].equals(transaction.getCategory())){
-                        index = i;
-                        intent.putExtra("category2", index);
-                    }
-                }
+                int index = incomeCategories.indexOf(transaction.getCategory());
+                if(index>-1) intent.putExtra("category2", index);
             }
             transactionAdapter.transactionFragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_EDIT_TRANSACTION);
         }
