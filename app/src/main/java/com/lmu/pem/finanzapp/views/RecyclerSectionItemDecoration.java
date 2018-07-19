@@ -1,4 +1,4 @@
-package com.lmu.pem.finanzapp;
+package com.lmu.pem.finanzapp.views;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.lmu.pem.finanzapp.R;
 
 public class RecyclerSectionItemDecoration extends RecyclerView.ItemDecoration {
 

@@ -166,7 +166,7 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         doneButton.setOnClickListener(v -> {
             boolean valid=true;
-            if (amountEditText.getText().toString().equals("")){
+            if (amountEditText.getText().toString().equals("") || Double.valueOf(amountEditText.getText().toString()) == 0.0){
                 valid=false;
                 amountEditText.setError("Please enter a valid amount.");
                 amountEditText.addTextChangedListener(new TextWatcher() {
@@ -243,14 +243,12 @@ public class TransactionAddActivity extends AppCompatActivity {
         // Expense-Category
         expenses.addAll(categoryManager.getUIExpCategories());
         ArrayAdapter<String> expenseCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, expenses);
-        // ArrayAdapter<CharSequence> expenseCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.expense_category, android.R.layout.simple_spinner_item);
         expenseCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expenseCategorySpinner.setAdapter(expenseCategoryAdapter);
         expenseCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category = parent.getItemAtPosition(position).toString();
-                //Toast.makeText(getBaseContext(), category + " selected", Toast.LENGTH_SHORT).show();
                 category = (String) expenseCategorySpinner.getSelectedItem();
                 if(category.equals("Add")){
                     LayoutInflater li = LayoutInflater.from(context);
@@ -285,7 +283,6 @@ public class TransactionAddActivity extends AppCompatActivity {
 
                     // show it
                     alertDialog.show();
-                    //Toast.makeText(getBaseContext(), expenseCategorySpinner.getSelectedItemPosition() + " selected", Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -297,10 +294,8 @@ public class TransactionAddActivity extends AppCompatActivity {
 
         // Income-Category
         if(incomes.isEmpty()) {
-           // incomes.addAll(Arrays.asList(getResources().getStringArray(R.array.income_category)));
             incomes.addAll(categoryManager.getUIIncCategories());
         }
-        // ArrayAdapter<CharSequence> incomeCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.income_category, android.R.layout.simple_spinner_item);
         ArrayAdapter<String> incomeCategoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, incomes);
 
         incomeCategoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

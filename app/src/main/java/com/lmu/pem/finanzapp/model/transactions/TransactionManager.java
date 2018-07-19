@@ -101,6 +101,30 @@ public class TransactionManager extends TransactionHistoryEventSource{
         return false;
     }
 
+    /**
+     * Are there any expense Transactions in this TransactionManager for a given category?
+     * @param category the category to search for
+     * @return true if a Transaction for the given category is found, otherwise false
+     */
+    public boolean transactionsForExpenseCategory(String category){
+        for(Transaction t : transactions){
+            if(t.getAmount()<0 && t.getCategory().equals(category)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Are there any income Transactions in this TransactionManager for a given category?
+     * @param category the category to search for
+     * @return true if a Transaction for the given category is found, otherwise false
+     */
+    public boolean transactionsForIncomeCategory(String category){
+        for(Transaction t : transactions){
+            if(t.getAmount()>0 && t.getCategory().equals(category)) return true;
+        }
+        return false;
+    }
+
     public Transaction getTransactionByKey(String key){
         for(Transaction t : transactions){
             if(t.getKey().equals(key)){
