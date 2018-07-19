@@ -1,5 +1,6 @@
 package com.lmu.pem.finanzapp.controller;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.TransactionAddActivity;
 import com.lmu.pem.finanzapp.model.accounts.Account;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
+import com.lmu.pem.finanzapp.model.accounts.AccountManager;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.views.AccountFragment;
 import com.lmu.pem.finanzapp.views.CircleView;
 import com.lmu.pem.finanzapp.views.TransactionFragment;
@@ -103,32 +106,42 @@ public class AccountAdapter extends BaseAdapter {
         });
 
         circleView.setOnDragListener((v, event) -> {
-            switch(event.getAction()){
-                case DragEvent.ACTION_DRAG_STARTED:
-                    Log.println(Log.INFO, "123123123", "Started dragging...");
-                    break;
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    Log.println(Log.INFO, "123123123", "Drag entered!");
-                    //TODO set color (call invalidate!) / ...
-                    break;
-                case DragEvent.ACTION_DRAG_EXITED:
-                    Log.println(Log.INFO, "123123123", "Drag exited!");
-                    //TODO set color (call invalidate!) / ...
-                    break;
-                case DragEvent.ACTION_DROP:
-                    Log.println(Log.INFO, "123123123", "Dropped! "+ event.getClipData().getItemAt(0).getText().toString()+" -> "+accounts.get(position).getId());
-                    if(!(event.getClipData().getItemAt(0).getText().toString().equals(accounts.get(position).getId()))){
-                        Intent intent = new Intent(context, TransactionAddActivity.class);
-                        intent.putExtra("account", event.getClipData().getItemAt(0).getText().toString());
-                        intent.putExtra("account2", accounts.get(position).getId());
-                        fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
-                    }
-                    break;
-                case DragEvent.ACTION_DRAG_ENDED:
-                    Log.println(Log.INFO, "123123123", "...Stopped dragging!");
-                    //TODO set color (call invalidate!) / ...
-                    break;
+            if(event.getAction()==DragEvent.ACTION_DROP){
+                Log.println(Log.INFO, "123123123", "Dropped! "+ event.getClipData().getItemAt(0).getText().toString()+" -> "+accounts.get(position).getId());
+                if(!(event.getClipData().getItemAt(0).getText().toString().equals(accounts.get(position).getId()))){
+                    Intent intent = new Intent(context, TransactionAddActivity.class);
+                    intent.putExtra("account", event.getClipData().getItemAt(0).getText().toString());
+                    intent.putExtra("account2", accounts.get(position).getId());
+                    fragment.startActivityForResult(intent, TransactionFragment.REQUEST_CODE_ADD_TRANSACTION);
+                }
             }
+            return true;
+        });
+
+        circleView.setOnLongClickListener((v)->{
+            String accId = accounts.get(position).getId();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+            builder.setIcon(android.R.drawable.ic_dialog_alert);
+
+            if(TransactionManager.getInstance().transactionsForAccount(accId)){
+                builder.setTitle("Can't delete account")
+                        .setMessage("You can't delete an account that has transactions linked to it!\nYou have to delete the transactions for this Account before you can delete this account.")
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            // do nothing
+                        });
+            }else{
+                builder.setTitle("Delete account")
+                        .setMessage("Are you sure you want to delete this account?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            AccountManager.getInstance().deleteAccount(accId);
+                            notifyDataSetChanged();
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                            // do nothing
+                        });
+            }
+            builder.show();
             return true;
         });
 

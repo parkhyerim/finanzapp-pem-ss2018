@@ -89,6 +89,18 @@ public class TransactionManager extends TransactionHistoryEventSource{
         return getTransactionByKey(transaction.getKey()) != null;
     }
 
+    /**
+     * Are there any Transactions in this TransactionManager for a given Account?
+     * @param id the ID of the Account to search for
+     * @return true if a Transaction for the given Account is found, otherwise false
+     */
+    public boolean transactionsForAccount(String id){
+        for(Transaction t : transactions){
+            if(id.equals(t.getAccount()) || id.equals(t.getAccount2())) return true;
+        }
+        return false;
+    }
+
     public Transaction getTransactionByKey(String key){
         for(Transaction t : transactions){
             if(t.getKey().equals(key)){

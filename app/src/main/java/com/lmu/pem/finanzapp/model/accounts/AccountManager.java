@@ -83,11 +83,15 @@ public class AccountManager implements TransactionHistoryEventListener {
     }
 
     /**
-     * Remove an account from this AccountManager
-     * @param index The index of the Account to be removed
+     * Removes an account from this AccountManager and deletes in in Firebase
+     * @param id The ID of the Account to be removed
      */
-    public void deleteAccount(int index){ //TODO: pass ID and figure out index automatically
-        this.accounts.remove(index);
+    public void deleteAccount(String id){
+        int index = accounts.indexOf(getAccountById(id));
+        if(index!=-1){
+            dbRef.child(id).setValue(null);
+            accounts.remove(index);
+        }
     }
 
     /**
