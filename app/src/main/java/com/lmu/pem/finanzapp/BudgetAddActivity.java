@@ -193,6 +193,7 @@ public class BudgetAddActivity extends AppCompatActivity {
                     startingDate.getYear() + 1900,
                     startingDate.getMonth(),
                     startingDate.getDate());
+            dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
         });
@@ -211,6 +212,7 @@ public class BudgetAddActivity extends AppCompatActivity {
                     customDate.getMonth(),
                     customDate.getDate());
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+            dialog.getDatePicker().setMinDate(startingDate.getTime());
             dialog.show();
         });
     }
