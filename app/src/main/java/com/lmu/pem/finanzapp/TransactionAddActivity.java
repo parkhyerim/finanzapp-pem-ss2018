@@ -447,7 +447,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         incomeLayout.setVisibility(View.GONE);
         accountLine2.setVisibility(View.GONE);
         expenseLayout.setVisibility(View.VISIBLE);
-        accountTextView.setText("Account");
+        accountTextView.setText(R.string.transaction_add_account);
         account2=null;
         //transactionAddLayout.setBackgroundColor(Color.parseColor("#F8E0E0"));
     }
@@ -463,7 +463,7 @@ public class TransactionAddActivity extends AppCompatActivity {
         expenseLayout.setVisibility(View.GONE);
         accountLine2.setVisibility(View.GONE);
         incomeLayout.setVisibility(View.VISIBLE);
-        accountTextView.setText("Account");
+        accountTextView.setText(R.string.transaction_add_account);
         account2=null;
         //transactionAddLayout.setBackgroundColor(Color.parseColor("#F1F8E0"));
     }

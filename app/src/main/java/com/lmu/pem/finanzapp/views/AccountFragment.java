@@ -94,7 +94,7 @@ public class AccountFragment extends Fragment implements TransactionHistoryEvent
                 acc.setBalance(balance);
                 acc.setColor(color);
                 acc.setDefault(defaultAcc);
-                if(defaultAcc && !(accountManager.getDefaultAcc().getId().equals(accountID))) accountManager.setDefaultAcc(acc);
+                if(defaultAcc && (accountManager.getDefaultAcc()==null || !(accountManager.getDefaultAcc().getId().equals(accountID)))) accountManager.setDefaultAcc(acc);
             }
             accountManager.writeAccountToFirebase(acc);
 

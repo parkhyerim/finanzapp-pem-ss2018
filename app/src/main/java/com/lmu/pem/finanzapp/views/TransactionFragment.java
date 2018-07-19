@@ -2,10 +2,8 @@ package com.lmu.pem.finanzapp.views;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -36,9 +34,6 @@ import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-
-import butterknife.ButterKnife;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -100,6 +95,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(adapter);
+        recyclerView.scrollToPosition(adapter.getItemCount()-1);
 
         // Header-Section
         RecyclerSectionItemDecoration transactionSectionItemDecoration = new RecyclerSectionItemDecoration(getResources().getDimensionPixelSize(R.dimen.transaction_recycler_section_header), true, getSectionCallback(transactionManager.getTransactions()));
@@ -173,7 +169,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 if(position >= 0) {
                     date = months[transactionList.get(position).getMonth()-1] + " " + transactionList.get(position).getDay() + ", " + transactionList.get(position).getYear();
                 } else {
-                    date = "January 01, 2018"; //TODO sinnvolle Fehlerbehandlung statt random Datum
+                    date = "";
                 }
                 return date;
             }
@@ -222,9 +218,9 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
     private ArrayList<Transaction> filter(ArrayList<Transaction> transactionList, String query){
         query = query.toLowerCase();
         final ArrayList<Transaction> fiteredList = new ArrayList<>();
-        for(Transaction transaction: transactionList){
+        for(Transaction transaction : transactionList){
             final String descText = transaction.getDescription().toLowerCase();
-            final String accText = transaction.getAccount().toLowerCase();
+            final String accText = AccountManager.getInstance().getAccountById(transaction.getAccount()).getName().toLowerCase();
             final String cateText = transaction.getCategory().toLowerCase();
             final String year = String.valueOf(transaction.getYear());
             final String month = String.valueOf(transaction.getMonth());
@@ -243,7 +239,7 @@ public class TransactionFragment extends Fragment implements SearchView.OnQueryT
                 fiteredList.add(transaction);
             }
         }
-        return  fiteredList;
+        return fiteredList;
     }
 
     @Override

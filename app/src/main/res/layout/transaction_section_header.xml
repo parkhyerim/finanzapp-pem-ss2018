@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/transaction_recycler_section_header"
     android:background="@color/colorPrimaryDark"
+    android:gravity="center_vertical"
+    android:paddingStart="5dp"
     android:textStyle="bold"
     android:textSize="12sp"
     android:layout_centerVertical="true">

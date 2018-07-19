@@ -1,5 +1,7 @@
 package com.lmu.pem.finanzapp.model.accounts;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +40,7 @@ public class AccountManager implements TransactionHistoryEventListener {
         this.accounts = new ArrayList<Account>();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
+        defaultAcc=null;
     }
 
     /**
@@ -71,6 +74,7 @@ public class AccountManager implements TransactionHistoryEventListener {
      */
     public void addAccount(Account acc){
         this.accounts.add(acc);
+        Log.i("123123123", "addAccount: "+acc.getId()+" ->default? "+acc.isDefault());
         if(acc.isDefault()) setDefaultAcc(acc);
     }
 
