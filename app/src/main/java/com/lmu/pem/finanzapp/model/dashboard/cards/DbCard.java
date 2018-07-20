@@ -35,4 +35,11 @@ public abstract class DbCard {
         this.primaryText = primaryText;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof DbCard))
+            return false;
+        DbCard card = (DbCard)obj;
+        return (card.title.equals(this.title) && card.primaryText.equals(this.primaryText) && card.type.equals(this.type));
+    }
 }

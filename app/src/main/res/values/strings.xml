@@ -79,10 +79,15 @@
     <string name="settings_loggedInAs">You\'re currently logged in as:</string>
 
     <!-- Dashboard -->
+    <string name="budget_delete_message">Hidden until next restart!</string>
+
     <!--Welcome Card-->
     <string name="welcomecard_title">Welcome to Oro!</string>
+    <string name="welcomecard_title_swiped">I\'m lonely!</string>
     <string name="welcomecard_text">It seems to be pretty empty in here. Do not worry! As you start
     using Oro more and more, this page will fill up in no time! Try adding a transaction for example!</string>
+
+    <string name="welcomecard_text_swiped">You seem to have swiped away all the relevant cards… I can bring everything back, if you want!</string>
     <string name="welcomecard_btn1">DO IT</string>
 
     <!--Swipe tutorial-->

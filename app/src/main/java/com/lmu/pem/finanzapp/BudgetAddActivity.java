@@ -248,6 +248,8 @@ public class BudgetAddActivity extends AppCompatActivity {
     private boolean verify() {
         boolean valid = true;
 
+
+
         if (startingDate.after(Calendar.getInstance().getTime())) {
             startingDateEditText.setError("Starting date can't lie in the future!");
             valid = false;
@@ -268,7 +270,17 @@ public class BudgetAddActivity extends AppCompatActivity {
             valid = false;
         }
 
-        //TODO CHECK SPINNERS
+        for (Budget budget : BudgetManager.getInstance().getBudgets()) {
+            if (budget.getCategory().equals(category)) {
+                String error = String.format(Locale.getDefault(),
+                        "You already have a %s budget of %.2f %s",
+                        category,
+                        budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
+                budgetEditText.setError(error);
+                valid = false;
+                break;
+            }
+        }
 
         return valid;
     }

@@ -1,9 +1,10 @@
 package com.lmu.pem.finanzapp.model.dashboard.cards;
 
+import android.util.Log;
+
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 
-public class BasicAmountCard extends DbCard{
-
+public class BasicAmountCard extends DbCard {
 
 
     public enum AmountType {POSITIVE, NEGATIVE, WARNING, NEUTRAL}
@@ -54,4 +55,17 @@ public class BasicAmountCard extends DbCard{
         this.secondaryMessage = secondaryMessage;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BasicAmountCard))
+            return false;
+        BasicAmountCard card = (BasicAmountCard) obj;
+        Log.i("ACTIVECARD", "comparing " + card.getTitle());
+
+        return (card.getTitle().equals(this.getTitle()) &&
+                card.getPrimaryText().equals(this.getPrimaryText()) &&
+                card.getAmount() == this.getAmount() &&
+                card.getAmountDescription().equals(this.getAmountDescription()) &&
+                card.getAmountType().equals(this.getAmountType()));
+    }
 }

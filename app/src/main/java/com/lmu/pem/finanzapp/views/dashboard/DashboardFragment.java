@@ -63,7 +63,7 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
         // specify an adapter (see also next example)
 
-        adapter = new CardAdapter(dashboardManager.getDataSet(transactionManager), this);
+        adapter = new CardAdapter(dashboardManager.getDataSet(), this);
         recyclerView.setAdapter(adapter);
         dashboardManager.setAdapterListener(adapter);
 
@@ -78,7 +78,7 @@ public class DashboardFragment extends Fragment implements DashboardEventListene
 
     private void handleListEmptyText() {
         TextView emptyListText = aboutView.findViewById(R.id.emptyListText);
-        if(dashboardManager.getDataSet(transactionManager).size()<1){
+        if(dashboardManager.getDataSet().size()<1){
             if(emptyListText!=null) emptyListText.setVisibility(View.VISIBLE);
         }else{
             if(emptyListText!=null) emptyListText.setVisibility(View.GONE);

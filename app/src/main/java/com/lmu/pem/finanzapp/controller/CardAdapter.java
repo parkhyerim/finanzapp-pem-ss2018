@@ -1,7 +1,9 @@
 package com.lmu.pem.finanzapp.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 import com.lmu.pem.finanzapp.model.dashboard.cards.*;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.views.dashboard.DashboardFragment;
 
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     private ArrayList<DbCard> dataSet;
 
-    private DashboardFragment fragmentHandle;
+    public DashboardFragment fragmentHandle;
 
 
     public static abstract class CardViewHolder extends RecyclerView.ViewHolder {
@@ -108,9 +111,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             WelcomeCard c = (WelcomeCard) dataSet.get(position);
             if (c.getBtnText() == "")
                 h.button.setVisibility(View.GONE);
-            else
+            else if (TransactionManager.getInstance().getTransactions().size() == 0)
                 h.button.setOnClickListener((v) -> fragmentHandle.startAddTransactionActivity()
                 );
+            else
+                h.button.setOnClickListener((v) -> DashboardManager.getInstance(fragmentHandle.getContext()).reset());
 
             h.primaryText.setText(c.getPrimaryText());
         } else {
@@ -173,5 +178,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     public void onItemDismiss(int position) {
         DashboardManager.getInstance(fragmentHandle.getContext()).deleteCard(dataSet.get(position));
         notifyItemRemoved(position);
+        Snackbar.make(fragmentHandle.getView(), R.string.budget_delete_message, Snackbar.LENGTH_LONG).show();
+
     }
 }

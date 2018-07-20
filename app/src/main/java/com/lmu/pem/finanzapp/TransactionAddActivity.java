@@ -369,7 +369,7 @@ public class TransactionAddActivity extends AppCompatActivity {
             setDateOnDisplay(year, month+1, day);
         };
         dateDisplay.setOnClickListener(v -> {
-           // dateDisplay.setError(null);
+           dateDisplay.setError(null);
             DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month-1, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();

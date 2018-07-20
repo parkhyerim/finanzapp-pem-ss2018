@@ -1,6 +1,9 @@
 package com.lmu.pem.finanzapp.model.dashboard;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,6 +16,7 @@ import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEvent;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEventListener;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
+import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.Analyzer;
 import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
@@ -27,15 +31,15 @@ import java.util.Locale;
 
 public class DashboardManager extends DashboardEventSource implements TransactionHistoryEventListener, BudgetEventListener {
 
+    /***
+     * The singleton instance
+     */
     private static DashboardManager instance;
 
     private CardAdapter adapterHandle;
 
-    private DatabaseReference firebaseRef;
+    private HashMap<CardType, Integer> cardTypeValues = new HashMap<>();
 
-    private HashMap<Integer, Integer> cardTypeValues = new HashMap<>();
-
-    private static final String FIREBASE_CHILD_NAME = "cardTypeValues";
 
     public enum CardType {
         WELCOME,
@@ -49,9 +53,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     private Context context;
 
     private ArrayList<DbCard> activeCards;
-    private ArrayList<DbCard> archivedCards;
+    private ArrayList<DbCard> archivedCards = new ArrayList<>();
 
-    private DashboardManager() {
+    private DashboardManager(Context context) {
+        this.context = context;
         TransactionManager.getInstance().addListener(this);
         BudgetManager.getInstance().addListener(this);
         reset();
@@ -59,23 +64,24 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     public void reset() {
         cardTypeValues.clear();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("dashboard");
+        archivedCards.clear();
+
+        refreshActiveCards();
     }
 
     @Override
     public void handle(TransactionHistoryEvent event) {
-        refreshActiveCards(TransactionManager.getInstance());
+        refreshActiveCards();
     }
 
     @Override
     public void handle(BudgetEvent event) {
-        refreshActiveCards(TransactionManager.getInstance());
+        refreshActiveCards();
     }
 
     public static DashboardManager getInstance(Context context) {
         if (instance == null) {
-            instance = new DashboardManager();
+            instance = new DashboardManager(context);
         }
         instance.context = context;
 
@@ -83,11 +89,11 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     }
 
 
-    public ArrayList<DbCard> getDataSet(TransactionManager history) {
+    public ArrayList<DbCard> getDataSet() {
         if (activeCards != null)
             return activeCards;
 
-        refreshActiveCards(history);
+        refreshActiveCards();
         return activeCards;
 
     }
@@ -96,11 +102,9 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         adapterHandle = cardAdapter;
     }
 
-    private void refreshActiveCards(TransactionManager history) {
+    private void refreshActiveCards() {
         if (activeCards == null) activeCards = new ArrayList<>();
         activeCards.clear();
-
-        //TODO Be smart about any of this
 
 
         for (CardType cardType : CardType.values()) {
@@ -112,16 +116,37 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         welcomeCardFactory();
         swipeTutorialFactory();
 
+        ArrayList<DbCard> removalBuffer = new ArrayList<>();
+        for (DbCard activeCard : activeCards) {
+            for (DbCard archivedCard : archivedCards) {
+                if (activeCard.equals(archivedCard)) removalBuffer.add(activeCard);
+                Log.i("ACTIVECARD", activeCard.getTitle() + " and " + archivedCard.getTitle() + " : " + activeCard.equals(archivedCard));
+            }
+        }
+        activeCards.removeAll(removalBuffer);
 
         if (adapterHandle != null) adapterHandle.notifyDataSetChanged();
         fireDashboardEvent(new DashboardEvent(this, DashboardEvent.EventType.UPDATED));
     }
 
+    public void deleteCard(DbCard card) {
+        archivedCards.add(card);
+        boolean stillOthers = false;
+        for (DbCard activeCard : activeCards) {
+            if (activeCard.getType() == card.getType() && !activeCard.equals(card)) {
+                stillOthers = true;
+                break;
+            }
+        }
+        if (!stillOthers)
+            setCardTypeValue(card.getType(), 0);
+        refreshActiveCards();
+    }
 
     //region Card Factories
 
     private boolean isCardTypeWanted(CardType t) {
-        return (getCardTypeValue(t) > 0);
+        return (getCardTypeValue(t) > 0 || getCardTypeValue(t) == -1);
     }
 
     private void cardFactory(CardType type) {
@@ -197,15 +222,23 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     }
 
     private WelcomeCard createWelcomeCardLayout() {
-        return new WelcomeCard(
+        if (TransactionManager.getInstance().getTransactions().size() == 0)
+            return new WelcomeCard(
                 CardType.WELCOME,
                 context.getString(R.string.welcomecard_title),
                 context.getString(R.string.welcomecard_text),
                 context.getString(R.string.welcomecard_btn1));
+        else
+            return new WelcomeCard(CardType.WELCOME,
+                    context.getString(R.string.welcomecard_title_swiped),
+                    context.getString(R.string.welcomecard_text_swiped),
+                    context.getString(R.string.welcomecard_btn1));
     }
 
     private void swipeTutorialFactory() {
-        if (cardTypeValues.containsKey(CardType.SWIPETUTORIAL.ordinal()) && cardTypeValues.get(CardType.SWIPETUTORIAL.ordinal()) == 0)
+        if (cardTypeValues.containsKey(CardType.SWIPETUTORIAL) && cardTypeValues.get(CardType.SWIPETUTORIAL) == 0)
+            return;
+        if (activeCards.size() > 1 || (TransactionManager.getInstance().getTransactions().size() > 0 && activeCards.size() == 1 && activeCards.get(0).getType() != CardType.WELCOME))
             return;
         activeCards.add(createSwipeTutorialCardLayout());
     }
@@ -226,8 +259,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     }
 
     public void setCardTypeValue(CardType type, int value) {
-        cardTypeValues.put(type.ordinal(), value);
-        firebaseRef.child(FIREBASE_CHILD_NAME).setValue(cardTypeValues);
+        cardTypeValues.put(type, value);
     }
 
     private int getCardTypeValue(CardType type) {
@@ -237,10 +269,6 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         return -1;
     }
 
-    public void deleteCard(DbCard card) {
-        setCardTypeValue(card.getType(), 0);
-        refreshActiveCards(TransactionManager.getInstance());
-    }
 
     private BasicAmountCard createBudgetWarningCardLayout(Budget budget) {
         String title = context.getString(R.string.bw_title) + " " + budget.getCategory() + " " + context.getString(R.string.bw_title2);

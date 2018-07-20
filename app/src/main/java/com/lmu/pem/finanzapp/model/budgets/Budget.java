@@ -31,15 +31,22 @@ public class Budget implements Serializable {
             String[] returnBuffer = new String[RenewalTypes.values().length];
 
             for (int i = 0; i < RenewalTypes.values().length; i++) {
-                returnBuffer[i] = RenewalTypes.values()[i].toString().toLowerCase().substring(0, 1).toUpperCase()
+                if (RenewalTypes.values()[i] != CUSTOM)
+                    returnBuffer[i] = "Every ";
+                else
+                    returnBuffer[i] = "";
+                returnBuffer[i] += RenewalTypes.values()[i].toString().toLowerCase().substring(0, 1).toUpperCase()
                         + RenewalTypes.values()[i].toString().toLowerCase().substring(1);
+
+
             }
 
             return returnBuffer;
         }
     }
 
-    public Budget() {}
+    public Budget() {
+    }
 
     Budget(String category, Date from, Date until, float budget, float currentAmount, RenewalTypes renewalType) {
         this.category = category;
@@ -65,6 +72,10 @@ public class Budget implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isTheSameBudgetAs(Budget other) {
+        return other.category.equals(this.category);
     }
 
     public String getCategory() {
@@ -118,12 +129,12 @@ public class Budget implements Serializable {
     public float getDatePart() {
         float datePart = 1f;
         if (getUntil().getTime() != getFrom().getTime())
-            datePart = ((float)(Calendar.getInstance().getTime().getTime() - getFrom().getTime()) / (getUntil().getTime() - getFrom().getTime()));
+            datePart = ((float) (Calendar.getInstance().getTime().getTime() - getFrom().getTime()) / (getUntil().getTime() - getFrom().getTime()));
         return datePart;
     }
 
     public float getAmountPart() {
-       return getCurrentAmount() / getBudget();
+        return getCurrentAmount() / getBudget();
     }
 
 }

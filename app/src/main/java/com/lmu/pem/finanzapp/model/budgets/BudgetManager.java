@@ -60,8 +60,8 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
 
     private void forceRenewSingleBudget(Budget budget) {
 
-        budget.setFrom(addTimeByRenewalType(addOneDay(budget.getFrom()), budget.getRenewalType()));
-        budget.setUntil(addTimeByRenewalType(addOneDay(budget.getUntil()), budget.getRenewalType()));
+        budget.setFrom(addTimeByRenewalType(budget.getFrom(), budget.getRenewalType()));
+        budget.setUntil(addTimeByRenewalType(budget.getUntil(), budget.getRenewalType()));
 
 
     }
@@ -89,12 +89,7 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
     }
 
 
-    private Date addOneDay(Date date) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, 1);
-        return c.getTime();
-    }
+
 
     @Override
     public void handle(TransactionHistoryEvent event) {
