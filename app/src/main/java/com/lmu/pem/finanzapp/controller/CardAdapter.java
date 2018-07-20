@@ -20,34 +20,43 @@ import com.lmu.pem.finanzapp.views.dashboard.DashboardFragment;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
 
+    /**
+     * The DataSet of Cards to display
+     */
     private ArrayList<DbCard> dataSet;
 
-    public DashboardFragment fragmentHandle;
+    /**
+     * A handle to the fragment with the RecyclerView.
+     */
+    private DashboardFragment fragmentHandle;
 
+    /**
+     * The basic ViewHolder for any card.
+     */
+    static abstract class CardViewHolder extends RecyclerView.ViewHolder {
+        TextView titleText;
 
-    public static abstract class CardViewHolder extends RecyclerView.ViewHolder {
-        public TextView titleText;
-
-        public CardViewHolder(View view) {
+        CardViewHolder(View view) {
             super(view);
         }
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
+    /**
+     * The ViewHolder for the basic amount cards.
+     */
     public static class BasicAmountViewHolder extends CardViewHolder {
         // each data item is just a string in this case
-        public TextView primaryText;
-        public TextView amountText;
-        public TextView amountDescText;
-        public TextView secondaryText;
+        TextView primaryText;
+        TextView amountText;
+        TextView amountDescText;
+        TextView secondaryText;
 
 
-        public BasicAmountViewHolder(View itemView) {
+        BasicAmountViewHolder(View itemView) {
             super(itemView);
 
             titleText = itemView.findViewById(R.id.title);
@@ -60,11 +69,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
+    /**
+     * The ViewHolder for the welcome cards.
+     */
     public static class WelcomeCardViewHolder extends CardViewHolder {
-        public TextView primaryText;
+        TextView primaryText;
         public Button button;
 
-        public WelcomeCardViewHolder(View view) {
+        WelcomeCardViewHolder(View view) {
             super(view);
             this.titleText = view.findViewById(R.id.title);
             this.primaryText = view.findViewById(R.id.primaryMessage);
@@ -73,11 +85,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
+    /**
+     * Constructs a new CardAdapter. Takes the dataSet to display as an argument and the fragment
+     * that created it.
+     * @param dataSet The DataSet of Cards to display
+     * @param fragment The fragment containing the RecyclerView that displays the cards.
+     */
     public CardAdapter(ArrayList<DbCard> dataSet, @NonNull DashboardFragment fragment) {
         this.dataSet = dataSet;
         this.fragmentHandle = fragment;
     }
-
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent,
@@ -96,7 +113,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Binds a ViewHolder to the model object representing the card. Also deals with setting colors
+     * and dynamic text.
+     * @param holder The ViewHolder to bind.
+     * @param position the position in the list to bind.
+     */
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
 
@@ -108,7 +130,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
                 || getItemViewType(position) == DashboardManager.CardType.SWIPETUTORIAL.hashCode()) {
             WelcomeCardViewHolder h = (WelcomeCardViewHolder) holder;
             WelcomeCard c = (WelcomeCard) dataSet.get(position);
-            if (c.getBtnText() == "")
+            if (c.getBtnText().equals(""))
                 h.button.setVisibility(View.GONE);
             else if (TransactionManager.getInstance().getTransactions().size() == 0)
                 h.button.setOnClickListener((v) -> fragmentHandle.startAddTransactionActivity()
@@ -125,6 +147,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             h.amountText.setText(String.format(Locale.getDefault(), "%,.2f %s", c.getAmount(), GlobalSettings.getInstance().getCurrencyString()));
 
             Context context = fragmentHandle.getContext();
+            assert context != null;
+
             switch (c.getAmountType()) {
                 case POSITIVE:
                     h.amountText.setTextColor(context.getColor(R.color.positiveAmount));
@@ -154,6 +178,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     }
 
+    /**
+     * Removes a given view from its parent.
+     * @param view The view to remove from its parent.
+     */
     private void removeView(View view) {
         if (view.getParent() != null) {
             ((ViewManager) view.getParent()).removeView(view);
@@ -161,11 +189,20 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
 
+    /**
+     * Returns the amount of cards to display.
+     * @return The amount of displayed cards.
+     */
     @Override
     public int getItemCount() {
         return dataSet.size();
     }
 
+    /**
+     * Gets the hasCode of the type of a Card at the given position in the dataset.
+     * @param position The position of the card to check.
+     * @return The Hashcode of the cards Type.
+     */
     @Override
     public int getItemViewType(int position) {
         DbCard buffer = dataSet.get(position);
@@ -174,10 +211,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     }
 
+    /**
+     * Is called when an item at a given position is dismissed. Updates the DashboardManager and
+     * shows a SnackBar.
+     * @param position The position of the dismissed item.
+     */
     public void onItemDismiss(int position) {
         DashboardManager.getInstance(fragmentHandle.getContext()).dismissCard(dataSet.get(position));
         notifyItemRemoved(position);
-        Snackbar.make(fragmentHandle.getView(), R.string.budget_delete_message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(Objects.requireNonNull(fragmentHandle.getView()), R.string.budget_delete_message, Snackbar.LENGTH_LONG).show();
 
     }
 }

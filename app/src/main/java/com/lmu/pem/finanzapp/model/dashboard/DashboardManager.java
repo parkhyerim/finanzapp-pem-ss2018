@@ -1,29 +1,22 @@
 package com.lmu.pem.finanzapp.model.dashboard;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
+import com.lmu.pem.finanzapp.model.Analyzer;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEvent;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEventListener;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
-import com.lmu.pem.finanzapp.model.transactions.Transaction;
-import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
-import com.lmu.pem.finanzapp.model.Analyzer;
 import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
 import com.lmu.pem.finanzapp.model.dashboard.cards.DbCard;
 import com.lmu.pem.finanzapp.model.dashboard.cards.WelcomeCard;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
+import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -217,7 +210,7 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     }
 
     /**
-     * Sets a value to a given type, to accomodate user preference.
+     * Sets a value to a given type, to accommodate user preference.
      * @param type The type to set a value to.
      * @param value The value of this type to the user.
      */
