@@ -21,7 +21,6 @@ import com.lmu.pem.finanzapp.model.GlobalSettings;
 import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -318,9 +317,9 @@ public class BudgetAddActivity extends AppCompatActivity {
         }
 
         if (renewalType == Budget.RenewalTypes.CUSTOM)
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), startingDate, customDate);
+            BudgetManager.getInstance().addBudgetByUser(category, getBudgetAmount(), startingDate, customDate);
         else
-            BudgetManager.getInstance().addBudget(category, getBudgetAmount(), startingDate, renewalType);
+            BudgetManager.getInstance().addBudgetByUser(category, getBudgetAmount(), startingDate, renewalType);
 
         setResult(0);
         finish();

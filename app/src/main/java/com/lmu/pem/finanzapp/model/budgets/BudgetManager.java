@@ -20,52 +20,90 @@ import java.util.Map;
 
 public class BudgetManager extends BudgetEventSource implements TransactionHistoryEventListener{
 
+    /**
+     * The singleton instance.
+     */
     private static BudgetManager instance;
 
-
+    /**
+     * The Firebase Reference to the budgets.
+     */
     private DatabaseReference budgetsRef;
 
+    /**
+     * All Budgets.
+     */
     private ArrayList<Budget> budgets;
 
+    /**
+     * Private Constructor for singleton instance.
+     */
     private BudgetManager() {
         reset();
         TransactionManager.getInstance().addListener(this);
     }
 
-    public void reset() {
+    /**
+     * Public getter for the singleton instance.
+     * @return The Singleton instance
+     */
+    public static BudgetManager getInstance() {
+        if (instance == null) instance = new BudgetManager();
+        return instance;
+    }
+
+    /**
+     * Resets all the references and lists, so that they can be populated by firebase.
+     */
+    private void reset() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
         budgetsRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("budgets");
         budgets = new ArrayList<>();
     }
 
+    /**
+     * Checks all budgets if they are expired and should renew. If so, it renews them.
+     */
     private void renewBudgets() {
         for (Budget budget : this.budgets) {
-            if (!isBudgetCurrent(budget) && budget.getRenewalType() == Budget.RenewalTypes.CUSTOM) {
+            if (isBudgetExpired(budget) && budget.getRenewalType() == Budget.RenewalTypes.CUSTOM) {
                 continue;
             }
 
-            while (!isBudgetCurrent(budget))
+            while (isBudgetExpired(budget))
                 forceRenewSingleBudget(budget);
         }
 
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
-    private boolean isBudgetCurrent(Budget budget) {
+    /**
+     * Checks if a given budget has expired.
+     * @param budget The budget to check.
+     * @return True, if the budget is expired, false if it is still running.
+     */
+    private boolean isBudgetExpired(Budget budget) {
         Date today = Calendar.getInstance().getTime();
-        Log.i("ISCURRENT", "" + budget.getFrom() + " to " + budget.getUntil());
-        return (today.after(budget.getFrom()) && today.before(budget.getUntil()));
+        return (!today.after(budget.getFrom()) || !today.before(budget.getUntil()));
 
     }
 
+    /**
+     * Renews a given budget without consideration for its expiry
+     * @param budget The budget to renew.
+     */
     private void forceRenewSingleBudget(Budget budget) {
-
         budget.setFrom(addTimeByRenewalType(budget.getFrom(), budget.getRenewalType()));
         budget.setUntil(addTimeByRenewalType(budget.getUntil(), budget.getRenewalType()));
-
-
     }
 
+    /**
+     * Takes a date and RenewalType and returns a new Date with the added time from the renewal.
+     * @param date Date to add to.
+     * @param renewalType RenewalType to add.
+     * @return Date with added time from RenewalType.
+     */
     private Date addTimeByRenewalType(Date date, Budget.RenewalTypes renewalType) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -88,9 +126,11 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return c.getTime();
     }
 
-
-
-
+    /**
+     * Handles an event from the TransactionManager to react to changes to the transactions by updating
+     * the budgets.
+     * @param event The Event fired by the TransactionManager.
+     */
     @Override
     public void handle(TransactionHistoryEvent event) {
         switch (event.getType()) {
@@ -120,6 +160,12 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         }
     }
 
+    /**
+     * Checks if a given transaction should be considered by a given budget. (Time and Category)
+     * @param t The transaction to check.
+     * @param b The budget to check it against.
+     * @return True, if the transaction fits, false if not.
+     */
     private boolean doesTransactionFitBudget(Transaction t, Budget b) {
         Date transactionDate = new Date(t.getYear() - 1900, t.getMonth() - 1, t.getDay());
         transactionDate.setHours(12);
@@ -129,16 +175,23 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return (dateFits && categoryFits);
     }
 
-    public static BudgetManager getInstance() {
-        if (instance == null) instance = new BudgetManager();
-        return instance;
-    }
-
     public ArrayList<Budget> getBudgets() {
         return budgets;
     }
 
+    /**
+     * Adds a budget with the given parameters to the local list.
+     * @param category The budgets category.
+     * @param budget The budgets maximum amount.
+     * @param startingDate The budgets starting date.
+     * @param endingDate The budgets ending date.
+     * @return The budget that was added to the list.
+     */
     private Budget addBudgetLocally(String category, float budget, Date startingDate, Date endingDate) {
+        startingDate.setHours(0);
+        startingDate.setMinutes(0);
+        startingDate.setSeconds(0);
+
         endingDate.setHours(23);
         endingDate.setMinutes(59);
         endingDate.setSeconds(59);
@@ -151,13 +204,31 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return newBudget;
     }
 
-    public void addBudget (String category, float budget, Date startingDate,  Date endingDate) {
+    /**
+     * Is called by the BudgetAddActivity, after the user added a budget. Adds it locally and to firebase.
+     * @param category The budgets category.
+     * @param budget The budgets maximum amount.
+     * @param startingDate The budgets starting Date.
+     * @param endingDate The budgets ending date.
+     */
+    public void addBudgetByUser(String category, float budget, Date startingDate, Date endingDate) {
         Budget b = addBudgetLocally(category, budget, startingDate, endingDate);
         b.setId(writeNewBudgetToFirebase(b));
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
+    /**
+     * Adds a budget with the given parameters to the local list.
+     * @param category The budgets category.
+     * @param budget The budgets maximum amount.
+     * @param startingDate The budgets starting date.
+     * @param renewalType The budgets renewal type.
+     * @return The budget that was added to the list.
+     */
     private Budget addBudgetLocally(String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
+        startingDate.setHours(0);
+        startingDate.setMinutes(0);
+        startingDate.setSeconds(0);
 
         Date endingDate = new Date();
         endingDate.setHours(23);
@@ -171,12 +242,24 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return newBudget;
     }
 
-    public void addBudget (String category, float budget, Date startingDate,  Budget.RenewalTypes renewalType) {
+    /**
+     * Is called by the BudgetAddActivity, after the user added a budget. Adds it locally and to firebase.
+     * @param category The budgets category.
+     * @param budget The budgets maximum amount.
+     * @param startingDate The budgets starting Date.
+     * @param renewalType The budgets renewal type.
+     */
+    public void addBudgetByUser(String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
         Budget b = addBudgetLocally(category, budget, startingDate, renewalType);
         b.setId(writeNewBudgetToFirebase(b));
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
+    /**
+     * Adds a budget from firebase with a given id.
+     * @param id The id of the budget to add.
+     * @param budget The budget to add
+     */
     public void addBudgetFromFirebase(String id, Budget budget) {
         budgets.add(budget);
         budget.setId(id);
@@ -185,7 +268,11 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         fireBudgetEvent(new BudgetEvent(BudgetEvent.EventType.UPDATED, this));
     }
 
-
+    /**
+     * Gets a budget by a given id.
+     * @param id The id of the budget to get.
+     * @return The budget associated with the id, null if there is none.
+     */
     public Budget getById(String id) {
         for (Budget budget : budgets) {
             if (budget.getId().equals(id))
@@ -194,9 +281,17 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return null;
     }
 
-    public boolean editById(String id, String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
+    /**
+     * Edits a budget by a given id.
+     * @param id The id of the budget to edit.
+     * @param category The new category of the budget.
+     * @param budget The new limit.
+     * @param startingDate the new starting date.
+     * @param renewalType the new renewal type.
+     */
+    public void editById(String id, String category, float budget, Date startingDate, Budget.RenewalTypes renewalType) {
         Budget b = getById(id);
-        if (b == null) return false;
+        if (b == null) return;
 
         b.setBudget(budget);
         b.setCategory(category);
@@ -209,12 +304,19 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         editInFirebase(b.getId(), b);
         renewBudgets();
 
-        return true;
     }
 
-    public boolean editById(String id, String category, float budget, Date startingDate, Date customDate) {
+    /**
+     * Edits a budget by a given id.
+     * @param id The id of the budget to edit.
+     * @param category The new category of the budget.
+     * @param budget The new limit.
+     * @param startingDate the new starting date.
+     * @param customDate the new ending date.
+     */
+    public void editById(String id, String category, float budget, Date startingDate, Date customDate) {
         Budget b = getById(id);
-        if (b == null) return false;
+        if (b == null) return;
 
         b.setBudget(budget);
         b.setCategory(category);
@@ -230,9 +332,16 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         editInFirebase(b.getId(), b);
         renewBudgets();
 
-        return true;
     }
 
+    /**
+     * Iterates through all transactions between startingDate and endingDate that belong to category,
+     * sums up their amounts and returns the total.
+     * @param category The category that the transactions must have
+     * @param startingDate All transactions must be after this date to be taken into account.
+     * @param endingDate All transactions must be before this date to be taken into account.
+     * @return The total amount of all the transactions.
+     */
     private float getTransactionSum(String category, Date startingDate, Date endingDate) {
         float amount = 0f;
 
@@ -249,26 +358,43 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
         return (amount == 0f) ? amount : -amount;
     }
 
+    /**
+     * Edits a budget of given id in firebase, by overwriting it.
+     * @param id Id of the budget to edit
+     * @param newBudget Budget to overwrite the old one with.
+     */
     private void editInFirebase(String id, Budget newBudget) {
         budgetsRef.child(id).setValue(newBudget);
     }
 
-    public boolean removeById(String id) {
+    /**
+     * Removes a budget of given id.
+     * @param id Id of the budget to remove.
+     */
+    public void removeById(String id) {
         Budget b = getById(id);
-        if (b == null) return false;
+        if (b == null) return;
 
         budgets.remove(b);
         budgetsRef.child(id).removeValue();
         renewBudgets();
-        return true;
     }
 
+    /**
+     * Removes a budget at a given place in the list
+     * @param position The position of the budget to remove in the list.
+     */
     public void removeAt(int position) {
         if (position < 0 || position >= budgets.size()) return;
         budgetsRef.child(budgets.get(position).getId()).removeValue();
         budgets.remove(position);
     }
 
+    /**
+     * Swaps two budgets in the list. Used to reorder budgets by the user.
+     * @param fromPosition position of the first budget.
+     * @param toPosition position of the second budget.
+     */
     public void swap(int fromPosition, int toPosition) {
         Log.i("BUDGETSWAP:", "from: " + fromPosition + " to: " + toPosition);
         if (fromPosition < toPosition) {
@@ -283,6 +409,11 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
     }
 
 
+    /**
+     * Writes a given budget to the firebase database.
+     * @param budget The budget to write
+     * @return The id of the written budget.
+     */
     private String writeNewBudgetToFirebase(Budget budget) {
         String key = budgetsRef.push().getKey();
 
