@@ -215,14 +215,14 @@ public class TransactionAddActivity extends AppCompatActivity {
                 errorText1.setError(errTxt);
                 errorText2.setError(errTxt);
             }
-            /*
+
             Date d1 = new Date(this.year - 1900, this.month - 1, this.day); //transaction date
             Date d2 = new Date(); //today
             if(d1.after(d2)){
                 valid=false;
                 dateDisplay.setError("This day hasn't happened yet!");
             }
-            */
+
             if(valid){
                 amount = Double.parseDouble(amountEditText.getText().toString());
                 if(selection==SELECTED_EXPENSE){
