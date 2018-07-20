@@ -130,6 +130,18 @@ public class AccountAdapter extends BaseAdapter {
                         .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                             // do nothing
                         });
+            }else if(AccountManager.getInstance().getAccounts().size()==1){
+                builder.setTitle("Can't delete account")
+                        .setMessage("You need at least one account to add transactions!")
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            // do nothing
+                        });
+            }else if(accounts.get(position).isDefault()){
+                builder.setTitle("Can't delete account")
+                        .setMessage("This is your default account. Please choose a new default account before you delete this one.")
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            // do nothing
+                        });
             }else{
                 builder.setTitle("Delete account")
                         .setMessage("Are you sure you want to delete the account "+accounts.get(position).getName()+"?")

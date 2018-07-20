@@ -31,6 +31,7 @@ import com.lmu.pem.finanzapp.model.transactions.Transaction;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class TransactionAddActivity extends AppCompatActivity {
 
@@ -214,6 +215,12 @@ public class TransactionAddActivity extends AppCompatActivity {
                 errorText1.setError(errTxt);
                 errorText2.setError(errTxt);
             }
+            Date d1 = new Date(this.year, this.month, this.day); //transaction date
+            Date d2 = new Date(); //today
+            if(d1.compareTo(d2)>0){
+                valid=false;
+                dateDisplay.setError("This day hasn't happened yet!");
+            }
             if(valid){
                 amount = Double.parseDouble(amountEditText.getText().toString());
                 if(selection==SELECTED_EXPENSE){
@@ -360,6 +367,7 @@ public class TransactionAddActivity extends AppCompatActivity {
             setDateOnDisplay(year, month+1, day);
         };
         dateDisplay.setOnClickListener(v -> {
+            dateDisplay.setError(null);
             DatePickerDialog dialog = new DatePickerDialog(TransactionAddActivity.this, android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month-1, day);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
             dialog.show();
