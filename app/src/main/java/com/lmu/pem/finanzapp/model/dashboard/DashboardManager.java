@@ -31,16 +31,28 @@ import java.util.Locale;
 
 public class DashboardManager extends DashboardEventSource implements TransactionHistoryEventListener, BudgetEventListener {
 
-    /***
+    /**
      * The singleton instance
      */
     private static DashboardManager instance;
 
+    /**
+     * A handle to the adapter that's responsible for displaying the cards. Used to notify it when
+     * the data set is updated
+     */
     private CardAdapter adapterHandle;
 
+    /**
+     * Holds the value of different card types to the user. Is not used to its fullest extent, as it
+     * doesn't get saved persistently, but the framework is there if it should be implemented in the
+     * future
+     */
     private HashMap<CardType, Integer> cardTypeValues = new HashMap<>();
 
 
+    /**
+     * The types of cards that exist.
+     */
     public enum CardType {
         WELCOME,
         SWIPETUTORIAL,
@@ -50,11 +62,26 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         BUDGETFAILED,
     }
 
+    /**
+     * The context, in which the DashboardManager is used.
+     */
     private Context context;
 
+    /**
+     * The cards on display currently.
+     */
     private ArrayList<DbCard> activeCards;
+
+    /**
+     * The cards that have been dismissed by the user.
+     */
     private ArrayList<DbCard> archivedCards = new ArrayList<>();
 
+    /**
+     * Private constructor for the singleton instance. Adds this as listener to the transactions and
+     * budgets, so it can react to updates.
+     * @param context The current context.
+     */
     private DashboardManager(Context context) {
         this.context = context;
         TransactionManager.getInstance().addListener(this);
@@ -62,6 +89,9 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         reset();
     }
 
+    /**
+     * Resets the users preferences and reloads all the cards.
+     */
     public void reset() {
         cardTypeValues.clear();
         archivedCards.clear();
@@ -69,16 +99,32 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         refreshActiveCards();
     }
 
+    /**
+     * Reacts to a TransactionHistoryEvent to update the cards when a change to the transactions
+     * occured.
+     * @param event The event, that was fired by the TransactionManager.
+     */
     @Override
     public void handle(TransactionHistoryEvent event) {
         refreshActiveCards();
     }
 
+    /**
+     * Reacts to a BudgetEvent to update the cards when a change to the budgets
+     * occured.
+     * @param event The event, that was fired by the BudgetManager.
+     */
     @Override
     public void handle(BudgetEvent event) {
         refreshActiveCards();
     }
 
+    /**
+     * Public getter for the singleton instance. Needs to be given the current context for certain
+     * functionalities.
+     * @param context The context, in which the DashboardManager is used.
+     * @return Returns the singleton instance.
+     */
     public static DashboardManager getInstance(Context context) {
         if (instance == null) {
             instance = new DashboardManager(context);
@@ -89,6 +135,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     }
 
 
+    /**
+     * Public getter for the DataSet (all cards meant to be displayed).
+     * @return An ArrayList of all active Cards.
+     */
     public ArrayList<DbCard> getDataSet() {
         if (activeCards != null)
             return activeCards;
@@ -98,10 +148,19 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     }
 
+    /**
+     * Sets a CardAdapter as the responsible listener for this DashboardManager, so it gets notified
+     * on Updates to the DataSet.
+     * @param cardAdapter The CardAdapter to be notified.
+     */
     public void setAdapterListener(CardAdapter cardAdapter) {
         adapterHandle = cardAdapter;
     }
 
+    /**
+     * Main method. Reloads all active cards while using the specific factories. Takes preference
+     * and sensibility into account.
+     */
     private void refreshActiveCards() {
         if (activeCards == null) activeCards = new ArrayList<>();
         activeCards.clear();
@@ -129,7 +188,12 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         fireDashboardEvent(new DashboardEvent(this, DashboardEvent.EventType.UPDATED));
     }
 
-    public void deleteCard(DbCard card) {
+    /**
+     * Dismisses a given card and notifies the adapter that it has to reload the view.
+     * Also updates the users preference to take into account, that this card is not liked.
+     * @param card The card that is dismissed.
+     */
+    public void dismissCard(DbCard card) {
         archivedCards.add(card);
         boolean stillOthers = false;
         for (DbCard activeCard : activeCards) {
@@ -143,12 +207,45 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         refreshActiveCards();
     }
 
-    //region Card Factories
-
+    /**
+     * Checks if a given CardType should be displayed to the user, according to his preference.
+     * @param t The CardType that is checked against user preference.
+     * @return True, if the CardType should be displayed. False, if not.
+     */
     private boolean isCardTypeWanted(CardType t) {
         return (getCardTypeValue(t) > 0 || getCardTypeValue(t) == -1);
     }
 
+    /**
+     * Sets a value to a given type, to accomodate user preference.
+     * @param type The type to set a value to.
+     * @param value The value of this type to the user.
+     */
+    private void setCardTypeValue(CardType type, int value) {
+        cardTypeValues.put(type, value);
+    }
+
+    /**
+     * Gets a value for a given type, to check the user preference.
+     * @param type The type to get the value from
+     * @return  The value of this type to the user. -1 if there is no specified value yet.
+     */
+    private int getCardTypeValue(CardType type) {
+        if (cardTypeValues.containsKey(type))
+            return cardTypeValues.get(type);
+
+        return -1;
+    }
+
+    //region Card Factories
+
+
+
+    /**
+     * The Main Factory for all cards. Takes a card type as an argument and calls the corresponding
+     * factory.
+     * @param type The CardType to be displayed.
+     */
     private void cardFactory(CardType type) {
         if (type == null) return;
 
@@ -168,6 +265,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         }
     }
 
+    /**
+     * The factory for the highest income card. If it is useful, it calculates the values and adds
+     * the card to the active cards.
+     */
     private void highestIncomeCardFactory() {
         HashMap<String, Float> i = Analyzer.calculateBestIncomeCategory(TransactionManager.getInstance());
         String iCat = "";
@@ -178,6 +279,12 @@ public class DashboardManager extends DashboardEventSource implements Transactio
             activeCards.add(createHighestIncomeCardLayout(iCat, i.get(iCat)));
     }
 
+    /**
+     * Creates and returns a new AmountCard of type HighestIncome with a given category and amount.
+     * @param category The category, that the user got the most money from.
+     * @param amount The amount he got from on that category.
+     * @return The BasicAmountCard representing the HighestIncomeCard.
+     */
     private BasicAmountCard createHighestIncomeCardLayout(String category, float amount) {
         String title = context.getString(R.string.highestincome_title);
         String primaryMessage = context.getString(R.string.highestincome_mainText) + " " + category + ":";
@@ -192,6 +299,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 "");
     }
 
+    /**
+     * The factory for the highest expense card. If it is useful, it calculates the values and adds
+     * the card to the active cards.
+     */
     private void highestExpenseCardFactory() {
 
         HashMap<String, Float> h = Analyzer.calculateMostExpensiveCategory(TransactionManager.getInstance());
@@ -203,6 +314,12 @@ public class DashboardManager extends DashboardEventSource implements Transactio
             activeCards.add(createHighestExpensesCardLayout(cat, h.get(cat)));
     }
 
+    /**
+     * Creates and returns a new AmountCard of type HighestExpense with a given category and amount.
+     * @param category The category, that the user spent the most money on.
+     * @param amount The amount he spent on that category.
+     * @return The BasicAmountCard representing the HighestExpenseCard.
+     */
     private BasicAmountCard createHighestExpensesCardLayout(String category, float amount) {
         String title = context.getString(R.string.highestexpenses_title);
         String primaryMessage = context.getString(R.string.highestexpenses_mainText) + " " + category + ":";
@@ -217,10 +334,18 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 "");
     }
 
+    /**
+     * The factory for the welcome card. If it is useful, it adds
+     * the card to the active cards.
+     */
     private void welcomeCardFactory() {
         if (activeCards.size() == 0) activeCards.add(createWelcomeCardLayout());
     }
 
+    /**
+     * Creates and returns a new WelcomeCard.
+     * @return The WelcomeCard.
+     */
     private WelcomeCard createWelcomeCardLayout() {
         if (TransactionManager.getInstance().getTransactions().size() == 0)
             return new WelcomeCard(
@@ -235,6 +360,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                     context.getString(R.string.welcomecard_btn1));
     }
 
+    /**
+     * The factory for the swipe tutorial card. If it is useful, it adds
+     * the card to the active cards.
+     */
     private void swipeTutorialFactory() {
         if (cardTypeValues.containsKey(CardType.SWIPETUTORIAL) && cardTypeValues.get(CardType.SWIPETUTORIAL) == 0)
             return;
@@ -245,6 +374,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         activeCards.add(createSwipeTutorialCardLayout());
     }
 
+    /**
+     * Creates and returns a new Swipe Tutorial Card.
+     * @return The WelcomeCard.
+     */
     private WelcomeCard createSwipeTutorialCardLayout() {
         return new WelcomeCard(
                 CardType.SWIPETUTORIAL,
@@ -254,24 +387,22 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         );
     }
 
+    /**
+     * The factory for the budget warning card. If it is useful, it calculates the values and adds
+     * the card to the active cards.
+     */
     private void budgetWarningCardFactory() {
         for (Budget budget : Analyzer.getBudgetsOver(0f, true, false)) {
             activeCards.add(createBudgetWarningCardLayout(budget));
         }
     }
 
-    public void setCardTypeValue(CardType type, int value) {
-        cardTypeValues.put(type, value);
-    }
 
-    private int getCardTypeValue(CardType type) {
-        if (cardTypeValues.containsKey(type))
-            return cardTypeValues.get(type);
-
-        return -1;
-    }
-
-
+    /**
+     * Creates and returns a new AmountCard of type BudgetWarninf with a given category and amount.
+     * @param budget The budget, that the user should be warned about.
+     * @return The BasicAmountCard representing the BudgetWarningCard.
+     */
     private BasicAmountCard createBudgetWarningCardLayout(Budget budget) {
         String title = context.getString(R.string.bw_title) + " " + budget.getCategory() + " " + context.getString(R.string.bw_title2);
 
@@ -290,6 +421,10 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     }
 
+    /**
+     * The factory for the budget failed card. If it is useful, it calculates the values and adds
+     * the card to the active cards.
+     */
     private void budgetFailedCardFactory() {
 
         for (Budget budget : Analyzer.getBudgetsOver(1f, true, true)) {
@@ -297,6 +432,11 @@ public class DashboardManager extends DashboardEventSource implements Transactio
         }
     }
 
+    /**
+     * Creates and returns a new AmountCard of type BudgetFailed with a given category and amount.
+     * @param budget The budget, that the user has exceeded.
+     * @return The BasicAmountCard representing the BudgetFailedCard.
+     */
     private BasicAmountCard createBudgetFailedCardLayout(Budget budget) {
         String title = context.getString(R.string.bf_title) + " " + budget.getCategory() + " " + context.getString(R.string.bf_title2);
 

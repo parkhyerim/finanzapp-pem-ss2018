@@ -1,6 +1,5 @@
 package com.lmu.pem.finanzapp.controller;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -176,7 +175,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     }
 
     public void onItemDismiss(int position) {
-        DashboardManager.getInstance(fragmentHandle.getContext()).deleteCard(dataSet.get(position));
+        DashboardManager.getInstance(fragmentHandle.getContext()).dismissCard(dataSet.get(position));
         notifyItemRemoved(position);
         Snackbar.make(fragmentHandle.getView(), R.string.budget_delete_message, Snackbar.LENGTH_LONG).show();
 
