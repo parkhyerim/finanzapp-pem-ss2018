@@ -35,57 +35,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
     private DashboardFragment fragmentHandle;
 
     /**
-     * The basic ViewHolder for any card.
-     */
-    static abstract class CardViewHolder extends RecyclerView.ViewHolder {
-        TextView titleText;
-
-        CardViewHolder(View view) {
-            super(view);
-        }
-    }
-
-    /**
-     * The ViewHolder for the basic amount cards.
-     */
-    public static class BasicAmountViewHolder extends CardViewHolder {
-        // each data item is just a string in this case
-        TextView primaryText;
-        TextView amountText;
-        TextView amountDescText;
-        TextView secondaryText;
-
-
-        BasicAmountViewHolder(View itemView) {
-            super(itemView);
-
-            titleText = itemView.findViewById(R.id.title);
-            primaryText = itemView.findViewById(R.id.primaryMessage);
-            amountText = itemView.findViewById(R.id.amount);
-            amountDescText = itemView.findViewById(R.id.amountDescription);
-            secondaryText = itemView.findViewById(R.id.secondaryMessage);
-
-
-        }
-    }
-
-    /**
-     * The ViewHolder for the welcome cards.
-     */
-    public static class WelcomeCardViewHolder extends CardViewHolder {
-        TextView primaryText;
-        public Button button;
-
-        WelcomeCardViewHolder(View view) {
-            super(view);
-            this.titleText = view.findViewById(R.id.title);
-            this.primaryText = view.findViewById(R.id.primaryMessage);
-            this.button = view.findViewById(R.id.btn1);
-
-        }
-    }
-
-    /**
      * Constructs a new CardAdapter. Takes the dataSet to display as an argument and the fragment
      * that created it.
      * @param dataSet The DataSet of Cards to display
@@ -188,7 +137,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         }
     }
 
-
     /**
      * Returns the amount of cards to display.
      * @return The amount of displayed cards.
@@ -221,5 +169,56 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         notifyItemRemoved(position);
         Snackbar.make(Objects.requireNonNull(fragmentHandle.getView()), R.string.budget_delete_message, Snackbar.LENGTH_LONG).show();
 
+    }
+
+    /**
+     * The basic ViewHolder for any card.
+     */
+    static abstract class CardViewHolder extends RecyclerView.ViewHolder {
+        TextView titleText;
+
+        CardViewHolder(View view) {
+            super(view);
+        }
+    }
+
+    /**
+     * The ViewHolder for the basic amount cards.
+     */
+    public static class BasicAmountViewHolder extends CardViewHolder {
+        // each data item is just a string in this case
+        TextView primaryText;
+        TextView amountText;
+        TextView amountDescText;
+        TextView secondaryText;
+
+
+        BasicAmountViewHolder(View itemView) {
+            super(itemView);
+
+            titleText = itemView.findViewById(R.id.title);
+            primaryText = itemView.findViewById(R.id.primaryMessage);
+            amountText = itemView.findViewById(R.id.amount);
+            amountDescText = itemView.findViewById(R.id.amountDescription);
+            secondaryText = itemView.findViewById(R.id.secondaryMessage);
+
+
+        }
+    }
+
+    /**
+     * The ViewHolder for the welcome cards.
+     */
+    public static class WelcomeCardViewHolder extends CardViewHolder {
+        public Button button;
+        TextView primaryText;
+
+        WelcomeCardViewHolder(View view) {
+            super(view);
+            this.titleText = view.findViewById(R.id.title);
+            this.primaryText = view.findViewById(R.id.primaryMessage);
+            this.button = view.findViewById(R.id.btn1);
+
+        }
     }
 }
