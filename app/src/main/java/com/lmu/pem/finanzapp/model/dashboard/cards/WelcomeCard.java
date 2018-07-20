@@ -4,19 +4,15 @@ import com.lmu.pem.finanzapp.model.dashboard.DashboardManager;
 
 public class WelcomeCard extends DbCard {
 
-    private String btn2Text;
+    private String btnText;
 
-    public WelcomeCard (DashboardManager.CardType type, String title, String primaryText, String btn1Text, String btn2Text) {
+    public WelcomeCard (DashboardManager.CardType type, String title, String primaryText, String btnText) {
         super(type, title, primaryText);
-        this.btn2Text = btn2Text;
+        this.btnText = btnText;
 
     }
 
-    public String getBtn2Text() {
-        return btn2Text;
-    }
-
-    public void setBtn2Text(String btn2Text) {
-        this.btn2Text = btn2Text;
+    public String getBtnText() {
+        return btnText;
     }
 }

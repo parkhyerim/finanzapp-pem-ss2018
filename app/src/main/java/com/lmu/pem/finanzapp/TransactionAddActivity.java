@@ -215,9 +215,9 @@ public class TransactionAddActivity extends AppCompatActivity {
                 errorText1.setError(errTxt);
                 errorText2.setError(errTxt);
             }
-            Date d1 = new Date(this.year, this.month, this.day); //transaction date
+            Date d1 = new Date(this.year - 1900, this.month - 1, this.day); //transaction date
             Date d2 = new Date(); //today
-            if(d1.compareTo(d2)>0){
+            if(d1.after(d2)){
                 valid=false;
                 dateDisplay.setError("This day hasn't happened yet!");
             }

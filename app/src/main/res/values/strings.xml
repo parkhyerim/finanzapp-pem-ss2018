@@ -80,10 +80,14 @@
 
     <!-- Dashboard -->
     <!--Welcome Card-->
-    <string name="welcomecard_title">Hello there!</string>
+    <string name="welcomecard_title">Welcome to Oro!</string>
     <string name="welcomecard_text">It seems to be pretty empty in here. Do not worry! As you start
     using Oro more and more, this page will fill up in no time! Try adding a transaction for example!</string>
     <string name="welcomecard_btn1">DO IT</string>
+
+    <!--Swipe tutorial-->
+    <string name="swipetut_title">Delete me!</string>
+    <string name="swipetut_text">You do not want me here? That\'s fine! Just swipe me away towards the right side of your screen. Oro will remember your choice.</string>
 
     <!--Highest Income Card-->
     <string name="highestincome_title">Your Biggest Income</string>

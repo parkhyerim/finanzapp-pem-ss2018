@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/activity_vertical_margin"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".views.DashboardFragment">
+    tools:context=".views.dashboard.DashboardFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

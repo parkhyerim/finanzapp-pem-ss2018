@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.lmu.pem.finanzapp.views.TransactionFragment;
 import com.lmu.pem.finanzapp.views.budgets.BudgetFragment;
-import com.lmu.pem.finanzapp.views.DashboardFragment;
+import com.lmu.pem.finanzapp.views.dashboard.DashboardFragment;
 import com.lmu.pem.finanzapp.views.AccountFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {

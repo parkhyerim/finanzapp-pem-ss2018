@@ -11,7 +11,7 @@ public class BudgetTouchHelperCallback extends ItemTouchHelper.Callback {
 
 
 
-    public BudgetTouchHelperCallback(BudgetAdapter adapter) {
+    BudgetTouchHelperCallback(BudgetAdapter adapter) {
         mAdapter = adapter;
     }
 
@@ -22,7 +22,7 @@ public class BudgetTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean isItemViewSwipeEnabled() {
-        return true;
+        return false;
     }
 
     @Override

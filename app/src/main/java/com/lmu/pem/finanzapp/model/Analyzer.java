@@ -9,12 +9,15 @@ import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public  class Analyzer {
+public class Analyzer {
 
-    public static HashMap<String, Float> calculateMostExpensiveCategory (TransactionManager manager) {
+    public static HashMap<String, Float> calculateMostExpensiveCategory(TransactionManager manager) {
         ArrayList<String> cat = CategoryManager.getInstance().getPureExpCategories();
 
-        float [] categoryCounters = new float[cat.size()];
+        if (cat.size() == 0 || manager.getTransactions().size() == 0)
+            return new HashMap<>();
+
+        float[] categoryCounters = new float[cat.size()];
 
         for (Transaction transaction : manager.getTransactions()) {
             if (cat.contains(transaction.getCategory()))
@@ -31,14 +34,19 @@ public  class Analyzer {
 
 
         HashMap<String, Float> h = new HashMap<>();
-        h.put(cat.get(mostExpensive), categoryCounters[mostExpensive]);
+
+        if (mostExpensive != 0 || categoryCounters[mostExpensive] != 0)
+            h.put(cat.get(mostExpensive), categoryCounters[mostExpensive]);
         return h;
     }
 
-    public static HashMap<String, Float> calculateBestIncomeCategory (TransactionManager manager) {
+    public static HashMap<String, Float> calculateBestIncomeCategory(TransactionManager manager) {
         ArrayList<String> cat = CategoryManager.getInstance().getPureIncCategories();
 
-        float [] categoryCounters = new float[cat.size()];
+        if (cat.size() == 0 || manager.getTransactions().size() == 0)
+            return new HashMap<>();
+
+        float[] categoryCounters = new float[cat.size()];
 
         for (Transaction transaction : manager.getTransactions()) {
             if (cat.contains(transaction.getCategory()))
@@ -55,7 +63,7 @@ public  class Analyzer {
 
 
         HashMap<String, Float> h = new HashMap<>();
-        if (cat.size() != 0)
+        if (mostExpensive != 0 || categoryCounters[mostExpensive] != 0)
             h.put(cat.get(mostExpensive), categoryCounters[mostExpensive]);
         return h;
     }
@@ -67,16 +75,13 @@ public  class Analyzer {
                 if (budget.getAmountPart() >= 1f && includeOvershot) {
                     if (onlyIfOverTime) {
                         if (budget.getAmountPart() > budget.getDatePart()) buffer.add(budget);
-                    }
-                    else {
+                    } else {
                         buffer.add(budget);
                     }
-                }
-                else if (budget.getAmountPart() < 1f) {
+                } else if (budget.getAmountPart() < 1f) {
                     if (onlyIfOverTime) {
                         if (budget.getAmountPart() > budget.getDatePart()) buffer.add(budget);
-                    }
-                    else {
+                    } else {
                         buffer.add(budget);
                     }
                 }
@@ -93,10 +98,10 @@ public  class Analyzer {
     public static float getBudgetExtrapolationInDays(Budget budget) {
         long days = getBudgetDays(budget);
 
-        return ((budget.getAmountPart() / budget.getDatePart())* days);
+        return ((budget.getAmountPart() / budget.getDatePart()) * days);
     }
 
     public static float getOvershootAmount(Budget budget) {
-        return (budget.getAmountPart()/budget.getDatePart()) * budget.getCurrentAmount();
+        return (budget.getAmountPart() / budget.getDatePart()) * budget.getCurrentAmount();
     }
 }

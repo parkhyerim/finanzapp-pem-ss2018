@@ -1,9 +1,11 @@
 package com.lmu.pem.finanzapp.model.dashboard;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Adapter;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.lmu.pem.finanzapp.R;
 import com.lmu.pem.finanzapp.controller.CardAdapter;
 import com.lmu.pem.finanzapp.model.GlobalSettings;
@@ -11,7 +13,6 @@ import com.lmu.pem.finanzapp.model.budgets.Budget;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEvent;
 import com.lmu.pem.finanzapp.model.budgets.BudgetEventListener;
 import com.lmu.pem.finanzapp.model.budgets.BudgetManager;
-import com.lmu.pem.finanzapp.model.transactions.Transaction;
 import com.lmu.pem.finanzapp.model.transactions.TransactionManager;
 import com.lmu.pem.finanzapp.model.Analyzer;
 import com.lmu.pem.finanzapp.model.dashboard.cards.BasicAmountCard;
@@ -20,11 +21,7 @@ import com.lmu.pem.finanzapp.model.dashboard.cards.WelcomeCard;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEvent;
 import com.lmu.pem.finanzapp.model.transactions.TransactionHistoryEventListener;
 
-import java.text.DateFormatSymbols;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -34,11 +31,15 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     private CardAdapter adapterHandle;
 
+    private DatabaseReference firebaseRef;
 
+    private HashMap<Integer, Integer> cardTypeValues = new HashMap<>();
+
+    private static final String FIREBASE_CHILD_NAME = "cardTypeValues";
 
     public enum CardType {
         WELCOME,
-        MEM,
+        SWIPETUTORIAL,
         HIGHESTINCOME,
         HIGHESTEXPENSE,
         BUDGETWARNING,
@@ -53,6 +54,13 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     private DashboardManager() {
         TransactionManager.getInstance().addListener(this);
         BudgetManager.getInstance().addListener(this);
+        reset();
+    }
+
+    public void reset() {
+        cardTypeValues.clear();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("dashboard");
     }
 
     @Override
@@ -91,34 +99,19 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     private void refreshActiveCards(TransactionManager history) {
         if (activeCards == null) activeCards = new ArrayList<>();
         activeCards.clear();
-        Log.i("DashboardManager", "REFRESHED ACTIVE CARDS");
-        Log.i("DashboardManager", "There are " + history.getTransactions().size() + " Transactions!");
 
         //TODO Be smart about any of this
 
-        TransactionManager manager = TransactionManager.getInstance();
 
-        HashMap<String, Float> i = Analyzer.calculateBestIncomeCategory(manager);
-        String iCat = i.keySet().iterator().next();
-
-        if (!iCat.isEmpty())
-            activeCards.add(createHighestIncomeCard(iCat, i.get(iCat)));
-
-        HashMap<String, Float> h = Analyzer.calculateMostExpensiveCategory(manager);
-        String cat = h.keySet().iterator().next();
-
-        if (!cat.isEmpty())
-            activeCards.add(createHighestExpensesCard(cat, h.get(cat)));
-
-        for (Budget budget : Analyzer.getBudgetsOver(0f, true, false)) {
-            activeCards.add(createBudgetWarningCard(budget));
+        for (CardType cardType : CardType.values()) {
+            if (isCardTypeWanted(cardType))
+                cardFactory(cardType);
         }
 
-        for (Budget budget : Analyzer.getBudgetsOver(1f, true, true)) {
-            activeCards.add(createBudgetFailedCard(budget));
-        }
+        //===
+        welcomeCardFactory();
+        swipeTutorialFactory();
 
-        if (activeCards.size() == 0) activeCards.add(createEmptyPromptCard());
 
         if (adapterHandle != null) adapterHandle.notifyDataSetChanged();
         fireDashboardEvent(new DashboardEvent(this, DashboardEvent.EventType.UPDATED));
@@ -127,7 +120,40 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
     //region Card Factories
 
-    private BasicAmountCard createHighestIncomeCard(String category, float amount) {
+    private boolean isCardTypeWanted(CardType t) {
+        return (getCardTypeValue(t) > 0);
+    }
+
+    private void cardFactory(CardType type) {
+        if (type == null) return;
+
+        switch (type) {
+            case HIGHESTINCOME:
+                highestIncomeCardFactory();
+                break;
+            case HIGHESTEXPENSE:
+                highestExpenseCardFactory();
+                break;
+            case BUDGETWARNING:
+                budgetWarningCardFactory();
+                break;
+            case BUDGETFAILED:
+                budgetFailedCardFactory();
+                break;
+        }
+    }
+
+    private void highestIncomeCardFactory() {
+        HashMap<String, Float> i = Analyzer.calculateBestIncomeCategory(TransactionManager.getInstance());
+        String iCat = "";
+        if (!i.isEmpty())
+            iCat = i.keySet().iterator().next();
+
+        if (!iCat.isEmpty())
+            activeCards.add(createHighestIncomeCardLayout(iCat, i.get(iCat)));
+    }
+
+    private BasicAmountCard createHighestIncomeCardLayout(String category, float amount) {
         String title = context.getString(R.string.highestincome_title);
         String primaryMessage = context.getString(R.string.highestincome_mainText) + " " + category + ":";
 
@@ -141,7 +167,18 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 "");
     }
 
-    private BasicAmountCard createHighestExpensesCard(String category, float amount) {
+    private void highestExpenseCardFactory() {
+
+        HashMap<String, Float> h = Analyzer.calculateMostExpensiveCategory(TransactionManager.getInstance());
+        String cat = "";
+        if (!h.isEmpty())
+            cat = h.keySet().iterator().next();
+
+        if (!cat.isEmpty())
+            activeCards.add(createHighestExpensesCardLayout(cat, h.get(cat)));
+    }
+
+    private BasicAmountCard createHighestExpensesCardLayout(String category, float amount) {
         String title = context.getString(R.string.highestexpenses_title);
         String primaryMessage = context.getString(R.string.highestexpenses_mainText) + " " + category + ":";
 
@@ -155,28 +192,57 @@ public class DashboardManager extends DashboardEventSource implements Transactio
                 "");
     }
 
-    private WelcomeCard createEmptyPromptCard () {
+    private void welcomeCardFactory() {
+        if (activeCards.size() == 0) activeCards.add(createWelcomeCardLayout());
+    }
+
+    private WelcomeCard createWelcomeCardLayout() {
         return new WelcomeCard(
                 CardType.WELCOME,
                 context.getString(R.string.welcomecard_title),
                 context.getString(R.string.welcomecard_text),
-                context.getString(R.string.welcomecard_btn1),
-                "");
+                context.getString(R.string.welcomecard_btn1));
     }
 
-    private BasicAmountCard createMemCard(int month, float amount) {
-        return new BasicAmountCard(
-                CardType.MEM,
-                context.getString(R.string.mem_title),
-                context.getString(R.string.mem_mainText) + " " + new DateFormatSymbols().getMonths()[month] + ".",
-                amount,
-                BasicAmountCard.AmountType.NEGATIVE,
-                context.getString(R.string.mem_amountDesc),
-                context.getString(R.string.mem_secondaryText)
+    private void swipeTutorialFactory() {
+        if (cardTypeValues.containsKey(CardType.SWIPETUTORIAL.ordinal()) && cardTypeValues.get(CardType.SWIPETUTORIAL.ordinal()) == 0)
+            return;
+        activeCards.add(createSwipeTutorialCardLayout());
+    }
+
+    private WelcomeCard createSwipeTutorialCardLayout() {
+        return new WelcomeCard(
+                CardType.SWIPETUTORIAL,
+                context.getString(R.string.swipetut_title),
+                context.getString(R.string.swipetut_text),
+                ""
         );
     }
 
-    private BasicAmountCard createBudgetWarningCard(Budget budget) {
+    private void budgetWarningCardFactory() {
+        for (Budget budget : Analyzer.getBudgetsOver(0f, true, false)) {
+            activeCards.add(createBudgetWarningCardLayout(budget));
+        }
+    }
+
+    public void setCardTypeValue(CardType type, int value) {
+        cardTypeValues.put(type.ordinal(), value);
+        firebaseRef.child(FIREBASE_CHILD_NAME).setValue(cardTypeValues);
+    }
+
+    private int getCardTypeValue(CardType type) {
+        if (cardTypeValues.containsKey(type))
+            return cardTypeValues.get(type);
+
+        return -1;
+    }
+
+    public void deleteCard(DbCard card) {
+        setCardTypeValue(card.getType(), 0);
+        refreshActiveCards(TransactionManager.getInstance());
+    }
+
+    private BasicAmountCard createBudgetWarningCardLayout(Budget budget) {
         String title = context.getString(R.string.bw_title) + " " + budget.getCategory() + " " + context.getString(R.string.bw_title2);
 
         long days = Analyzer.getBudgetDays(budget);
@@ -184,28 +250,35 @@ public class DashboardManager extends DashboardEventSource implements Transactio
 
         String main = context.getString(R.string.bw_mainText) + " " + days + " days, you spent";
         String amountDesc = context.getString(R.string.bw_amountDesc)
-                + String.format(Locale.getDefault(), " %.2f %s",budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
+                + String.format(Locale.getDefault(), " %.2f %s", budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
 
         String extraDaysString = String.format(Locale.getDefault(), " %.2f %s", overshootAmount, GlobalSettings.getInstance().getCurrencyString());
-        String secondaryText =  context.getString(R.string.bw_secondaryText1) + extraDaysString;
+        String secondaryText = context.getString(R.string.bw_secondaryText1) + extraDaysString;
 
         return new BasicAmountCard(CardType.BUDGETWARNING, title, main, budget.getCurrentAmount(),
                 BasicAmountCard.AmountType.WARNING, amountDesc, secondaryText);
 
     }
 
-    private BasicAmountCard createBudgetFailedCard(Budget budget) {
+    private void budgetFailedCardFactory() {
+
+        for (Budget budget : Analyzer.getBudgetsOver(1f, true, true)) {
+            activeCards.add(createBudgetFailedCardLayout(budget));
+        }
+    }
+
+    private BasicAmountCard createBudgetFailedCardLayout(Budget budget) {
         String title = context.getString(R.string.bf_title) + " " + budget.getCategory() + " " + context.getString(R.string.bf_title2);
 
         long days = Analyzer.getBudgetDays(budget);
         float extraDays = Analyzer.getBudgetExtrapolationInDays(budget);
 
-        String main = context.getString(R.string.bf_mainText1) + " " + budget.getCategory() + " "+ context.getString(R.string.bf_mainText2);
+        String main = context.getString(R.string.bf_mainText1) + " " + budget.getCategory() + " " + context.getString(R.string.bf_mainText2);
         String amountDesc = context.getString(R.string.bf_amountDesc)
-                + String.format(Locale.getDefault(), " %.2f %s",budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
+                + String.format(Locale.getDefault(), " %.2f %s", budget.getBudget(), GlobalSettings.getInstance().getCurrencyString());
 
-        String extraDaysString = String.format(Locale.getDefault(), " %.1f ", extraDays -  days);
-        String secondaryText =  context.getString(R.string.bf_secondaryText1) + extraDaysString + context.getString(R.string.bf_secondaryText2);
+        String extraDaysString = String.format(Locale.getDefault(), " %.1f ", extraDays - days);
+        String secondaryText = context.getString(R.string.bf_secondaryText1) + extraDaysString + context.getString(R.string.bf_secondaryText2);
 
         return new BasicAmountCard(CardType.BUDGETFAILED, title, main, budget.getCurrentAmount(),
                 BasicAmountCard.AmountType.NEGATIVE, amountDesc, secondaryText);
