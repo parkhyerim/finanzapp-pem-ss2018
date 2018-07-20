@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TransactionManager extends TransactionHistoryEventSource{
+public class TransactionManager extends TransactionHistoryEventSource {
 
     private static TransactionManager instance;
 
@@ -24,14 +24,17 @@ public class TransactionManager extends TransactionHistoryEventSource{
     }
 
     public void reset() {
-        this.transactions = new ArrayList<>();
+        if (transactions != null)
+            this.transactions.clear();
+        else
+            transactions = new ArrayList<>();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         transactionRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("transactions");
     }
 
 
     public static TransactionManager getInstance() {
-        if(instance == null) instance = new TransactionManager();
+        if (instance == null) instance = new TransactionManager();
         return instance;
     }
 
@@ -39,20 +42,22 @@ public class TransactionManager extends TransactionHistoryEventSource{
     /**
      * Adds a Transaction to the Transaction Manager and stores it in Firebase by calling the {@link #writeNewTransactionToFB(Transaction) writeNewTransactionToFB} method.
      * This method also automatically stores the Firebase key in the given Transaction object.
+     *
      * @param transaction the Transaction object to be added
      */
-    public void addTransaction(Transaction transaction){
+    public void addTransaction(Transaction transaction) {
         addTransactionLocally(transaction, true);
         String key = writeNewTransactionToFB(transaction);
         transaction.setKey(key);
     }
 
-    public void addTransactionLocally(Transaction transaction, boolean fireEvent){
+    public void addTransactionLocally(Transaction transaction, boolean fireEvent) {
         this.transactions.add(transaction);
-        if(fireEvent) fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
+        if (fireEvent)
+            fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.ADDED, this, transaction));
     }
 
-    public void updateTransaction(String key, int year, int month, int day, String account, String account2, String category, String description, double amount){
+    public void updateTransaction(String key, int year, int month, int day, String account, String account2, String category, String description, double amount) {
         Transaction transaction = getTransactionByKey(key);
         Transaction transactionOld;
         transactionOld = new Transaction(
@@ -65,76 +70,81 @@ public class TransactionManager extends TransactionHistoryEventSource{
                 transaction.getDescription(),
                 transaction.getAmount()
         );
-        if(transaction.getYear() != year) transaction.setYear(year);
-        if(transaction.getMonth() != month) transaction.setMonth(month);
-        if(transaction.getDay() != day) transaction.setDay(day);
-        if(!(transaction.getAccount().equals(account))) transaction.setAccount(account);
-        if(!(transaction.getAccount2()!=null && transaction.getAccount2().equals(account2)) && !(transaction.getAccount2()==null && account2==null)) transaction.setAccount2(account2);
-        if(!(transaction.getCategory().equals(category))) transaction.setCategory(category);
-        if(!(transaction.getDescription().equals(description))) transaction.setDescription(description);
-        if(!(transaction.getAmount() == amount)) transaction.setAmount(amount);
+        if (transaction.getYear() != year) transaction.setYear(year);
+        if (transaction.getMonth() != month) transaction.setMonth(month);
+        if (transaction.getDay() != day) transaction.setDay(day);
+        if (!(transaction.getAccount().equals(account))) transaction.setAccount(account);
+        if (!(transaction.getAccount2() != null && transaction.getAccount2().equals(account2)) && !(transaction.getAccount2() == null && account2 == null))
+            transaction.setAccount2(account2);
+        if (!(transaction.getCategory().equals(category))) transaction.setCategory(category);
+        if (!(transaction.getDescription().equals(description)))
+            transaction.setDescription(description);
+        if (!(transaction.getAmount() == amount)) transaction.setAmount(amount);
         updateTransactionInFB(key, transaction);
         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.UPDATED, this, transaction, transactionOld));
     }
 
 
-    public void removeTransaction(Transaction transaction){
+    public void removeTransaction(Transaction transaction) {
         deleteTransactionFromFB(transaction);
         this.transactions.remove(transaction);
         fireTransactionHistoryEvent(new TransactionHistoryEvent(TransactionHistoryEvent.EventType.REMOVED, this, transaction));
     }
 
 
-    public boolean containsTransaction(Transaction transaction){
+    public boolean containsTransaction(Transaction transaction) {
         return getTransactionByKey(transaction.getKey()) != null;
     }
 
     /**
      * Are there any Transactions in this TransactionManager for a given Account?
+     *
      * @param id the ID of the Account to search for
      * @return true if a Transaction for the given Account is found, otherwise false
      */
-    public boolean transactionsForAccount(String id){
-        for(Transaction t : transactions){
-            if(id.equals(t.getAccount()) || id.equals(t.getAccount2())) return true;
+    public boolean transactionsForAccount(String id) {
+        for (Transaction t : transactions) {
+            if (id.equals(t.getAccount()) || id.equals(t.getAccount2())) return true;
         }
         return false;
     }
 
     /**
      * Are there any expense Transactions in this TransactionManager for a given category?
+     *
      * @param category the category to search for
      * @return true if a Transaction for the given category is found, otherwise false
      */
-    public boolean transactionsForExpenseCategory(String category){
-        for(Transaction t : transactions){
-            if(t.getAmount()<0 && t.getCategory().equals(category)) return true;
+    public boolean transactionsForExpenseCategory(String category) {
+        for (Transaction t : transactions) {
+            if (t.getAmount() < 0 && t.getCategory().equals(category)) return true;
         }
         return false;
     }
 
     /**
      * Are there any income Transactions in this TransactionManager for a given category?
+     *
      * @param category the category to search for
      * @return true if a Transaction for the given category is found, otherwise false
      */
-    public boolean transactionsForIncomeCategory(String category){
-        for(Transaction t : transactions){
-            if(t.getAmount()>0 && t.getCategory().equals(category)) return true;
+    public boolean transactionsForIncomeCategory(String category) {
+        for (Transaction t : transactions) {
+            if (t.getAmount() > 0 && t.getCategory().equals(category)) return true;
         }
         return false;
     }
 
-    public Transaction getTransactionByKey(String key){
-        for(Transaction t : transactions){
-            if(t.getKey().equals(key)){
+    public Transaction getTransactionByKey(String key) {
+        for (Transaction t : transactions) {
+            if (t.getKey().equals(key)) {
                 return t;
             }
         }
         return null;
     }
 
-    public ArrayList<Transaction> getTransactions(){
+    public ArrayList<Transaction> getTransactions() {
         Collections.sort(transactions);
         return transactions;
 
@@ -143,18 +153,19 @@ public class TransactionManager extends TransactionHistoryEventSource{
     /**
      * for debugging / testing purposes
      */
-    public void createTransactionList(){
+    public void createTransactionList() {
         // dummy transaction list
         addTransaction(new Transaction(2018, 4, 28, "Cash", null, "Salary", "Werkstudenten-Gehalt", 450));
         addTransaction(new Transaction(2018, 5, 2, "Cash", null, "Household", "Edeka", -55.20));
-        addTransaction(new Transaction(2018, 5,2, "Cash", null, "Bonus", "Bonus!!!", 180));
-        addTransaction(new Transaction(2018, 5,5, "Cash", null, "Movie", "Black Panther", -21));
-        addTransaction(new Transaction(2018, 5,5, "Cash", null, "Gift", "Muttertag", -38.25));
+        addTransaction(new Transaction(2018, 5, 2, "Cash", null, "Bonus", "Bonus!!!", 180));
+        addTransaction(new Transaction(2018, 5, 5, "Cash", null, "Movie", "Black Panther", -21));
+        addTransaction(new Transaction(2018, 5, 5, "Cash", null, "Gift", "Muttertag", -38.25));
     }
 
 
     /**
      * Writes a given Transaction into the Firebase Database
+     *
      * @param transaction the Transaction object to be stored in the database
      * @return the key of the dataset in Firebase (will be added to the Transaction in {@link #addTransaction(Transaction) addTransaction})
      */
@@ -174,7 +185,7 @@ public class TransactionManager extends TransactionHistoryEventSource{
         return key;
     }
 
-    public void updateTransactionInFB(String key, Transaction newT){
+    public void updateTransactionInFB(String key, Transaction newT) {
         transactionRef.child(key).setValue(newT.toMap());
     }
 

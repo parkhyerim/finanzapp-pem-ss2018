@@ -202,6 +202,7 @@ public class LoginActivity extends AppCompatActivity {
         CategoryManager categoryManager = CategoryManager.getInstance();
         categoryManager.reset();
         BudgetManager budgetManager = BudgetManager.getInstance();
+        budgetManager.reset();
         curUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -283,6 +284,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e("123123123", "onDataChange: NullPointerException!", e);
                 }
 
+                transactionManager.addListener(accountManager);
                 goToMainActivity();
             }
 

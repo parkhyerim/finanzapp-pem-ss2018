@@ -55,11 +55,14 @@ public class BudgetManager extends BudgetEventSource implements TransactionHisto
     /**
      * Resets all the references and lists, so that they can be populated by firebase.
      */
-    private void reset() {
+    public void reset() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         assert user != null;
         budgetsRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("budgets");
-        budgets = new ArrayList<>();
+        if (budgets == null)
+            budgets = new ArrayList<>();
+        else
+            budgets.clear();
     }
 
     /**

@@ -24,7 +24,6 @@ public class AccountManager implements TransactionHistoryEventListener {
     private AccountManager() {
         reset();
 
-        TransactionManager.getInstance().addListener(this);
     }
 
     /**
@@ -37,7 +36,11 @@ public class AccountManager implements TransactionHistoryEventListener {
     }
 
     public void reset(){
-        this.accounts = new ArrayList<Account>();
+        if (this.accounts != null)
+            this.accounts.clear();
+        else
+            this.accounts = new ArrayList<>();
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("accounts");
         defaultAcc=null;
