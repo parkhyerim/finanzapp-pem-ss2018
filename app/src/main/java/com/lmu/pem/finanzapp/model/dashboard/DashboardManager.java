@@ -238,7 +238,9 @@ public class DashboardManager extends DashboardEventSource implements Transactio
     private void swipeTutorialFactory() {
         if (cardTypeValues.containsKey(CardType.SWIPETUTORIAL) && cardTypeValues.get(CardType.SWIPETUTORIAL) == 0)
             return;
-        if (activeCards.size() > 1 || (TransactionManager.getInstance().getTransactions().size() > 0 && activeCards.size() == 1 && activeCards.get(0).getType() != CardType.WELCOME))
+        if (activeCards.size() > 1 || (activeCards.size() == 1 && activeCards.get(0).getType() != CardType.WELCOME))
+            return;
+        if (TransactionManager.getInstance().getTransactions().size() > 0)
             return;
         activeCards.add(createSwipeTutorialCardLayout());
     }
